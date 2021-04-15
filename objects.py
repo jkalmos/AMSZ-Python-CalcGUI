@@ -13,8 +13,8 @@ class window(tk.Tk):
         self.minsize(width=200, height=200)
 
         # seting up toolbar
-        self.toolbar = Toolbar(self)
-        self.toolbar.pack(side=tk.TOP, fill=tk.X)
+        self.eszkoztar = Eszkoztar(self)
+        self.eszkoztar.pack(side=tk.TOP, fill=tk.X)
 
         #seting up side menu
 
@@ -25,53 +25,57 @@ class window(tk.Tk):
         self.canvas.pack()
 
     def doNothing(self):
-        print("A buuton has been pushed")
+        print("Ez a funkció jelenleg nem elérhető...")
     def add_circle(self):
-        self.canvas.create_oval(25,25,50,50,fill="blue")
+        self.canvas.delete('all')
+        reduced_size = min(self.canvas.winfo_width(),self.canvas.winfo_height())*0.7/2
+        c_x = self.canvas.winfo_width()/2
+        c_y = self.canvas.winfo_height()/2
+        self.canvas.create_oval(c_x-reduced_size,c_y-reduced_size, c_x+reduced_size,c_y+reduced_size, fill="blue")
+    def add_retangle(self):
+        self.canvas.delete('all')
+        reduced_size = min(self.canvas.winfo_width(),self.canvas.winfo_height())*0.7/2
+        c_x = self.canvas.winfo_width()/2
+        c_y = self.canvas.winfo_height()/2
+        self.canvas.create_rectangle(c_x-reduced_size,c_y-reduced_size, c_x+reduced_size,c_y+reduced_size, fill="blue")
+    def szamol(self):
+        try:
+            a = int(self.sm.e1.get())
+            b = int(self.sm.e2.get())
+            print(a*b)
+        except:
+            print("Hiba!")
+
 # ************ Toolbar ************
-class Toolbar(tk.Frame):
+class Eszkoztar(tk.Frame):
     def __init__(self, root):
         super().__init__(root, bg='#F5F5DC')
         self.root=root
-        tegla = tk.Button(self, text="Téglalap", command=self.root.doNothing)
+        kep = tk.PhotoImage(file='./source/images/teglalap.png')
+        kep = kep.subsample(10,10)
+        label = tk.Label(image=kep)
+        label.image = kep # keep a reference!
+        tegla = tk.Button(self, text="teglalap",image=kep,compound="top", command=self.root.add_retangle)
         tegla.pack(side=tk.LEFT, padx=2, pady=2)
         kor = tk.Button(self, text="Kör", command=self.root.add_circle)
         kor.pack(side=tk.LEFT, padx=2, pady=2)
         haromszog = tk.Button(self, text="Háromszög", command=self.root.doNothing)
         haromszog.pack(side=tk.LEFT, padx=2, pady=2)
 
-        calc = tk.Button(self, text="Calculate", command=self.root.doNothing)
+        calc = tk.Button(self, text="Calculate", command=self.root.szamol)
         calc.pack(side=tk.RIGHT, padx=2, pady=2)
 
 class SideMenu(tk.Frame):
     def __init__(self, root):
         super().__init__(root, bg='#707070')
         self.root=root
-        title = tk.Label(self, text="This is a side menu")
+        title = tk.Label(self, text="This is a side menu", bg=self["background"])
         title.grid(row=0, columnspan=2)
-        tk.Label(self, text="First Name").grid(row=1)
-        tk.Label(self, text="Last Name").grid(row=2)
-        e1 = tk.Entry(self)
-        e2 = tk.Entry(self)
-        e1.grid(row=1, column=1)
-        e2.grid(row=2, column=1)
+        tk.Label(self, text="Width", bg=self["background"]).grid(row=1)
+        tk.Label(self, text="Heigth", bg=self["background"]).grid(row=2)
+        self.e1 = tk.Entry(self)
+        self.e2 = tk.Entry(self)
+        self.e1.grid(row=1, column=1)
+        self.e2.grid(row=2, column=1)
 
-# *********** Status bar ********
-#status = tk.Label(root, text="this is a status bar", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-#status.pack(side=tk.BOTTOM, fill=tk.X)
-# ************ Menu ************
-"""
-menu = tk.Menu(root, bg="gray")
-root.config(menu=menu)
 
-subMenu = tk.Menu(menu)
-menu.add_cascade(label="File", menu=subMenu)
-subMenu.add_command(label="New project", command=doNothing)
-subMenu.add_command(label="New ...", command=doNothing)
-subMenu.add_separator()
-subMenu.add_command(label="Exit", command=doNothing)
-
-editMenu = tk.Menu(menu)
-menu.add_cascade(label="Edit", menu=editMenu)
-editMenu.add_command(label="revwerv",command=doNothing)
-"""
