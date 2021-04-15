@@ -1,23 +1,15 @@
 import tkinter as tk
 
-def doNothing():
-    print("i wont")
-
-
-
 class window(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Próba GUI")
         self.geometry("1000x600")
         self.minsize(width=200, height=200)
-
         # seting up toolbar
         self.eszkoztar = Eszkoztar(self)
         self.eszkoztar.pack(side=tk.TOP, fill=tk.X)
-
         #seting up side menu
-
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, fill=tk.Y)
         #seting up canvas
@@ -65,6 +57,7 @@ class Eszkoztar(tk.Frame):
         calc = tk.Button(self, text="Calculate", command=self.root.szamol)
         calc.pack(side=tk.RIGHT, padx=2, pady=2)
 
+#*************** Side Menu **************
 class SideMenu(tk.Frame):
     def __init__(self, root):
         super().__init__(root, bg='#707070')
