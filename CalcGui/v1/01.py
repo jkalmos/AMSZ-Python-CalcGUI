@@ -6,12 +6,24 @@ window.geometry("1280x720") #ablak mérete
 window.minsize(800,600) #minimális ablakméret
 window.title("TKinter gui") #ablak címe
 
-global img #kép változó definiálása
-global label_a
-global label_b
+canvas = Canvas(window, width = 400, height = 300, bg="pink") #vászon létrehozása a képekhez
 
-canvas = Canvas(window, width = 400, height = 500) #vászon létrehozása a képekhez
+def szamolas():
+	adat1 = float(textbox1.get("1.0","end"))
+	adat2 = float(textbox2.get("1.0","end"))
 
+	eredmeny = adat1 * adat2**3 / 12
+
+	print(eredmeny)
+
+button1 = Button(window, height=2, width=8, text="Számolás", command=szamolas) #.place(x=400, y=100)
+button1.pack()
+
+textbox1 = Text(window, height=1, width=10) #.place(x=130, y=340)
+textbox1.pack()
+
+textbox2 = Text(window, height=1, width=10) #.place(x=130, y=400)
+textbox2.pack()
 
 #Függvény, ami csinál valamit, most épp betölti a képeket
 
@@ -28,18 +40,6 @@ def teglalap():
 
 	canvas.create_text(40, 280, anchor=SW, text="Geometriai adatok:", font=("Courier", 14)) #geometriai adatok szöveg
 
-	canvas.create_text(110, 340, anchor=SE, text="a =", font=("Courier", 14)) # `a` adat szöveg
-
-	entry1 = Entry(window)
-	canvas.create_window(130, 340, anchor=SW, window=entry1, height=20, width=80) # `a` adat textbox
-
-	canvas.create_text(110, 400, anchor=SE, text="b =", font=("Courier", 14)) # `b` adat szöveg
-
-	entry2 = Entry(window)
-	canvas.create_window(130, 400, anchor=SW, window=entry2, height=20, width=80) # `b` adat textbox
-
-	
-
 	window.mainloop() #minden frissít
 
 def kor():
@@ -55,11 +55,6 @@ def kor():
 
 	canvas.create_text(40, 280, anchor=SW, text="Geometriai adatok:", font=("Courier", 14)) # `geometriai adatok` szöveg
 
-	canvas.create_text(110, 340, anchor=SE, text="d =", font=("Courier", 14)) # `d` adat szöveg
-
-	entry1 = Entry(window)
-	canvas.create_window(130, 340, anchor=SW, window=entry1, height=20, width=80) # `d` adat textbox
-
 	window.mainloop() #minden frissít
 
 
@@ -74,6 +69,6 @@ menubar.add_cascade(label="Keresztmetszet", menu=keresztmetszet) #keresztmetszet
 keresztmetszet.add_command(label="Téglalap", command=teglalap) #keresztmetszet 1. almenüje
 keresztmetszet.add_command(label="Kör", command=kor) #keresztmetszet 2. almenüje
 
-menubar.add_command(label="Kilépés", command=window.quit) #kilépés menü létrehozása
+menubar.add_command(label="Kilépés", command=window.destroy) #kilépés menü létrehozása
 
 window.mainloop() #minden frissít
