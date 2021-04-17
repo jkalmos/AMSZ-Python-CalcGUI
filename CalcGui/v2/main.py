@@ -136,28 +136,27 @@ class Kor_oldal(tk.Frame):
 		label4.grid(row=7, column=0)
 
 
+from teglalap_masodrendu import teglalap_szamitas_x
+from teglalap_masodrendu import teglalap_szamitas_y
+
 def szamolas_teglalap():
 	x = float(textbox1.get("1.0","end"))
 	y = float(textbox2.get("1.0","end"))
 
-	I_x = x * y**3 / 12
-	I_x = "{:.4f}".format(I_x)
-	I_x = str(I_x)
-
-	I_y = y * x**3 / 12
-	I_y = "{:.4f}".format(I_y)
-	I_y = str(I_y)
+	I_x = teglalap_szamitas_x(x,y)
+	I_y = teglalap_szamitas_y(x,y)
 
 	label2.config(text= "I_x = " + I_x)
 	label3.config(text= "I_y = " + I_y)
+
+
+from kor_masodrendu import kor_szamitas
 
 def szamolas_kor():
 
 	d = float(textbox3.get("1.0","end"))
 
-	I = d**4 / 164
-	I = "{:.4f}".format(I)
-	I = str(I)
+	I = kor_szamitas(d)
 
 	label4.config(text= 'I_x = I_y = ' + I)
 
