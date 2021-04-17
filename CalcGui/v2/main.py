@@ -6,14 +6,6 @@ global img
 
 LARGE_FONT = ("Verdana", 12)
 
-
-def teglalap(meret):
-	print("teglalap:", meret)
-
-def kor():
-	print("kor")
-
-
 class calcGUI(tk.Tk):
 
 	def __init__(self, *args, **kwargs):
@@ -99,10 +91,18 @@ class Teglalap_oldal(tk.Frame):
 		global textbox2
 		textbox2 = tk.Text(self, width=10, height=1)
 		textbox2.grid(row=4, column=0)
-		
 
-		button1 = tk.Button(self, text="Számolás", font=LARGE_FONT, command=szamolas_teglalap)
+		button1 = tk.Button(self, text="Számolás", font=LARGE_FONT, command= szamolas_teglalap)
 		button1.grid(row=5, column=0)
+
+		global label2
+		label2 = tk.Label(self, text="", font=LARGE_FONT)
+		label2.grid(row=6, column=0)
+
+		global label3
+		label3 = tk.Label(self, text="", font=LARGE_FONT)
+		label3.grid(row=7, column=0)
+
 
 class Kor_oldal(tk.Frame):
 
@@ -131,21 +131,35 @@ class Kor_oldal(tk.Frame):
 		button2 = tk.Button(self, text="Számolás", font=LARGE_FONT, command=szamolas_kor)
 		button2.grid(row=5, column=0)
 
+		global label4
+		label4 = tk.Label(self, text="", font=LARGE_FONT)
+		label4.grid(row=7, column=0)
+
 
 def szamolas_teglalap():
-	adat1 = float(textbox1.get("1.0","end"))
-	adat2 = float(textbox2.get("1.0","end"))
+	x = float(textbox1.get("1.0","end"))
+	y = float(textbox2.get("1.0","end"))
 
-	eredmeny = adat1 * adat2**3 / 12
+	I_x = x * y**3 / 12
+	I_x = "{:.4f}".format(I_x)
+	I_x = str(I_x)
 
-	print(eredmeny)
+	I_y = y * x**3 / 12
+	I_y = "{:.4f}".format(I_y)
+	I_y = str(I_y)
+
+	label2.config(text= "I_x = " + I_x)
+	label3.config(text= "I_y = " + I_y)
 
 def szamolas_kor():
-	adat3 = float(textbox3.get("1.0","end"))
 
-	eredmeny = adat3**4 * np.pi / 64
+	d = float(textbox3.get("1.0","end"))
 
-	print(eredmeny)
+	I = d**4 / 164
+	I = "{:.4f}".format(I)
+	I = str(I)
+
+	label4.config(text= 'I_x = I_y = ' + I)
 
 app = calcGUI()
 app.mainloop()
