@@ -1,5 +1,6 @@
 import tkinter as tk
 import Function1 as f1
+import Function2 as f2
 from tkinter import ttk
 #----------------------------------------------------------------
 
