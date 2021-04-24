@@ -3,6 +3,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
+import CrossSection as cs
+
 
 class window(tk.Tk):
     def __init__(self):
@@ -17,9 +19,13 @@ class window(tk.Tk):
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, fill=tk.Y)
         self.plotted = tk.BooleanVar(False)
-        
+    
+
 
     def plot(self):
+        
+
+
         if self.plotted == True:
             self.canvas._tkcanvas.destroy()
 
@@ -56,14 +62,32 @@ class window(tk.Tk):
         line4_x = [rect_x[2], rect_x[2]]
         line4_y = [rect_y[2]+rect_x[1]/4, rect_y[2]]
 
+        # if abs(alpha-np.pi/2) < 0.001:
+        #     I1_x = [0, 0]
+        # I1_x = [-1.2*x/2, 1.2*x/2]
+        # I1_y = [np.tan(self.alpha)]
+
+        if x>y:
+            I1_x = [0, 0]
+            I1_y = [-1.5*y/2, 1.5*y/2]
+        else:
+            I1_x = [-1.5*x/2, 1.5*x/2]
+            I1_y = [0, 0]
+
+        print(self.alpha)
         
 
         # self.canvas._tkcanvas.destroy()
+        #
+        self.ax.arrow(I1_x[0], I1_y[0], I1_x[1]-I1_x[0], I1_y[1]-I1_y[0], head_width=0.03*x, head_length=0.06*x, fc='red', ec='red',length_includes_head = True,zorder=10)
+        self.ax.text(I1_x[1]+x/20, I1_y[1]+y/20, 'I_1', horizontalalignment='center',
+                        verticalalignment='center', bbox=dict(facecolor='red'))
+
         self.ax.arrow(line1_x[0]+x/32, line1_y[0], 0, -y, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
         self.ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
         self.ax.arrow(line3_x[0], line3_y[0]+x/32, x, 0, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
         self.ax.arrow(line4_x[0], line3_y[0]+x/32, -x, 0, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
-        self.ax.plot(rect_x, rect_y, 'w', lw=2)
+        self.ax.plot(rect_x, rect_y, 'w', lw=2, zorder=5)
         self.ax.plot(line1_x, line1_y, 'grey',zorder=0)
         self.ax.plot(line2_x, line2_y, 'grey',zorder=0)
         self.ax.plot(line3_x, line3_y, 'grey',zorder=0)
@@ -90,11 +114,13 @@ class window(tk.Tk):
         c_x = self.canvas.winfo_width()/2
         c_y = self.canvas.winfo_height()/2
         self.canvas.create_rectangle(c_x-reduced_size,c_y-reduced_size, c_x+reduced_size,c_y+reduced_size, fill="#2A3C4D")
+
     def szamol(self):
         try:
-            a = int(self.sm.e1.get())
-            b = int(self.sm.e2.get())
-            print(a*b)
+            w = int(self.sm.e1.get())
+            h = int(self.sm.e2.get())
+            self.alpha = (cs.Rectangle(w,h))[6]
+            
         except:
             print("Hiba!")
 
@@ -125,7 +151,7 @@ class SideMenu(tk.Frame):
         tk.Label(self, text="Width", bg=self["background"], fg='white').grid(row=1)
         tk.Label(self, text="Heigth", bg=self["background"], fg='white').grid(row=3)
 
-        calc = tk.Button(self, text="Calculate", command=lambda:[self.root.plot(), self.root.szamol()])
+        calc = tk.Button(self, text="Calculate", command=lambda:[self.root.szamol(), self.root.plot()])
         calc.grid(row=5, pady=5)
 
         self.e1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white')
