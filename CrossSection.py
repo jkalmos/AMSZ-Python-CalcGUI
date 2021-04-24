@@ -9,41 +9,56 @@
 import numpy as np
 
 def Circle(d):
-    A = d ** 2 * np.pi / 4
-    Ix = d ** 4 * np.pi / 64
-    Iy = Ix
-    Ixy = 0
-    Kx = 2 * Ix / d
-    Ky = Kx
-    Ip = Ix + Iy
-    Kp = 2 * Ip / d
-    alpha = 0
-    return A, Ix, Iy, Ixy, Kx, Ky, Ip, Kp, alpha
+    properties = {
+        "A": d ** 2 * np.pi / 4,
+        "Ix": d ** 4 * np.pi / 64,
+        "Iy": d ** 4 * np.pi / 64,
+        "Ixy": 0,
+        "Kx": d ** 3 * np.pi / 32,
+        "Ky": d ** 3 * np.pi / 32,
+        "Ip": d ** 4 * np.pi / 32,
+        "Kp": d ** 3 * np.pi / 16,
+        "alpha": 0,
+    }
+    return properties
 
 def Ring(d1, d2):
-    A = (d2 ** 2 - d1 ** 2) * np.pi / 4
-    Ix = (d2 ** 4 - d1 ** 4) * np.pi / 64
-    Iy = Ix
-    Ixy = 0
-    Kx = 2 * Ix / d2
-    Ky = Kx
-    Ip = Ix + Iy
-    Kp = 2 * Ip / d2
-    alpha = 0
-    return A, Ix, Iy, Ixy, Kx, Ky, Ip, Kp, alpha
+    properties = {
+        "A": (d2 ** 2 - d1 ** 2) * np.pi / 4,
+        "Ix": (d2 ** 4 - d1 ** 4) * np.pi / 64,
+        "Iy": (d2 ** 4 - d1 ** 4) * np.pi / 64,
+        "Ixy": 0,
+        "Kx": (d2 ** 3 - d1 ** 3) * np.pi / (32 * d2),
+        "Ky": (d2 ** 3 - d1 ** 3) * np.pi / (32 * d2),
+        "Ip": (d2 ** 4 - d1 ** 4) * np.pi / 32,
+        "Kp": (d2 ** 4 - d1 ** 4) * np.pi / (16 * d2),
+        "alpha": 0,
+    }
+    return properties
 
 def Rectangle(w, h):
     A = w * h
     Ix = w * h ** 3 / 12
     Iy = w ** 3 * h / 12
-    Ixy =  0
+    Ixy = 0
     Kx = 2 * Ix / h
     Ky = 2 * Iy / w
     if Iy > Ix:
-        alpha = np.pi / 2
+       alpha = np.pi / 2
     else:
-        alpha = 0
-    return A, Ix, Iy, Ixy, Kx, Ky, alpha
+       alpha = 0
+
+    properties = {
+        "A": A,
+        "Ix": Ix,
+        "Iy": Iy,
+        "Ixy": Ixy,
+        "Kx": Kx,
+        "Ky": Ky,
+        "alpha": alpha,
+    }
+    return properties
+
 
 def RectangularHS(w1, h1, w2, h2):
     A = (w2 * h2) - (w1 * h1)
@@ -56,7 +71,17 @@ def RectangularHS(w1, h1, w2, h2):
         alpha = np.pi / 2
     else:
         alpha = 0
-    return A, Ix, Iy, Ixy, Kx, Ky, alpha
+
+    properties = {
+        "A": A,
+        "Ix": Ix,
+        "Iy": Iy,
+        "Ixy": Ixy,
+        "Kx": Kx,
+        "Ky": Ky,
+        "alpha": alpha,
+    }
+    return properties
 
 def Ellipse(a, b):
     A = a * b * np.pi
@@ -69,7 +94,17 @@ def Ellipse(a, b):
         alpha = np.pi / 2
     else:
         alpha = 0
-    return A, Ix, Iy, Ixy, Kx, Ky, alpha
+
+    properties = {
+        "A": A,
+        "Ix": Ix,
+        "Iy": Iy,
+        "Ixy": Ixy,
+        "Kx": Kx,
+        "Ky": Ky,
+        "alpha": alpha,
+    }
+    return properties
 
 def IsoscelesTriangle(w, h):
     A = w * h / 2
@@ -82,4 +117,14 @@ def IsoscelesTriangle(w, h):
         alpha = np.pi/2
     else:
         alpha = 0
-    return A, Ix, Iy, Ixy, Kx, Ky, alpha
+
+    properties = {
+        "A": A,
+        "Ix": Ix,
+        "Iy": Iy,
+        "Ixy": Ixy,
+        "Kx": Kx,
+        "Ky": Ky,
+        "alpha": alpha,
+    }
+    return properties
