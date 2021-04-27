@@ -17,21 +17,16 @@ class window(tk.Tk):
 
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        self.bind('<Return>', self.szamol)
         self.plotted = tk.BooleanVar(False)
         
         #menüszerkezet
-
         menubar = tk.Menu(self)
         self.config(menu=menubar)
-
         keresztmetszet = tk.Menu(self, menubar, tearoff=0)
         menubar.add_cascade(label="Keresztmetszet", menu=keresztmetszet)
-
-        keresztmetszet.add_command(label="Téglalap",
-                                    command = self.plot)
-        keresztmetszet.add_command(label="Kör", 
-                                    command = self.plot)
-
+        keresztmetszet.add_command(label="Téglalap", command = self.plot)
+        keresztmetszet.add_command(label="Kör", command = self.plot)
         menubar.add_command(label="Kilépés", command=self.destroy)
 
     def plot(self):
@@ -58,8 +53,8 @@ class window(tk.Tk):
         # self.arrow1 = self.ax.arrow(0, 0, 0, 0, head_width=0, head_length=0, fc='grey', ec='grey',length_includes_head = True, lw = 0)
         
         N = 101
-        x = int(self.sm.e1.get())
-        y = int(self.sm.e2.get())
+        x = float(self.sm.e1.get().replace(',','.'))
+        y = float(self.sm.e2.get().replace(',','.'))
         rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
         rect_y = [y/2, -y/2, -y/2, y/2, y/2]
         line1_x = [rect_x[0]+rect_x[0]/4, rect_x[0]]
@@ -90,9 +85,22 @@ class window(tk.Tk):
         # self.canvas = tk.Canvas(self, bg="#2A3C4D", highlightthickness=0)
         # self.canvas.pack(fill="both")
 
+    def szamol(self, event=None):
+        try:
+            a = float(self.sm.e1.get().replace(',','.'))
+            b = float(self.sm.e2.get().replace(',','.'))
+            self.plot()
+            self.values = CS.Rectangle(a,b)
+
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+
+        except:
+            print("Hiba!")
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
+    """
     def add_circle(self):
         self.canvas.delete('all')
         reduced_size = min(self.canvas.winfo_width(),self.canvas.winfo_height())*0.7/2
@@ -105,18 +113,8 @@ class window(tk.Tk):
         c_x = self.canvas.winfo_width()/2
         c_y = self.canvas.winfo_height()/2
         self.canvas.create_rectangle(c_x-reduced_size,c_y-reduced_size, c_x+reduced_size,c_y+reduced_size, fill="#2A3C4D")
-    def szamol(self):
-        try:
-            a = int(self.sm.e1.get())
-            b = int(self.sm.e2.get())
-            
-            self.values = CS.Rectangle(a,b)
-
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
-
-        except:
-            print("Hiba!")
+    """
+    
 
 # ************ Toolbar ************
 # class Eszkoztar(tk.Frame):
@@ -145,7 +143,7 @@ class SideMenu(tk.Frame):
         tk.Label(self, text="Width", bg=self["background"], fg='white').grid(row=1)
         tk.Label(self, text="Heigth", bg=self["background"], fg='white').grid(row=3)
 
-        calc = tk.Button(self, text="Calculate", command=lambda:[self.root.szamol(), self.root.plot()])
+        calc = tk.Button(self, text="Calculate", command=lambda: self.root.szamol())
         calc.grid(row=5, pady=5)
 
         self.e1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white')
@@ -158,6 +156,6 @@ class SideMenu(tk.Frame):
         self.eredmeny2 = tk.Label(self, text="", bg=self["background"], fg='white')
         self.eredmeny2.grid(row=7)
 
-
-root = window()
-root.mainloop()
+if __name__ == "__main__":
+    root = window()
+    root.mainloop()
