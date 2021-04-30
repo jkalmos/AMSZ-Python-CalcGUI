@@ -3,6 +3,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image, ImageTk
 import CrossSection as CS
 
 class window(tk.Tk):
@@ -14,15 +15,21 @@ class window(tk.Tk):
         self.minsize(width=200, height=200)
 
         self.canvas = None
-
+        #Side Menu
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, fill=tk.Y)
         self.bind('<Return>', self.szamol)
         self.plotted = tk.BooleanVar(False)
-        
+
+        #Basic logo
+        self.logo_img = Image.open("amsz_logo_full.png")
+        self.logo_img = ImageTk.PhotoImage(self.logo_img)
+        self.logo_image = tk.Label(self,image=self.logo_img,bg="#2A3C4D")
+        self.logo_image.image=self.logo_img
+        self.logo_image.pack(side=tk.LEFT)
         #menüszerkezet
-        menubar = tk.Menu(self)
-        self.config(menu=menubar)
+        menubar = tk.Menu(self)#, background='gray', foreground='black',activebackground='#004c99', activeforeground='white')
+        self.config(menu=menubar)        
         keresztmetszet = tk.Menu(self, menubar, tearoff=0)
         menubar.add_cascade(label="Keresztmetszet", menu=keresztmetszet)
         keresztmetszet.add_command(label="Téglalap", command = self.plot)
@@ -32,6 +39,8 @@ class window(tk.Tk):
     def plot(self):
         if self.plotted == True:
             self.canvas._tkcanvas.destroy()
+        else:
+            self.logo_image.pack_forget()
 
 
         self.fig = Figure()
@@ -134,7 +143,7 @@ class window(tk.Tk):
 #*************** Side Menu **************
 class SideMenu(tk.Frame):
     def __init__(self, root):
-        super().__init__(root, bg='#314457')
+        super().__init__(root,width=400, bg='#314457')
         self.root = root
         title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
         title.grid(row=0)
