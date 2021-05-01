@@ -17,7 +17,7 @@ class window(tk.Tk):
         self.canvas = None
         #Side Menu
         self.sm = SideMenu(self)
-        self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        #self.sm.pack(side=tk.LEFT, fill=tk.Y)
         self.bind('<Return>', self.szamol)
         self.plotted = tk.BooleanVar(False)
 
@@ -32,15 +32,27 @@ class window(tk.Tk):
         self.config(menu=menubar)        
         keresztmetszet = tk.Menu(self, menubar, tearoff=0)
         menubar.add_cascade(label="Keresztmetszet", menu=keresztmetszet)
-        keresztmetszet.add_command(label="Téglalap", command = self.plot)
-        keresztmetszet.add_command(label="Kör", command = self.plot)
+        keresztmetszet.add_command(label="Téglalap", command = lambda: self.choose_object("Teglalap"))
+        keresztmetszet.add_command(label="Kör", command = lambda: self.choose_object("Kor"))
         menubar.add_command(label="Kilépés", command=self.destroy)
 
+    def choose_object(self,shape=None):
+        if shape == "Teglalap" and self.sm.shape != "Teglalap":
+            self.sm.shape = "Teglalap"
+            self.plot()
+        else:
+            self.sm.shape = None
+            print("Ez az alakzat még nincs definiálva...")
     def plot(self):
         if self.plotted == True:
             self.canvas._tkcanvas.destroy()
+            x = float(self.sm.e1.get().replace(',','.'))
+            y = float(self.sm.e2.get().replace(',','.'))
         else:
             self.logo_image.pack_forget()
+            self.sm.pack(side=tk.LEFT, fill=tk.Y)
+            x=2
+            y=1
 
 
         self.fig = Figure()
@@ -62,8 +74,6 @@ class window(tk.Tk):
         # self.arrow1 = self.ax.arrow(0, 0, 0, 0, head_width=0, head_length=0, fc='grey', ec='grey',length_includes_head = True, lw = 0)
         
         N = 101
-        x = float(self.sm.e1.get().replace(',','.'))
-        y = float(self.sm.e2.get().replace(',','.'))
         rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
         rect_y = [y/2, -y/2, -y/2, y/2, y/2]
         line1_x = [rect_x[0]+rect_x[0]/4, rect_x[0]]
@@ -145,6 +155,7 @@ class SideMenu(tk.Frame):
     def __init__(self, root):
         super().__init__(root,width=400, bg='#314457')
         self.root = root
+        self.shape = None
         title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
         title.grid(row=0)
         lbl = tk.Label(self, width = 20, bg=self["background"])
