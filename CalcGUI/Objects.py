@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageTk
 import CrossSection as CS
-
+from SideMenu import SideMenu
 class window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -37,22 +37,26 @@ class window(tk.Tk):
         menubar.add_command(label="Kilépés", command=self.destroy)
 
     def choose_object(self,shape=None):
+        if shape == self.sm.shape:
+            return 0
+        if self.canvas is not None:
+            self.sm.clear()
         if shape == "Teglalap" and self.sm.shape != "Teglalap":
             self.sm.shape = "Teglalap"
-            self.plot()
+            self.sm.change_to_recrangle()
+            self.plot(2,1)
+        elif shape == "Kor" and self.sm.shape != "Kor":
+            self.sm.shape = "Kor"
+            self.sm.change_to_circle()
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-    def plot(self):
+    def plot(self,x,y):
         if self.plotted == True:
             self.canvas._tkcanvas.destroy()
-            x = float(self.sm.e1.get().replace(',','.'))
-            y = float(self.sm.e2.get().replace(',','.'))
         else:
             self.logo_image.pack_forget()
             self.sm.pack(side=tk.LEFT, fill=tk.Y)
-            x=2
-            y=1
 
 
         self.fig = Figure()
@@ -108,7 +112,7 @@ class window(tk.Tk):
         try:
             a = float(self.sm.e1.get().replace(',','.'))
             b = float(self.sm.e2.get().replace(',','.'))
-            self.plot()
+            self.plot(a,b)
             self.values = CS.Rectangle(a,b)
 
             self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
@@ -149,32 +153,6 @@ class window(tk.Tk):
 
 #         calc = tk.Button(self, text="Calculate", command=self.root.szamol)
 #         calc.pack(side=tk.RIGHT, padx=2, pady=2)
-
-#*************** Side Menu **************
-class SideMenu(tk.Frame):
-    def __init__(self, root):
-        super().__init__(root,width=400, bg='#314457')
-        self.root = root
-        self.shape = None
-        title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
-        title.grid(row=0)
-        lbl = tk.Label(self, width = 20, bg=self["background"])
-        lbl.grid(row=0)
-        tk.Label(self, text="Width", bg=self["background"], fg='white').grid(row=1)
-        tk.Label(self, text="Heigth", bg=self["background"], fg='white').grid(row=3)
-
-        calc = tk.Button(self, text="Calculate", command=lambda: self.root.szamol())
-        calc.grid(row=5, pady=5)
-
-        self.e1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white')
-        self.e2 = tk.Entry(self, width = 10, bg="#475C6F", fg='white')
-        self.e1.grid(row=2)
-        self.e2.grid(row=4)
-
-        self.eredmeny1 = tk.Label(self, text="", bg=self["background"], fg='white')
-        self.eredmeny1.grid(row=6)
-        self.eredmeny2 = tk.Label(self, text="", bg=self["background"], fg='white')
-        self.eredmeny2.grid(row=7)
 
 if __name__ == "__main__":
     root = window()
