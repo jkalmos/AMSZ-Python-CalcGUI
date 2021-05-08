@@ -5,7 +5,7 @@ class SideMenu(tk.Frame):
         self.root = root
         self.shape = None
         self.controls=[]
-        title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
+        #title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
         #title.grid(row=0)
         lbl = tk.Label(self, width = 20, bg=self["background"])
         lbl.grid(row=0)

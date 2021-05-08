@@ -11,6 +11,7 @@ class window(tk.Tk):
         self.geometry("1000x600")
         self.configure(bg="#2A3C4D")
         self.minsize(width=200, height=200)
+        self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo.png'))
 
         self.canvas = None
         #Side Menu
