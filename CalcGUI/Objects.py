@@ -1,11 +1,9 @@
 import tkinter as tk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageTk
 import CrossSection as CS
 from SideMenu import SideMenu
+from plot import plot_rectangle
 class window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -44,75 +42,19 @@ class window(tk.Tk):
         if shape == "Teglalap" and self.sm.shape != "Teglalap":
             self.sm.shape = "Teglalap"
             self.sm.change_to_recrangle()
-            self.plot(2,1)
+            plot_rectangle(self,2,1)
         elif shape == "Kor" and self.sm.shape != "Kor":
             self.sm.shape = "Kor"
             self.sm.change_to_circle()
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-    def plot(self,x,y):
-        if self.plotted == True:
-            self.canvas._tkcanvas.destroy()
-        else:
-            self.logo_image.pack_forget()
-            self.sm.pack(side=tk.LEFT, fill=tk.Y)
-
-
-        self.fig = Figure()
-
-        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
-        self.canvas.get_tk_widget().pack()
-        self.canvas._tkcanvas.pack(side="top", fill="both", expand=1)
-        self.plotted = True
-        # self.canvas = FigureCanvasTkAgg(self.fig)
-        # # self.canvas.show()
-        # self.canvas.get_tk_widget().pack(side='right', fill = 'both', expand=1)
-
-        self.ax = self.fig.add_subplot(111)
-        self.ax.set_aspect("equal")
-        self.fig.patch.set_facecolor(self["background"])
-        self.ax.xaxis.set_visible(False)
-        self.ax.yaxis.set_visible(False)
-        self.ax.set_frame_on(False)
-        # self.arrow1 = self.ax.arrow(0, 0, 0, 0, head_width=0, head_length=0, fc='grey', ec='grey',length_includes_head = True, lw = 0)
-        
-        N = 101
-        rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
-        rect_y = [y/2, -y/2, -y/2, y/2, y/2]
-        line1_x = [rect_x[0]+rect_x[0]/4, rect_x[0]]
-        line1_y = [rect_y[0], rect_y[0]]
-        line2_x = [rect_x[0]+rect_x[0]/4, rect_x[0]]
-        line2_y = [rect_y[1], rect_y[1]]
-        line3_x = [rect_x[1], rect_x[1]]
-        line3_y = [rect_y[1]+rect_x[1]/4, rect_y[1]]
-        line4_x = [rect_x[2], rect_x[2]]
-        line4_y = [rect_y[2]+rect_x[1]/4, rect_y[2]]
-
-        
-
-        # self.canvas._tkcanvas.destroy()
-        self.ax.arrow(line1_x[0]+x/32, line1_y[0], 0, -y, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
-        self.ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
-        self.ax.arrow(line3_x[0], line3_y[0]+x/32, x, 0, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
-        self.ax.arrow(line4_x[0], line3_y[0]+x/32, -x, 0, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
-        self.ax.plot(rect_x, rect_y, 'w', lw=2)
-        self.ax.plot(line1_x, line1_y, 'grey',zorder=0)
-        self.ax.plot(line2_x, line2_y, 'grey',zorder=0)
-        self.ax.plot(line3_x, line3_y, 'grey',zorder=0)
-        self.ax.plot(line4_x, line4_y, 'grey',zorder=0)
-        self.canvas.draw()
-
-        
-        #seting up canvas
-        # self.canvas = tk.Canvas(self, bg="#2A3C4D", highlightthickness=0)
-        # self.canvas.pack(fill="both")
-
+    
     def szamol(self, event=None):
         try:
             a = float(self.sm.e1.get().replace(',','.'))
             b = float(self.sm.e2.get().replace(',','.'))
-            self.plot(a,b)
+            plot_rectangle(self,a,b)
             self.values = CS.Rectangle(a,b)
 
             self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
@@ -120,7 +62,6 @@ class window(tk.Tk):
 
         except:
             print("Hiba!")
-
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
     """
