@@ -1,0 +1,53 @@
+diff a/CalcGUI/Objects.py b/CalcGUI/Objects.py	(rejected hunks)
+@@ -38,9 +38,7 @@
+         if self.plotted == True:
+             self.canvas._tkcanvas.destroy()
+ 
+-
+         self.fig = Figure()
+-
+         self.canvas = FigureCanvasTkAgg(self.fig, master=root)
+         self.canvas.get_tk_widget().pack()
+         self.canvas._tkcanvas.pack(side="top", fill="both", expand=1)
+@@ -57,7 +55,7 @@
+         self.ax.set_frame_on(False)
+         # self.arrow1 = self.ax.arrow(0, 0, 0, 0, head_width=0, head_length=0, fc='grey', ec='grey',length_includes_head = True, lw = 0)
+         
+-        N = 101
++        ## Rectangle
+         x = int(self.sm.e1.get())
+         y = int(self.sm.e2.get())
+         rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
+@@ -71,9 +69,30 @@
+         line4_x = [rect_x[2], rect_x[2]]
+         line4_y = [rect_y[2]+rect_x[1]/4, rect_y[2]]
+ 
+-        
++        ## Circle
++        # N = 100
++        # r = 1
++        # phi = np.linspace(0,2*np.pi,N)
++        # circ_x = r*np.cos(phi)
++        # circ_y = r*np.sin(phi)
++
++        # self.ax.plot(circ_x, circ_y, 'grey')
++
++        # ## Triangle
++        # alpha = 50/180*np.pi
++        # beta = 70/180*np.pi
++        # gamma = 60/180*np.pi
++        # a = 10
++        # b = 
++
++        ## Coordinate system
++        self.ax.arrow(-x*3/4, 0, 3/2*x, 0, head_width=0.03*x, head_length=0.06*x, fc='w', ec='w',length_includes_head = True)
++        self.ax.arrow(0, -y*3/4, 0, 2*y*3/4, head_width=0.03*x, head_length=0.06*x, fc='w', ec='w',length_includes_head = True)
++        self.ax.text(x*3/4+x/20, y/20, 'x', horizontalalignment='center', color = 'w',
++                        verticalalignment='center')
++        self.ax.text(x/20, y*3/4+y/20, 'y', horizontalalignment='center', color = 'w',
++                        verticalalignment='center')
+ 
+-        # self.canvas._tkcanvas.destroy()
+         self.ax.arrow(line1_x[0]+x/32, line1_y[0], 0, -y, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
+         self.ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
+         self.ax.arrow(line3_x[0], line3_y[0]+x/32, x, 0, head_width=0.03*x, head_length=0.06*x, fc='grey', ec='grey',length_includes_head = True)
