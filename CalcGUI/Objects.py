@@ -33,6 +33,9 @@ class window(tk.Tk):
         menubar.add_cascade(label="Keresztmetszet", menu=keresztmetszet)
         keresztmetszet.add_command(label="Téglalap", command = lambda: self.choose_object("Teglalap"))
         keresztmetszet.add_command(label="Kör", command = lambda: self.choose_object("Kor"))
+        keresztmetszet.add_command(label="ellipse", command = lambda: self.choose_object("ellipse"))
+        keresztmetszet.add_command(label="ring", command = lambda: self.choose_object("ring"))
+        keresztmetszet.add_command(label="isosceles triangle", command = lambda: self.choose_object("isosceles_triangle"))
         menubar.add_command(label="Kilépés", command=self.destroy)
 
     def choose_object(self,shape=None):
@@ -47,22 +50,43 @@ class window(tk.Tk):
         elif shape == "Kor" and self.sm.shape != "Kor":
             self.sm.shape = "Kor"
             self.sm.change_to_circle()
+        elif shape == "ellipse":
+            self.sm.shape = "ellipse"
+            self.sm.change_to_ellipse()
+        elif shape == "ring":
+            self.sm.shape = "ring"
+            self.sm.change_to_ring()
+        elif shape == "isosceles_triangle":
+            self.sm.shape = "isosceles_triangle"
+            self.sm.change_to_isosceles_triangle()
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
     
     def szamol(self, event=None):
+        if self.sm.shape != "Teglalap":
+            print("Hiba, az alakzat nincs definialva")
+            return -1
         try:
             a = float(self.sm.e1.get().replace(',','.'))
-            b = float(self.sm.e2.get().replace(',','.'))
-            plot_rectangle(self,a,b)
-            self.values = CS.Rectangle(a,b)
-
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
-
         except:
-            print("Hiba!")
+            print("Hiba")
+            self.sm.e1.config({"background": "#eb4034"})
+            return -1
+        try:
+            b = float(self.sm.e2.get().replace(',','.'))
+        except:
+            self.sm.e2.config({"background": "#eb4034"})
+            print("Hiba")
+            return -1
+        self.sm.e1.config({"background": "#475C6F"})
+        self.sm.e2.config({"background": "#475C6F"})
+        plot_rectangle(self,a,b)
+        self.values = CS.Rectangle(a,b)
+
+        self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+        self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
     """

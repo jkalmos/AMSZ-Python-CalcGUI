@@ -64,3 +64,49 @@ class SideMenu(tk.Frame):
         self.calc.grid(row=4,column=1,pady=5)
         for idx,i in enumerate(self.indicators):
             i.grid(row=5+idx)
+    def change_to_ring(self):
+        #d1
+        self.controls[0]["nev"].config(text="d1")
+        self.controls[0]["nev"].grid(row=2,column=0)
+        self.controls[0]["entry"].grid(row=2,column=1)
+        self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        #d2
+        self.controls[1]["nev"].config(text="d2")
+        self.controls[1]["nev"].grid(row=3,column=0)
+        self.controls[1]["entry"].grid(row=3,column=1)
+        self.controls[1]["mertekegyseg"].grid(row=3,column=2)
+        self.calc.grid(row=4,column=1,pady=5)
+        for idx,i in enumerate(self.indicators):
+            i.grid(row=5+idx)
+    def change_to_RectangularHS(self):
+        #w1 h1 w2 h2
+        #TODO
+        pass
+    def change_to_ellipse(self):
+        #a
+        self.controls[0]["nev"].config(text="a")
+        self.controls[0]["nev"].grid(row=2,column=0)
+        self.controls[0]["entry"].grid(row=2,column=1)
+        self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        #b
+        self.controls[1]["nev"].config(text="b")
+        self.controls[1]["nev"].grid(row=3,column=0)
+        self.controls[1]["entry"].grid(row=3,column=1)
+        self.controls[1]["mertekegyseg"].grid(row=3,column=2)
+        self.calc.grid(row=4,column=1,pady=5)
+        for idx,i in enumerate(self.indicators):
+            i.grid(row=5+idx)
+    def change_to_isosceles_triangle(self):
+        #w
+        self.controls[0]["nev"].config(text="Width")
+        self.controls[0]["nev"].grid(row=2,column=0)
+        self.controls[0]["entry"].grid(row=2,column=1)
+        self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        #h
+        self.controls[1]["nev"].config(text="Height")
+        self.controls[1]["nev"].grid(row=3,column=0)
+        self.controls[1]["entry"].grid(row=3,column=1)
+        self.controls[1]["mertekegyseg"].grid(row=3,column=2)
+        self.calc.grid(row=4,column=1,pady=5)
+        for idx,i in enumerate(self.indicators):
+            i.grid(row=5+idx)
