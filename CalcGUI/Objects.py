@@ -43,6 +43,10 @@ class window(tk.Tk):
             return 0
         if self.canvas is not None:
             self.sm.clear()
+            self.canvas._tkcanvas.destroy()
+        else:
+            self.logo_image.pack_forget()
+            self.sm.pack(side=tk.LEFT, fill=tk.Y)
         if shape == "Teglalap" and self.sm.shape != "Teglalap":
             self.sm.shape = "Teglalap"
             self.sm.change_to_recrangle()
@@ -62,30 +66,62 @@ class window(tk.Tk):
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-    
+    def get_entry(self, mennyi):
+        vissza = []
+        for i in range(mennyi):
+            try:
+                vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
+                self.sm.controls[i]["entry"].config({"background": "#475C6F"})
+            except:
+                print("Hiba")
+                self.sm.controls[i]["entry"].config({"background": "#eb4034"})
+                vissza.append(None)
+        #self.sm.e2.config({"background": "#475C6F"})    
+        return vissza
     def szamol(self, event=None):
-        if self.sm.shape != "Teglalap":
-            print("Hiba, az alakzat nincs definialva")
-            return -1
-        try:
-            a = float(self.sm.e1.get().replace(',','.'))
-        except:
-            print("Hiba")
-            self.sm.e1.config({"background": "#eb4034"})
-            return -1
-        try:
-            b = float(self.sm.e2.get().replace(',','.'))
-        except:
-            self.sm.e2.config({"background": "#eb4034"})
-            print("Hiba")
-            return -1
-        self.sm.e1.config({"background": "#475C6F"})
-        self.sm.e2.config({"background": "#475C6F"})
-        plot_rectangle(self,a,b)
-        self.values = CS.Rectangle(a,b)
+        if self.sm.shape == "Teglalap":
+            a,b= self.get_entry(2)
+            if a is None or b is None:
+                return -1
+            plot_rectangle(self,a,b)
+            self.values = CS.Rectangle(a,b)
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+        elif self.sm.shape == "Kor":
+            r = self.get_entry(1)[0]
+            if r is None:
+                return -1
+            #plot_rectangle(self,a,b)
+            self.values = CS.Circle(r)
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+        elif self.sm.shape == "ellipse":
+            a,b = self.get_entry(2)
+            if a is None or b is None:
+                return -1
+            #plot_rectangle(self,a,b)
+            self.values = CS.Ellipse(a,b)
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+        elif self.sm.shape == "ring":
+            a,b = self.get_entry(2)
+            if a is None or b is None:
+                return -1
+            #plot_rectangle(self,a,b)
+            self.values = CS.Ring(a,b)
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+        elif self.sm.shape == "isosceles_triangle":
+            a,b = self.get_entry(2)
+            if a is None or b is None:
+                return -1
+            #plot_rectangle(self,a,b)
+            self.values = CS.IsoscelesTriangle(a,b)
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+        else:
+            print("Hiba, az alakzat nem talalhato")
 
-        self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-        self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
