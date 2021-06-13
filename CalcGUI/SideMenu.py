@@ -5,7 +5,7 @@ class SideMenu(tk.Frame):
         self.root = root
         self.shape = None
         self.controls=[]
-        title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
+        #title = tk.Label(self, text="This is a side menu", bg=self["background"], fg='white')
         #title.grid(row=0)
         lbl = tk.Label(self, width = 20, bg=self["background"])
         lbl.grid(row=0)
@@ -16,7 +16,7 @@ class SideMenu(tk.Frame):
         self.m2=tk.Label(self, text="mm", bg=self["background"], fg='white')
         #self.l2.grid(row=3)
 
-        self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.szamol())
+        self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
         #self.calc.grid(row=5, pady=5)
 
         self.e1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white')
@@ -61,6 +61,52 @@ class SideMenu(tk.Frame):
         self.controls[0]["nev"].grid(row=2,column=0)
         self.controls[0]["entry"].grid(row=2,column=1)
         self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        self.calc.grid(row=4,column=1,pady=5)
+        for idx,i in enumerate(self.indicators):
+            i.grid(row=5+idx)
+    def change_to_ring(self):
+        #d1
+        self.controls[0]["nev"].config(text="d1")
+        self.controls[0]["nev"].grid(row=2,column=0)
+        self.controls[0]["entry"].grid(row=2,column=1)
+        self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        #d2
+        self.controls[1]["nev"].config(text="d2")
+        self.controls[1]["nev"].grid(row=3,column=0)
+        self.controls[1]["entry"].grid(row=3,column=1)
+        self.controls[1]["mertekegyseg"].grid(row=3,column=2)
+        self.calc.grid(row=4,column=1,pady=5)
+        for idx,i in enumerate(self.indicators):
+            i.grid(row=5+idx)
+    def change_to_RectangularHS(self):
+        #w1 h1 w2 h2
+        #TODO
+        pass
+    def change_to_ellipse(self):
+        #a
+        self.controls[0]["nev"].config(text="a")
+        self.controls[0]["nev"].grid(row=2,column=0)
+        self.controls[0]["entry"].grid(row=2,column=1)
+        self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        #b
+        self.controls[1]["nev"].config(text="b")
+        self.controls[1]["nev"].grid(row=3,column=0)
+        self.controls[1]["entry"].grid(row=3,column=1)
+        self.controls[1]["mertekegyseg"].grid(row=3,column=2)
+        self.calc.grid(row=4,column=1,pady=5)
+        for idx,i in enumerate(self.indicators):
+            i.grid(row=5+idx)
+    def change_to_isosceles_triangle(self):
+        #w
+        self.controls[0]["nev"].config(text="Width")
+        self.controls[0]["nev"].grid(row=2,column=0)
+        self.controls[0]["entry"].grid(row=2,column=1)
+        self.controls[0]["mertekegyseg"].grid(row=2,column=2)
+        #h
+        self.controls[1]["nev"].config(text="Height")
+        self.controls[1]["nev"].grid(row=3,column=0)
+        self.controls[1]["entry"].grid(row=3,column=1)
+        self.controls[1]["mertekegyseg"].grid(row=3,column=2)
         self.calc.grid(row=4,column=1,pady=5)
         for idx,i in enumerate(self.indicators):
             i.grid(row=5+idx)
