@@ -13,6 +13,9 @@ class window(tk.Tk):
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
 
+        #Default unit
+        self.unit = "mm"
+
         self.canvas = None
         #Side Menu
         self.sm = SideMenu(self)
@@ -26,7 +29,8 @@ class window(tk.Tk):
         self.logo_image = tk.Label(self,image=self.logo_img,bg="#2A3C4D")
         self.logo_image.image=self.logo_img
         self.logo_image.pack(side=tk.LEFT)
-        #menüszerkezet
+
+        #Menu
         menubar = tk.Menu(self)#, background='gray', foreground='black',activebackground='#004c99', activeforeground='white')
         self.config(menu=menubar)        
         keresztmetszet = tk.Menu(self, menubar, tearoff=0)
@@ -36,7 +40,30 @@ class window(tk.Tk):
         keresztmetszet.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
         keresztmetszet.add_command(label="Körgyűrű", command = lambda: self.choose_object("Ring"))
         keresztmetszet.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
+
+        beallitasok = tk.Menu(self, menubar, tearoff=0)
+        menubar.add_cascade(label="Beállítások", menu=beallitasok)
+
+        mertekegyseg = tk.Menu(self, beallitasok, tearoff=0)
+        mertekegyseg.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("mm"))
+        mertekegyseg.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("cm"))
+        mertekegyseg.add_command(label="Méter [m]", command=lambda: self.unit_change("m"))
+
+        tema = tk.Menu(self, beallitasok, tearoff=0)
+        tema.add_command(label="Világos")
+        tema.add_command(label="Sötét")
+
+        beallitasok.add_cascade(label="Téma", menu=tema)
+
+        beallitasok.add_cascade(label="Mértékegység", menu=mertekegyseg)
         menubar.add_command(label="Kilépés", command=self.destroy)
+
+    def unit_change(self, unit):
+        #self.sm.unit_text.config(text="Mértékegység: " + unit)
+        self.unit = unit
+
+        for i in self.sm.controls:
+            i["mertekegyseg"].config(text = unit)
 
     def choose_object(self, shape = None):
         if shape == self.sm.shape:
@@ -85,8 +112,8 @@ class window(tk.Tk):
                 return -1
             plot_rectangle(self,a,b, coordinate_on, dimension_lines_on)
             self.values = Calc.Rectangle(a,b)
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit)
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit)
         elif self.sm.shape == "Circle":
             r = self.get_entry(1)[0]
             if r is None:
