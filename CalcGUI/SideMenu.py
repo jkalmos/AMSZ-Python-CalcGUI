@@ -1,7 +1,7 @@
 import tkinter as tk
 class SideMenu(tk.Frame):
     def __init__(self, root):
-        super().__init__(root,width=400, bg='#314457')
+        super().__init__(root,width=400, bg=root.colors['secondary_color'])
         self.root = root
         self.shape = None
         self.controls=[]

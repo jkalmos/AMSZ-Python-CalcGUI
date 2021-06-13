@@ -6,11 +6,20 @@ from PlotFunctions import plot_circle, plot_ellipse, plot_rectangle, plot_isosce
 class window(tk.Tk):
     def __init__(self):
         super().__init__()
+
+        #Colors
+        self.colors = {
+        'main_color': '#2A3C4D',
+        'secondary_color': '#314457'
+        }
+
         self.title("Statika számító")
         self.geometry("1000x600")
-        self.configure(bg="#2A3C4D")
+        self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
+
+        
 
         #Default unit
         self.unit = "mm"
@@ -141,10 +150,6 @@ class window(tk.Tk):
  
 
  # VARIABLES --------------------------------------------------------------------------------------------------------------------------------------------
-colors = {
-    'main_color': '#2A3C4D',
-    'secondary_color': '#314457'
-    }
 coordinate_on = True
 dimension_lines_on = True
 
