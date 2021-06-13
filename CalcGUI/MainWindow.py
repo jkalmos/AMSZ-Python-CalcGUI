@@ -1,5 +1,4 @@
 import tkinter as tk
-import numpy as np
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
 from SideMenu import SideMenu
@@ -38,7 +37,6 @@ class window(tk.Tk):
         keresztmetszet.add_command(label="Téglalap", command = lambda: self.choose_object("Rectangle"))
         keresztmetszet.add_command(label="Kör", command = lambda: self.choose_object("Circle"))
         keresztmetszet.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
-        keresztmetszet.add_command(label="Körgyűrű", command = lambda: self.choose_object("Ring"))
         keresztmetszet.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
 
         beallitasok = tk.Menu(self, menubar, tearoff=0)
@@ -59,7 +57,6 @@ class window(tk.Tk):
         menubar.add_command(label="Kilépés", command=self.destroy)
 
     def unit_change(self, unit):
-        #self.sm.unit_text.config(text="Mértékegység: " + unit)
         self.unit = unit
 
         for i in self.sm.controls:
@@ -82,9 +79,6 @@ class window(tk.Tk):
             self.sm.shape = "Ellipse"
             self.sm.change_to_ellipse()
             plot_ellipse(self, 2, 1, coordinate_on, dimension_lines_on)
-        elif shape == "Ring":
-            self.sm.shape = "Ring"
-            self.sm.change_to_ring()
         elif shape == "Isosceles_triangle":
             self.sm.shape = "Isosceles_triangle"
             self.sm.change_to_isosceles_triangle()
@@ -112,40 +106,32 @@ class window(tk.Tk):
                 return -1
             plot_rectangle(self,a,b, coordinate_on, dimension_lines_on)
             self.values = Calc.Rectangle(a,b)
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit)
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit)
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
             r = self.get_entry(1)[0]
             if r is None:
                 return -1
             plot_circle(self, coordinate_on)
             self.values = Calc.Circle(r)
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
             a,b = self.get_entry(2)
             if a is None or b is None:
                 return -1
             plot_ellipse(self,a,b, coordinate_on, dimension_lines_on)
             self.values = Calc.Ellipse(a,b)
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
-        elif self.sm.shape == "Ring":
-            a,b = self.get_entry(2)
-            if a is None or b is None:
-                return -1
-            #plot_isosceles_triangle(self,a,b, coordinate_on, dimension_lines_on)
-            self.values = Calc.Ring(a,b)
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
             a,b = self.get_entry(2)
             if a is None or b is None:
                 return -1
             plot_isosceles_triangle(self,a,b, coordinate_on, dimension_lines_on)
             self.values = Calc.IsoscelesTriangle(a,b)
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)))
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)))
+            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
 
