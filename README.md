@@ -1,1 +1,3 @@
 # AMSZ-Python-CalcGUI
+
+Próbálgatások
