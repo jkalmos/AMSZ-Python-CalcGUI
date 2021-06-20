@@ -1,4 +1,5 @@
 import tkinter as tk
+from PlotFunctions import plot
 class SideMenu(tk.Frame):
     def __init__(self, root):
         super().__init__(root,width=400, bg=root.colors['secondary_color'])
@@ -37,7 +38,19 @@ class SideMenu(tk.Frame):
         
         #Checkbox
         self.is_inner_cut_off = tk.BooleanVar()
-        self.inner_cut_off = tk.Checkbutton(self, text="Falvastagság hozzáadása", variable=self.is_inner_cut_off, onvalue=True, offvalue=False, bg=self["background"], fg='white', selectcolor='grey', command=self.add_inner_cut_off)
+        self.inner_cut_off = tk.Checkbutton(
+            self, text="Falvastagság hozzáadása",
+            variable=self.is_inner_cut_off, onvalue=True, offvalue=False,
+            bg=self["background"], fg='white', selectcolor='grey',
+            command=self.add_inner_cut_off)
+        self.inner_cut_off.grid(row=0, column=0,columnspan=3)
+
+        # Checkbox: coordinate system
+        self.coordinate_system = tk.Checkbutton(
+            self, text = "Koordináta rendszer",
+            variable = self.root.coordinate_on, onvalue=True, offvalue=False,
+            bg=self["background"], fg='white', selectcolor='grey',
+            command=lambda: plot(root, self.root.dimensions, self.shape, self.root.coordinate_on, self.root.dimension_lines_on))
         self.inner_cut_off.grid(row=0, column=0,columnspan=3)
 
         self.indicators = []
@@ -100,7 +113,8 @@ class SideMenu(tk.Frame):
         self.controls[1]["entry"].grid(row=3,column=1)
         self.controls[1]["mertekegyseg"].grid(row=3,column=2)
         self.inner_cut_off.grid(row=4, column=0, columnspan=3)
-        self.calc.grid(row=5,column=1,pady=5)
+        self.coordinate_system.grid(row=5, column=0, columnspan=3)
+        self.calc.grid(row=6,column=1,pady=5)
         for idx,i in enumerate(self.indicators):
             i.grid(row=10+self.is_inner_cut_off.get()*2+idx, column=1)
     def change_to_circle(self):

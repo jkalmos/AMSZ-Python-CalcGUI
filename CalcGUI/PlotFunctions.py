@@ -6,12 +6,15 @@ import matplotlib.patches as patches
 import numpy as np
 
 # RECTANGLE --------------------------------------------------------------------------------------------------------------------------------------------------------
-def plot_rectangle(parent, a, b, coordinate_on, dimension_lines_on):
+def plot(parent, dimensions, shape, coordinate_on, dimension_lines_on):
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
     else:
         parent.logo_image.pack_forget()
         parent.sm.pack(side=tk.LEFT, fill=tk.Y)
+    a = dimensions["a"]
+    b = dimensions["b"]
+    d = dimensions["d"]
 
     fig = Figure()
     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
@@ -25,16 +28,44 @@ def plot_rectangle(parent, a, b, coordinate_on, dimension_lines_on):
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
     ax.set_frame_on(False)
-    
-    x, y = set_dimensions(a, b)
-    rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
-    rect_y = [y/2, -y/2, -y/2, y/2, y/2]
-    
-    ax.plot(rect_x, rect_y, 'w', lw=2)
-    
-    if coordinate_on:
-        coordinate_system(x, y, ax, 0)
-    if dimension_lines_on:
+
+    if shape == "Rectangle":
+        x, y = set_dimensions(a, b)
+        rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
+        rect_y = [y/2, -y/2, -y/2, y/2, y/2]
+        
+        ax.plot(rect_x, rect_y, 'w', lw=2)
+        coordinate_displacement = 0
+    elif shape == "Ellipse":
+        x, y = set_dimensions(a, b)
+        t = np.linspace(0, 2*np.pi, 100)
+        ell_x = x/2*np.cos(t)
+        ell_y = y/2*np.sin(t)
+
+        ax.plot(ell_x, ell_y, 'w', lw=2)
+        coordinate_displacement = 0
+    elif shape == "Circle":
+        t = np.linspace(0, 2*np.pi, 100)
+        x = y = d = 2
+        circ_x = d/2*np.cos(t)
+        circ_y = d/2*np.sin(t)
+
+        ax.plot(circ_x, circ_y, 'w', lw=2)
+        coordinate_displacement = 0
+    elif shape == "Isosceles_triangle":
+        x, y = set_dimensions(a, b)
+        tri_x = [-x/2, x/2, 0, -x/2]
+        tri_y = [-y/3, -y/3, y/3*2, -y/3]
+
+        ax.plot(tri_x, tri_y, 'w', lw=2)
+        coordinate_displacement = y/6
+    elif shape == None:
+        coordinate_on == False
+        dimension_lines_on == False
+
+    if coordinate_on == True:
+        coordinate_system(x, y, ax, coordinate_displacement)
+    if dimension_lines_on == True:
         dimension_lines(x, y, ax, r"$a$", r"$b$", 0)
         transformed_coordinate_system(x, y, ax, 15)
         transformation_dimensions(x, y, ax)

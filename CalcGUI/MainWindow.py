@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
 from SideMenu import SideMenu
-from PlotFunctions import plot_circle, plot_ellipse, plot_rectangle, plot_isosceles_triangle
+from PlotFunctions import plot
 class window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -12,6 +12,9 @@ class window(tk.Tk):
         'main_color': '#2A3C4D',
         'secondary_color': '#314457'
         }
+        # Variables
+        self.coordinate_on = tk.BooleanVar(False)
+        self.dimension_lines_on = tk.BooleanVar(False)
 
         self.title("Statika számító")
         self.geometry("1000x600")
@@ -72,6 +75,11 @@ class window(tk.Tk):
             i["mertekegyseg"].config(text = unit)
 
     def choose_object(self, shape = None):
+        self.dimensions = {
+            "a": 2,
+            "b": 1,
+            "d": 1
+        }
         if shape == self.sm.shape:
             return 0
         if self.canvas is not None:
@@ -79,26 +87,23 @@ class window(tk.Tk):
         if shape == "Rectangle" and self.sm.shape != "Rectangle":
             self.sm.shape = "Rectangle"
             self.sm.change_to_recrangle()
-            plot_rectangle(self,2,1, coordinate_on, dimension_lines_on)
         elif shape == "Circle" and self.sm.shape != "Circle":
             self.sm.shape = "Circle"
             self.sm.change_to_circle()
-            plot_circle(self, coordinate_on)
         elif shape == "Ellipse":
             self.sm.shape = "Ellipse"
             self.sm.change_to_ellipse()
-            plot_ellipse(self, 2, 1, coordinate_on, dimension_lines_on)
         elif shape == "Isosceles_triangle":
             self.sm.shape = "Isosceles_triangle"
             self.sm.change_to_isosceles_triangle()
-            plot_isosceles_triangle(self, 2, 1, coordinate_on, dimension_lines_on)
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
+        plot(self, self.dimensions, self.sm.shape, self.coordinate_on, self.dimension_lines_on)
     
-    def get_entry(self, mennyi):
+    def get_entry(self, number_of_entries):
         vissza = []
-        for i in range(mennyi):
+        for i in range(number_of_entries):
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
                 self.sm.controls[i]["entry"].config({"background": "#475C6F"})
@@ -110,48 +115,40 @@ class window(tk.Tk):
         return vissza
     def calculate(self, event=None):
         if self.sm.shape == "Rectangle":
-            a,b= self.get_entry(2)
-            if a is None or b is None:
+            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
+            if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
-            plot_rectangle(self,a,b, coordinate_on, dimension_lines_on)
-            self.values = Calc.Rectangle(a,b)
+            self.values = Calc.Rectangle(self.dimensions["a"],self.dimensions["b"])
             self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
-            r = self.get_entry(1)[0]
-            if r is None:
+            self.dimensions["d"] = self.get_entry(1)[0]
+            if self.dimensions["d"] is None:
                 return -1
-            plot_circle(self, coordinate_on)
-            self.values = Calc.Circle(r)
+            self.values = Calc.Circle(self.dimensions["d"])
             self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
-            a,b = self.get_entry(2)
-            if a is None or b is None:
+            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
+            if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
-            plot_ellipse(self,a,b, coordinate_on, dimension_lines_on)
-            self.values = Calc.Ellipse(a,b)
+            self.values = Calc.Ellipse(self.dimensions["a"],self.dimensions["b"])
             self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
-            a,b = self.get_entry(2)
-            if a is None or b is None:
+            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
+            if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
-            plot_isosceles_triangle(self,a,b, coordinate_on, dimension_lines_on)
-            self.values = Calc.IsoscelesTriangle(a,b)
+            self.values = Calc.IsoscelesTriangle(self.dimensions["a"],self.dimensions["b"])
             self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
+        plot(self, self.dimensions, self.sm.shape, self.coordinate_on, self.dimension_lines_on)
 
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
- 
-
- # VARIABLES --------------------------------------------------------------------------------------------------------------------------------------------
-coordinate_on = True
-dimension_lines_on = True
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
