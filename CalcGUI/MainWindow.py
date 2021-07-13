@@ -2,30 +2,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
 from SideMenu import SideMenu
-from tkvideo import tkvideo
 from PlotFunctions import plot
-
-class starting_window(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.overrideredirect(1)
-        positionRight = int(self.winfo_screenwidth()/2 - 240)
-        positionDown = int(self.winfo_screenheight()/2 - 120)
-        
-        # Positions the window in the center of the page.
-        self.geometry("+{}+{}".format(positionRight, positionDown))
-
-        my_label = tk.Label(self)
-        my_label.pack()
-        player = tkvideo("AMSZ_animation.mp4", my_label, loop = 0, size = (480,240))
-        player.play()
-        self.after(10000, lambda: self.destroy())
-    # def command(self):
-    #     self.destroy()
-    #     self.newWindow = tk.Toplevel(self)
-    #     self.root = main_window(self)
-
-class main_window(tk.Tk):
+class window(tk.Tk):
     def __init__(self):
         super().__init__()
 
@@ -37,10 +15,6 @@ class main_window(tk.Tk):
         # Variables
         self.coordinate_on = tk.BooleanVar(False)
         self.dimension_lines_on = tk.BooleanVar(False)
-        self.transformed_coordinate_on = tk.BooleanVar(False)
-        self.coordinate_on.set(True)
-        self.dimension_lines_on.set(True)
-        self.transformed_coordinate_on.set(True)
 
         self.title("Statika számító")
         self.geometry("1000x600")
@@ -125,7 +99,7 @@ class main_window(tk.Tk):
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-        plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+        plot(self, self.dimensions, self.sm.shape, self.coordinate_on, self.dimension_lines_on)
     
     def get_entry(self, number_of_entries):
         vissza = []
@@ -170,7 +144,7 @@ class main_window(tk.Tk):
             self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
-        plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+        plot(self, self.dimensions, self.sm.shape, self.coordinate_on, self.dimension_lines_on)
 
 
     def doNothing(self):
@@ -178,7 +152,5 @@ class main_window(tk.Tk):
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    master = starting_window()
-    master.mainloop()
-    root = main_window()
+    root = window()
     root.mainloop()
