@@ -50,8 +50,8 @@ class SideMenu(tk.Frame):
             self, text = "Koordináta rendszer",
             variable = self.root.coordinate_on, onvalue=True, offvalue=False,
             bg=self["background"], fg='white', selectcolor='grey',
-            command=lambda: plot(root, self.root.dimensions, self.shape, self.root.coordinate_on, self.root.dimension_lines_on))
-        self.inner_cut_off.grid(row=0, column=0,columnspan=3)
+            command=lambda: plot(root, self.root.dimensions, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get()))
+        self.coordinate_system.grid(row = 0, column = 0, columnspan = 4)
 
         self.indicators = []
         self.eredmeny1 = tk.Label(self, text="", bg=self["background"], fg='white')
