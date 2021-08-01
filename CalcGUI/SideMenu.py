@@ -9,24 +9,39 @@ class SideMenu(tk.Frame):
 
 # DEFINE SIDEMENU OBJECTS ------------------------------------------------------------------------------
         # place holder label
-        lbl = tk.Label(self, width = 0, bg=self["background"])
-        lbl.grid(row=0)
+        lbl = tk.Label(self, text="Alakzat:", width = 0, bg=self["background"] , fg='white')
+        lbl.grid(row=0, column=1)
 
-        # # combobox
-        # def shape_changed(event):
-        #     current_shape = event.widget.get()
-        #     if current_shape == 'Téglalap':
-        #         self.shape = "Rectangle"
-        #     self.root.choose_object(self.shape)
-        # n = tk.StringVar()
-        # choose_shape = ttk.Combobox(self, width = 27, textvariable = n)
-        # choose_shape['values'] = ('Téglalap', 
-        #                         ' Kör',
-        #                         ' Ellipszis',
-        #                         ' Egyenylőszárú háromszög',)
-        # choose_shape.bind('<<ComboboxSelected>>', shape_changed)
-        # choose_shape.grid(column = 1, row = 5)
-        # choose_shape.current()
+        # combobox
+        # style= ttk.Style()
+        # # style.theme_use('clam')
+        # style.configure("TCombobox", fieldbackground= self["background"], background=self["background"])
+
+        def callback(shape):
+            self.root.choose_object(shape)
+        def shape_changed(self):
+            current_shape = self.widget.get()
+            print(current_shape)
+            if current_shape == 'Téglalap':
+                shape = "Rectangle"
+            elif current_shape == 'Kör':
+                shape = "Circle"
+            elif current_shape == 'Ellipszis':
+                shape = "Ellipse"
+            elif current_shape == 'Egyenlőszárú háromszög':
+                shape = "Isosceles_triangle"
+            else:
+                shape = None
+            callback(shape)
+
+        self.n = tk.StringVar()
+        self.choose_shape = ttk.Combobox(self, width = 25, textvariable=self.n, state='readonly')
+        self.choose_shape['values'] = ('Téglalap', 
+                                'Kör',
+                                'Ellipszis',
+                                'Egyenlőszárú háromszög')
+        self.choose_shape.grid(column = 1, row = 1)
+        self.choose_shape.bind('<<ComboboxSelected>>', shape_changed)
 
         # dimension input labels
         self.l1 = tk.Label(self, text="Width", bg=self["background"], fg='white')
@@ -47,16 +62,16 @@ class SideMenu(tk.Frame):
         self.tm3 = tk.Label(self, text="rad", bg=self["background"], fg='white')
 
         # transformed coordinate system input entries
-        self.te1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled')
-        self.te2 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled')
-        self.te3 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled')
+        self.te1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled', disabledbackground="grey")
+        self.te2 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled', disabledbackground="grey")
+        self.te3 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled', disabledbackground="grey")
 
         # thickness input labels
         self.thl1 = tk.Label(self, text="t", bg=self["background"], fg='white')
         self.thm1 = tk.Label(self, text="mm", bg=self["background"], fg='white')
 
         # thickness input entry
-        self.the1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled')
+        self.the1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled', disabledbackground="grey")
 
         # calculate button
         self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
@@ -74,6 +89,8 @@ class SideMenu(tk.Frame):
         self.indicators = []
         self.result1 = tk.Label(self, text="", bg=self["background"], fg='white')
         self.result2 = tk.Label(self, text="", bg=self["background"], fg='white')
+        self.result1.grid(row=12, column = 1)
+        self.result2.grid(row=13, column = 1)
         self.indicators.append(self.result1)
         self.indicators.append(self.result2)
 
@@ -139,7 +156,7 @@ class SideMenu(tk.Frame):
         self.controls[3]["entry"].grid(row=7,column=1)
         self.controls[3]["unit"].grid(row=7,column=2)
         # transformed phi
-        self.controls[4]["nev"].config(text="x")
+        self.controls[4]["nev"].config(text="φ")
         self.controls[4]["nev"].grid(row=8,column=0)
         self.controls[4]["entry"].grid(row=8,column=1)
         self.controls[4]["unit"].grid(row=8,column=2)
@@ -171,7 +188,7 @@ class SideMenu(tk.Frame):
         self.controls[3]["entry"].grid(row=7,column=1)
         self.controls[3]["unit"].grid(row=7,column=2)
         # transformed phi
-        self.controls[4]["nev"].config(text="x")
+        self.controls[4]["nev"].config(text="φ")
         self.controls[4]["nev"].grid(row=8,column=0)
         self.controls[4]["entry"].grid(row=8,column=1)
         self.controls[4]["unit"].grid(row=8,column=2)
@@ -208,7 +225,7 @@ class SideMenu(tk.Frame):
         self.controls[3]["entry"].grid(row=7,column=1)
         self.controls[3]["unit"].grid(row=7,column=2)
         # transformed phi
-        self.controls[4]["nev"].config(text="x")
+        self.controls[4]["nev"].config(text="φ")
         self.controls[4]["nev"].grid(row=8,column=0)
         self.controls[4]["entry"].grid(row=8,column=1)
         self.controls[4]["unit"].grid(row=8,column=2)
@@ -245,7 +262,7 @@ class SideMenu(tk.Frame):
         self.controls[3]["entry"].grid(row=7,column=1)
         self.controls[3]["unit"].grid(row=7,column=2)
         # transformed phi
-        self.controls[4]["nev"].config(text="x")
+        self.controls[4]["nev"].config(text="φ")
         self.controls[4]["nev"].grid(row=8,column=0)
         self.controls[4]["entry"].grid(row=8,column=1)
         self.controls[4]["unit"].grid(row=8,column=2)

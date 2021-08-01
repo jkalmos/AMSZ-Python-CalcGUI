@@ -149,29 +149,29 @@ class main_window(tk.Tk):
             if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
             self.values = Calc.Rectangle(self.dimensions["a"],self.dimensions["b"])
-            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
             self.dimensions["d"] = self.get_entry(1)[0]
             if self.dimensions["d"] is None:
                 return -1
             self.values = Calc.Circle(self.dimensions["d"])
-            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
             self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
             if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
             self.values = Calc.Ellipse(self.dimensions["a"],self.dimensions["b"])
-            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
             self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
             if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
             self.values = Calc.IsoscelesTriangle(self.dimensions["a"],self.dimensions["b"])
-            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
         # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
@@ -182,7 +182,7 @@ class main_window(tk.Tk):
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    # master = starting_window()
-    # master.mainloop()
+    master = starting_window()
+    master.mainloop()
     root = main_window()
     root.mainloop()
