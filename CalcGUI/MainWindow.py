@@ -19,11 +19,7 @@ class starting_window(tk.Tk):
         my_label.pack()
         player = tkvideo("AMSZ_animation.mp4", my_label, loop = 0, size = (480,240))
         player.play()
-        self.after(10000, lambda: self.destroy())
-    # def command(self):
-    #     self.destroy()
-    #     self.newWindow = tk.Toplevel(self)
-    #     self.root = main_window(self)
+        self.after(8000, lambda: self.destroy())
 
 class main_window(tk.Tk):
     def __init__(self):
@@ -38,9 +34,10 @@ class main_window(tk.Tk):
         self.coordinate_on = tk.BooleanVar(False)
         self.dimension_lines_on = tk.BooleanVar(False)
         self.transformed_coordinate_on = tk.BooleanVar(False)
+        self.thickness_on = tk.BooleanVar(False)
         self.coordinate_on.set(True)
         self.dimension_lines_on.set(True)
-        self.transformed_coordinate_on.set(True)
+        # self.transformed_coordinate_on.set(True)
 
         self.title("Statika számító")
         self.geometry("1000x600")
@@ -60,12 +57,16 @@ class main_window(tk.Tk):
         self.bind('<Return>', self.calculate)
         self.plotted = tk.BooleanVar(False)
 
-        #Basic logo
-        self.logo_img = Image.open("logo_Full.png")
-        self.logo_img = ImageTk.PhotoImage(self.logo_img)
-        self.logo_image = tk.Label(self,image=self.logo_img,bg="#2A3C4D")
-        self.logo_image.image=self.logo_img
-        self.logo_image.pack(side=tk.LEFT)
+        
+        self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        # self.choose_object("Rectangle")
+        
+        # #Basic logo
+        # self.logo_img = Image.open("logo_Full.png")
+        # self.logo_img = ImageTk.PhotoImage(self.logo_img)
+        # self.logo_image = tk.Label(self,image=self.logo_img,bg="#2A3C4D")
+        # self.logo_image.image=self.logo_img
+        # self.logo_image.pack(side=tk.LEFT)
 
         #Menu
         menubar = tk.Menu(self)#, background='gray', foreground='black',activebackground='#004c99', activeforeground='white')
@@ -81,9 +82,11 @@ class main_window(tk.Tk):
         menubar.add_cascade(label="Beállítások", menu=beallitasok)
 
         mertekegyseg = tk.Menu(self, beallitasok, tearoff=0)
-        mertekegyseg.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("mm"))
-        mertekegyseg.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("cm"))
-        mertekegyseg.add_command(label="Méter [m]", command=lambda: self.unit_change("m"))
+        mertekegyseg.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
+        mertekegyseg.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
+        mertekegyseg.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
+        mertekegyseg.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
+        mertekegyseg.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
 
         tema = tk.Menu(self, beallitasok, tearoff=0)
         tema.add_command(label="Világos")
@@ -94,11 +97,12 @@ class main_window(tk.Tk):
         beallitasok.add_cascade(label="Mértékegység", menu=mertekegyseg)
         menubar.add_command(label="Kilépés", command=self.destroy)
 
-    def unit_change(self, unit):
+    def unit_change(self, unit_type, unit):
         self.unit = unit
 
         for i in self.sm.controls:
-            i["mertekegyseg"].config(text = unit)
+            if i["unit_type"] == unit_type:
+                i["unit"].config(text = unit)
 
     def choose_object(self, shape = None):
         self.dimensions = {
@@ -125,7 +129,7 @@ class main_window(tk.Tk):
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-        plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get())
     
     def get_entry(self, number_of_entries):
         vissza = []
@@ -145,32 +149,32 @@ class main_window(tk.Tk):
             if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
             self.values = Calc.Rectangle(self.dimensions["a"],self.dimensions["b"])
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
             self.dimensions["d"] = self.get_entry(1)[0]
             if self.dimensions["d"] is None:
                 return -1
             self.values = Calc.Circle(self.dimensions["d"])
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
             self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
             if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
             self.values = Calc.Ellipse(self.dimensions["a"],self.dimensions["b"])
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
             self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
             if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
             self.values = Calc.IsoscelesTriangle(self.dimensions["a"],self.dimensions["b"])
-            self.sm.eredmeny1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.eredmeny2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.reuslt2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
-        plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+        # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
 
 
     def doNothing(self):
@@ -178,7 +182,7 @@ class main_window(tk.Tk):
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    master = starting_window()
-    master.mainloop()
+    # master = starting_window()
+    # master.mainloop()
     root = main_window()
     root.mainloop()

@@ -1,20 +1,19 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 
 # PLOT SHAPE --------------------------------------------------------------------------------------------------------------------------------------------------------
-def plot(parent, dimensions, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on):
+def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on, thickness_on):
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
-    else:
-        parent.logo_image.pack_forget()
-        parent.sm.pack(side=tk.LEFT, fill=tk.Y)
-    a = dimensions["a"]
-    b = dimensions["b"]
-    d = dimensions["d"]
+    # else:
+    #     parent.logo_image.pack_forget()
+    #     parent.sm.pack(side=tk.LEFT, fill=tk.Y)
+    a = 2
+    b = 1
+    d = 1
     circ = False
 
     fig = Figure()
@@ -34,8 +33,13 @@ def plot(parent, dimensions, shape, coordinate_on, dimension_lines_on, transform
         x, y = set_dimensions(a, b)
         rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
         rect_y = [y/2, -y/2, -y/2, y/2, y/2]
+
+        rect_x_th = [-x/2+0.1, -x/2+0.1, x/2-0.1, x/2-0.1, -x/2+0.1]
+        rect_y_th = [y/2-0.1, -y/2+0.1, -y/2+0.1, y/2-0.1, y/2-0.1]
         
         ax.plot(rect_x, rect_y, 'w', lw=2)
+        if thickness_on == True:
+            ax.plot(rect_x_th, rect_y_th, 'w', lw=2)
         coordinate_displacement = 0
     elif shape == "Ellipse":
         x, y = set_dimensions(a, b)
@@ -43,7 +47,12 @@ def plot(parent, dimensions, shape, coordinate_on, dimension_lines_on, transform
         ell_x = x/2*np.cos(t)
         ell_y = y/2*np.sin(t)
 
+        ell_x_th = (x/2-0.1)*np.cos(t)
+        ell_y_th = (y/2-0.1)*np.sin(t)
+
         ax.plot(ell_x, ell_y, 'w', lw=2)
+        if thickness_on == True:
+            ax.plot(ell_x_th, ell_y_th, 'w', lw=2)
         coordinate_displacement = 0
     elif shape == "Circle":
         t = np.linspace(0, 2*np.pi, 100)
@@ -51,16 +60,26 @@ def plot(parent, dimensions, shape, coordinate_on, dimension_lines_on, transform
         circ_x = d/2*np.cos(t)
         circ_y = d/2*np.sin(t)
 
+        circ_x_th = (d/2-0.1)*np.cos(t)
+        circ_y_th = (d/2-0.1)*np.sin(t)
+
         circ = True
 
         ax.plot(circ_x, circ_y, 'w', lw=2)
+        if thickness_on == True:
+            ax.plot(circ_x_th, circ_y_th, 'w', lw=2)
         coordinate_displacement = 0
     elif shape == "Isosceles_triangle":
         x, y = set_dimensions(a, b)
         tri_x = [-x/2, x/2, 0, -x/2]
         tri_y = [-y/3, -y/3, y/3*2, -y/3]
 
+        tri_x_th = [-x/2+0.175, x/2-0.175, 0, -x/2+0.175]
+        tri_y_th = [-y/3+0.075, -y/3+0.075, y/3*2-0.1, -y/3+0.075]
+
         ax.plot(tri_x, tri_y, 'w', lw=2)
+        if thickness_on == True:
+            ax.plot(tri_x_th, tri_y_th, 'w', lw=2)
         coordinate_displacement = y/6
     elif shape == None:
         coordinate_on == False
@@ -74,118 +93,6 @@ def plot(parent, dimensions, shape, coordinate_on, dimension_lines_on, transform
         transformed_coordinate_system(x, y, ax, 15)
         transformation_dimensions(x, y, ax)
     parent.canvas.draw()
-
-# # ELLIPSE ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# def plot_ellipse(parent, a, b, coordinate_on, dimension_lines_on, transformed_coordinate_on):
-#     if parent.plotted == True:
-#         parent.canvas._tkcanvas.destroy()
-#     else:
-#         parent.logo_image.pack_forget()
-#         parent.sm.pack(side=tk.LEFT, fill=tk.Y)
-
-#     fig = Figure()
-#     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
-#     parent.canvas.get_tk_widget().pack()
-#     parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1)
-#     parent.plotted = True
-
-#     ax = fig.add_subplot(111)
-#     ax.set_aspect("equal")
-#     fig.patch.set_facecolor(parent["background"])
-#     ax.xaxis.set_visible(False)
-#     ax.yaxis.set_visible(False)
-#     ax.set_frame_on(False)
-
-#     x, y = set_dimensions(a, b)
-#     t = np.linspace(0, 2*np.pi, 100)
-#     ell_x = x/2*np.cos(t)
-#     ell_y = y/2*np.sin(t)
-
-#     ax.plot(ell_x, ell_y, 'w', lw=2)
-
-#     if coordinate_on:
-#         coordinate_system(x, y, ax, 0)
-#     if dimension_lines_on:
-#         dimension_lines(x, y, ax, r"$a$", r"$b$", 0)
-#     if transformed_coordinate_on == True:
-#         transformed_coordinate_system(x, y, ax, 15)
-#         transformation_dimensions(x, y, ax)
-#     parent.canvas.draw()
-
-# # # CIRCLE -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# def plot_circle(parent, coordinate_on, dimension_lines_on, transformed_coordinate_on):
-#     if parent.plotted == True:
-#         parent.canvas._tkcanvas.destroy()
-#     else:
-#         parent.logo_image.pack_forget()
-#         parent.sm.pack(side=tk.LEFT, fill=tk.Y)
-
-#     fig = Figure()
-#     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
-#     parent.canvas.get_tk_widget().pack()
-#     parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1)
-#     parent.plotted = True
-
-#     ax = fig.add_subplot(111)
-#     ax.set_aspect("equal")
-#     fig.patch.set_facecolor(parent["background"])
-#     ax.xaxis.set_visible(False)
-#     ax.yaxis.set_visible(False)
-#     ax.set_frame_on(False)
-
-#     t = np.linspace(0, 2*np.pi, 100)
-#     x = y = d = 2
-#     circ_x = d/2*np.cos(t)
-#     circ_y = d/2*np.sin(t)
-
-#     ax.plot(circ_x, circ_y, 'w', lw=2)
-
-#     if coordinate_on == True:
-#         coordinate_system(x, y, ax, 0)
-#         transformed_coordinate_system(x, y, ax, 15)
-#         transformation_dimensions(x, y, ax)
-#     if dimension_lines_on == True:
-#         dimension_lines(x, y, ax, 0, 0, 0, True)
-#     # if transformed_coordinate_on == True:
-#     #     transformed_coordinate_system(x, y, ax, 15)
-#     #     transformation_dimensions(x, y, ax)
-#     parent.canvas.draw()
-
-# # # ISOSCELES TRIANGLE -------------------------------------------------------------------------------------------------------------------------------------------------------
-# def plot_isosceles_triangle(parent, a, b, coordinate_on, dimension_lines_on, transformed_coordinate_on):
-#     if parent.plotted == True:
-#         parent.canvas._tkcanvas.destroy()
-#     else:
-#         parent.logo_image.pack_forget()
-#         parent.sm.pack(side=tk.LEFT, fill=tk.Y)
-
-#     fig = Figure()
-#     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
-#     parent.canvas.get_tk_widget().pack()
-#     parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1)
-#     parent.plotted = True
-
-#     ax = fig.add_subplot(111)
-#     ax.set_aspect("equal")
-#     fig.patch.set_facecolor(parent["background"])
-#     ax.xaxis.set_visible(False)
-#     ax.yaxis.set_visible(False)
-#     ax.set_frame_on(False)
-
-#     x, y = set_dimensions(a, b)
-#     tri_x = [-x/2, x/2, 0, -x/2]
-#     tri_y = [-y/3, -y/3, y/3*2, -y/3]
-
-#     ax.plot(tri_x, tri_y, 'w', lw=2)
-
-#     if coordinate_on:
-#         coordinate_system(x, y, ax, y/6)
-#     if dimension_lines_on:
-#         dimension_lines(x, y, ax, r"$a$", r"$b$", y/6)
-#     if transformed_coordinate_on == True:
-#         transformed_coordinate_system(x, y, ax, 15)
-#         transformation_dimensions(x, y, ax)
-#     parent.canvas.draw()
 
 # USEFUL FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
 def set_dimensions(a, b):
@@ -319,6 +226,7 @@ def transformed_coordinate_system(x, y, ax, phi):
                         verticalalignment='center', size='large')
     ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$\eta$", horizontalalignment='center', color = 'w',
                         verticalalignment='center', size='large')
+
 def transformation_dimensions(x, y, ax):
     transparency = 0.7
     hw = 0.015*x*y
