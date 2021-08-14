@@ -35,7 +35,7 @@ class SideMenu(tk.Frame):
             callback(shape)
 
         self.n = tk.StringVar()
-        self.choose_shape = ttk.Combobox(self, width = 25, textvariable=self.n, state='readonly')
+        self.choose_shape = ttk.Combobox(self, width = 25, textvariable=self.n, state='readonly', text="x")
         self.choose_shape['values'] = ('Téglalap', 
                                 'Kör',
                                 'Ellipszis',
@@ -74,7 +74,13 @@ class SideMenu(tk.Frame):
         self.the1 = tk.Entry(self, width = 10, bg="#475C6F", fg='white', state='disabled', disabledbackground="grey")
 
         # calculate button
-        self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
+        self.buttonimage = tk.PhotoImage(file="calc_button.png")
+        self.calc = tk.Button(self, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate())
+        # self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
+        self.calc["bg"] = '#082032'
+        self.calc["border"] = "0"
+        self.calc["width"] = "73"
+        self.calc["height"] = "21"
 
         # append entry objects to controls array
         self.controls = []

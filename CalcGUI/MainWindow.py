@@ -17,9 +17,9 @@ class starting_window(tk.Tk):
 
         my_label = tk.Label(self)
         my_label.pack()
-        player = tkvideo("AMSZ_animation.mp4", my_label, loop = 0, size = (480,240))
+        player = tkvideo("AMSZ_animation_short.mp4", my_label, loop = 0, size = (480,240))
         player.play()
-        self.after(8000, lambda: self.destroy())
+        self.after(4000, lambda: self.destroy())
 
 class main_window(tk.Tk):
     def __init__(self):
@@ -27,8 +27,8 @@ class main_window(tk.Tk):
 
         #Colors
         self.colors = {
-        'main_color': '#2A3C4D',
-        'secondary_color': '#314457'
+        'main_color': '#2C394B',
+        'secondary_color': '#082032'
         }
         # Variables
         self.coordinate_on = tk.BooleanVar(False)
@@ -182,7 +182,7 @@ class main_window(tk.Tk):
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    master = starting_window()
-    master.mainloop()
+    # master = starting_window()
+    # master.mainloop()
     root = main_window()
     root.mainloop()
