@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import CalcFunctions as Calc
+import CrossSection as Calc
 from SideMenu import SideMenu
 from tkvideo import tkvideo
 from PlotFunctions import plot
@@ -19,7 +19,7 @@ class starting_window(tk.Tk):
         my_label.pack()
         player = tkvideo("AMSZ_animation.mp4", my_label, loop = 0, size = (480,240))
         player.play()
-        self.after(8000, lambda: self.destroy())
+        self.after(500, lambda: self.destroy())
 
 class main_window(tk.Tk):
     def __init__(self):

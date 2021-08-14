@@ -89,8 +89,8 @@ class SideMenu(tk.Frame):
         self.indicators = []
         self.result1 = tk.Label(self, text="", bg=self["background"], fg='white')
         self.result2 = tk.Label(self, text="", bg=self["background"], fg='white')
-        self.result1.grid(row=12, column = 1)
-        self.result2.grid(row=13, column = 1)
+        self.result1.grid(row=15, column = 1)
+        self.result2.grid(row=16, column = 1)
         self.indicators.append(self.result1)
         self.indicators.append(self.result2)
 
@@ -169,6 +169,10 @@ class SideMenu(tk.Frame):
         self.controls[5]["unit"].grid(row=10,column=2)
         # calculate button
         self.calc.grid(row=11,column=1,pady=5)
+        #clear previous results
+        self.result1.config(text="")
+        self.result2.config(text="")
+        
     def change_to_circle(self):
         # size d
         self.controls[0]["nev"].config(text="Ød")
