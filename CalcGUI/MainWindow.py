@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
+import json
 from SideMenu import SideMenu
 from tkvideo import tkvideo
 from PlotFunctions import plot
@@ -9,12 +10,13 @@ class starting_window(tk.Tk):
     def __init__(self):
         super().__init__()
         self.overrideredirect(1)
+
+        # Position the window in the center of the page.
         positionRight = int(self.winfo_screenwidth()/2 - 240)
         positionDown = int(self.winfo_screenheight()/2 - 120)
-        
-        # Positions the window in the center of the page.
         self.geometry("+{}+{}".format(positionRight, positionDown))
 
+        # Play animation on tkinter widget
         my_label = tk.Label(self)
         my_label.pack()
         player = tkvideo("AMSZ_animation_short.mp4", my_label, loop = 0, size = (480,240))
@@ -22,14 +24,11 @@ class starting_window(tk.Tk):
         self.after(4000, lambda: self.destroy())
 
 class main_window(tk.Tk):
+    # def onExit(self):
+    #     self.quit()
     def __init__(self):
         super().__init__()
 
-        #Colors
-        self.colors = {
-        'main_color': '#2C394B',
-        'secondary_color': '#082032'
-        }
         # Variables
         self.coordinate_on = tk.BooleanVar(False)
         self.dimension_lines_on = tk.BooleanVar(False)
@@ -37,65 +36,95 @@ class main_window(tk.Tk):
         self.thickness_on = tk.BooleanVar(False)
         self.coordinate_on.set(True)
         self.dimension_lines_on.set(True)
-        # self.transformed_coordinate_on.set(True)
+        self.plotted = tk.BooleanVar(False)
+        
+        # Default unit, default theme
+        self.unit = settings["default_unit"]#"mm"
+        self.theme = settings["theme"]#"dark"
 
+        # Colors
+        if self.theme == "dark":
+            self.colors = DARK_THEME
+        else:
+            self.colors = LIGHT_THEME
+
+        # Window 
         self.title("Statika számító")
         self.geometry("1000x600")
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
 
-        
-
-        #Default unit
-        self.unit = "mm"
-
+        # Canvas for drawing
         self.canvas = None
-        #Side Menu
+
+        # # Toolbar
+        # self.toolbar = tk.Frame(self, bd=1, relief=tk.RAISED, bg=self.colors['main_color'])
+        # self.img = Image.open("calc_button.png")
+        # self.eimg = ImageTk.PhotoImage(self.img)
+        # self.exitButton = tk.Button(self.toolbar, image=self.eimg, relief=tk.FLAT,
+        #     command=self.quit)
+        # self.exitButton.image = self.eimg
+        # self.exitButton.pack(side=tk.LEFT, padx=2, pady=2)
+        # self.toolbar.pack(side=tk.TOP, fill=tk.X)
+
+        # Side Menu
         self.sm = SideMenu(self)
-        #self.sm.pack(side=tk.LEFT, fill=tk.Y)
-        self.bind('<Return>', self.calculate)
-        self.plotted = tk.BooleanVar(False)
-
-        
         self.sm.pack(side=tk.LEFT, fill=tk.Y)
-        # self.choose_object("Rectangle")
-        
-        # #Basic logo
-        # self.logo_img = Image.open("logo_Full.png")
-        # self.logo_img = ImageTk.PhotoImage(self.logo_img)
-        # self.logo_image = tk.Label(self,image=self.logo_img,bg="#2A3C4D")
-        # self.logo_image.image=self.logo_img
-        # self.logo_image.pack(side=tk.LEFT)
+        # calculate on pressing enter
+        self.bind('<Return>', self.calculate)
 
-        #Menu
-        menubar = tk.Menu(self)#, background='gray', foreground='black',activebackground='#004c99', activeforeground='white')
-        self.config(menu=menubar)        
-        keresztmetszet = tk.Menu(self, menubar, tearoff=0)
-        menubar.add_cascade(label="Keresztmetszet", menu=keresztmetszet)
-        keresztmetszet.add_command(label="Téglalap", command = lambda: self.choose_object("Rectangle"))
-        keresztmetszet.add_command(label="Kör", command = lambda: self.choose_object("Circle"))
-        keresztmetszet.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
-        keresztmetszet.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
+        # Menubar
+        menubar = tk.Menu(self)
+        self.config(menu=menubar)
 
-        beallitasok = tk.Menu(self, menubar, tearoff=0)
-        menubar.add_cascade(label="Beállítások", menu=beallitasok)
+        # # Add cross section to menubar
+        # cross_section = tk.Menu(self, menubar, tearoff=0)
+        # cross_section.add_command(label="Téglalap", command = lambda: self.choose_object("Rectangle"))
+        # cross_section.add_command(label="Kör", command = lambda: self.choose_object("Circle"))
+        # cross_section.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
+        # cross_section.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
+        # menubar.add_cascade(label="Keresztmetszet", menu = cross_section)
 
-        mertekegyseg = tk.Menu(self, beallitasok, tearoff=0)
-        mertekegyseg.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
-        mertekegyseg.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
-        mertekegyseg.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
-        mertekegyseg.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
-        mertekegyseg.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
+        # Add settings to menubar
+        settings_menu = tk.Menu(self, menubar, tearoff=0)
+        menubar.add_cascade(label="Beállítások", menu = settings_menu)
 
-        tema = tk.Menu(self, beallitasok, tearoff=0)
-        tema.add_command(label="Világos")
-        tema.add_command(label="Sötét")
+        # Add units menu to settings menu
+        units_menu = tk.Menu(self, settings_menu, tearoff=0)
+        units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
+        units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
+        units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
+        units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
+        units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
+        settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
 
-        beallitasok.add_cascade(label="Téma", menu=tema)
+        # Add themes menu to setting menu
+        themes_menu = tk.Menu(self, settings_menu, tearoff=0)
+        themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
+        themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
+        settings_menu.add_cascade(label="Téma", menu=themes_menu)
 
-        beallitasok.add_cascade(label="Mértékegység", menu=mertekegyseg)
+        # Add exit button to menubar
         menubar.add_command(label="Kilépés", command=self.destroy)
+    ## USEFUL FUNCTIONS -----------------------------------------------------------
+    def theme_change(self, theme):
+        if self.theme != theme:
+            self.theme=theme
+            if self.theme=="dark":
+                self.colors=DARK_THEME
+                self.sm.change_color(DARK_THEME)
+                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+            elif self.theme == "light":
+                self.colors=LIGHT_THEME
+                self.sm.change_color(LIGHT_THEME)
+                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+            else:
+                print("ERROR: Unknown Theme")
+                return -1
+            self.configure(bg=self.colors['main_color'])
+            #TODO: canvas color???? + plot
+            print(f"Theme set to {theme}")
 
     def unit_change(self, unit_type, unit):
         self.unit = unit
@@ -129,7 +158,7 @@ class main_window(tk.Tk):
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get())
+        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
     
     def get_entry(self, number_of_entries):
         vissza = []
@@ -179,10 +208,36 @@ class main_window(tk.Tk):
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
+# VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
+DARK_THEME = {
+        'main_color': '#2C394B',
+        'secondary_color': '#082032',
+        'text_color': '#FF4C29',
+        'entry_color': '#334756',
+        'draw_main': '#FF4C29',
+        'draw_secondary': 'grey'
+        }
+LIGHT_THEME = {
+        'main_color': '#FFFFFF',
+        'secondary_color': '#999999',
+        'text_color': '#000000',
+        'entry_color': '#FFFFFF',
+        'draw_main': 'black',
+        'draw_secondary': '#000000'
+        }
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    # Load settings from JSON file
+    try:
+        with open('app_settings.json') as f:
+            settings = json.load(f)
+    except:
+        print("404 app_settings.json not found")
+        settings={'theme':'dark', 'default_unit':'mm'}
     # master = starting_window()
     # master.mainloop()
     root = main_window()
     root.mainloop()
+    with open('app_settings.json', 'w') as json_file:
+        json.dump({'theme':root.theme, 'default_unit':root.unit}, json_file)
