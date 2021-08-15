@@ -8,7 +8,7 @@
 #   Polar modulus: Kp)
 import numpy as np
 
-def Circle(d):
+def Circle(d,i_d=0):
     properties = {
         "A": d ** 2 * np.pi / 4,
         "Ix": d ** 4 * np.pi / 64,
@@ -22,21 +22,7 @@ def Circle(d):
     }
     return properties
 
-def Ring(d1, d2):
-    properties = {
-        "A": (d2 ** 2 - d1 ** 2) * np.pi / 4,
-        "Ix": (d2 ** 4 - d1 ** 4) * np.pi / 64,
-        "Iy": (d2 ** 4 - d1 ** 4) * np.pi / 64,
-        "Ixy": 0,
-        "Kx": (d2 ** 3 - d1 ** 3) * np.pi / (32 * d2),
-        "Ky": (d2 ** 3 - d1 ** 3) * np.pi / (32 * d2),
-        "Ip": (d2 ** 4 - d1 ** 4) * np.pi / 32,
-        "Kp": (d2 ** 4 - d1 ** 4) * np.pi / (16 * d2),
-        "alpha": 0,
-    }
-    return properties
-
-def Rectangle(w, h):
+def Rectangle(w, h, i_W=0, i_h=0):
     A = w * h
     Ix = w * h ** 3 / 12
     Iy = w ** 3 * h / 12
@@ -83,13 +69,13 @@ def RectangularHS(w1, h1, w2, h2):
     }
     return properties
 
-def Ellipse(a, b):
-    A = a * b * np.pi
-    Ix = a * b ** 3 * np.pi / 4
-    Iy = a ** 3 * b * np.pi / 4
+def Ellipse(a, b, i_a=0, i_b=0):
+    A = a/2 * b/2 * np.pi
+    Ix = a/2 * (b/2) ** 3 * np.pi / 4
+    Iy = (a/2) ** 3 * b/2 * np.pi / 4
     Ixy = 0
-    Kx = Ix / b
-    Ky = Iy / a
+    Kx = Ix / (b/2)
+    Ky = Iy / (a/2)
     if Iy > Ix:
         alpha = np.pi / 2
     else:
@@ -106,7 +92,7 @@ def Ellipse(a, b):
     }
     return properties
 
-def IsoscelesTriangle(w, h):
+def IsoscelesTriangle(w, h, i_w=0, i_h=0):
     A = w * h / 2
     Ix = w * h ** 3 / 36
     Iy = w ** 3 * h / 48
