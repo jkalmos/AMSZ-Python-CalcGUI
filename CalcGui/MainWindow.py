@@ -5,6 +5,7 @@ import json
 from SideMenu import SideMenu
 from tkvideo import tkvideo
 from PlotFunctions import plot
+import shape_builder
 
 class starting_window(tk.Tk):
     def __init__(self):
@@ -108,6 +109,7 @@ class main_window(tk.Tk):
 
         # Add exit button to menubar
         menubar.add_command(label="Kilépés", command=self.destroy)
+        menubar.add_command(label="Saját alakzat", command=self.build_shape)
     ## USEFUL FUNCTIONS -----------------------------------------------------------
     def theme_change(self, theme):
         if self.theme != theme:
@@ -135,6 +137,17 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
+
+    def build_shape(self):
+        print("opening sb")
+        self.sm.pack_forget()
+        self.sb_sm = shape_builder.sb_side_menu(self)
+        self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+        self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
+        if self.plotted==True:
+            self.canvas._tkcanvas.destroy()
+        self.sb.pack(expand=tk.YES, fill=tk.BOTH)
+
 
     def choose_object(self, shape = None):
         self.dimensions = {
