@@ -38,7 +38,7 @@ class main_window(tk.Tk):
         self.coordinate_on.set(True)
         self.dimension_lines_on.set(True)
         self.plotted = tk.BooleanVar(False)
-        
+        self.shape_builder_mode = False
         # Default unit, default theme
         self.unit = settings["default_unit"]#"mm"
         self.angle_unit = settings["angle_unit"] #! to settings
@@ -77,8 +77,8 @@ class main_window(tk.Tk):
         self.bind('<Return>', self.calculate)
 
         # Menubar
-        menubar = tk.Menu(self)
-        self.config(menu=menubar)
+        self.menubar = tk.Menu(self)
+        self.config(menu=self.menubar)
 
         # # Add cross section to menubar
         # cross_section = tk.Menu(self, menubar, tearoff=0)
@@ -89,8 +89,8 @@ class main_window(tk.Tk):
         # menubar.add_cascade(label="Keresztmetszet", menu = cross_section)
 
         # Add settings to menubar
-        settings_menu = tk.Menu(self, menubar, tearoff=0)
-        menubar.add_cascade(label="Beállítások", menu = settings_menu)
+        settings_menu = tk.Menu(self, self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
 
         # Add units menu to settings menu
         units_menu = tk.Menu(self, settings_menu, tearoff=0)
@@ -107,9 +107,10 @@ class main_window(tk.Tk):
         themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
         settings_menu.add_cascade(label="Téma", menu=themes_menu)
 
+        #Changing to shape builder
+        self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
         # Add exit button to menubar
-        menubar.add_command(label="Kilépés", command=self.destroy)
-        menubar.add_command(label="Saját alakzat", command=self.build_shape)
+        self.menubar.add_command(label="Kilépés", command=self.destroy)
     ## USEFUL FUNCTIONS -----------------------------------------------------------
     def theme_change(self, theme):
         if self.theme != theme:
@@ -139,14 +140,27 @@ class main_window(tk.Tk):
                 i["unit"].config(text = unit)
 
     def build_shape(self):
-        print("opening sb")
-        self.sm.pack_forget()
-        self.sb_sm = shape_builder.sb_side_menu(self)
-        self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
-        self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
-        if self.plotted==True:
-            self.canvas._tkcanvas.destroy()
-        self.sb.pack(expand=tk.YES, fill=tk.BOTH)
+        if not self.shape_builder_mode:
+            print("opening sb")
+            self.shape_builder_mode = True
+            self.sm.pack_forget()
+            self.sb_sm = shape_builder.sb_side_menu(self)
+            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
+            self.menubar.entryconfig(2,label="Alap alakzatok")
+            self.menubar.entryconfig(1, state="disabled")
+            if self.plotted==True:
+                self.canvas._tkcanvas.destroy()
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH)
+        else:
+            print("closing sb")
+            self.sb.pack_forget()
+            self.sb_sm.pack_forget()
+            self.sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.plotted = False
+            self.shape_builder_mode = False
+            self.menubar.entryconfig(2,label="Saját alakzat")
+            self.menubar.entryconfig(1, state="normal")
 
 
     def choose_object(self, shape = None):
