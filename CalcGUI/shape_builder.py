@@ -1,7 +1,9 @@
 import tkinter as tk
+from tkinter.constants import CENTER
 WIDTH = 30
 EPSILON = 20
 STICKY = True
+CENTER = 250
 #TODO: Overleaping warning with different size rectangles
 #TODO: Sticking with different points
 #TODO: scaling
@@ -25,8 +27,8 @@ class shapeBuilder(tk.Canvas):
         self.button2.pack()
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
-        self.x_axis = self.create_line(0,250,500,250)
-        self.y_axis = self.create_line(250,0,250,500)
+        self.x_axis = self.create_line(0,CENTER,CENTER*2,CENTER)
+        self.y_axis = self.create_line(CENTER,0,CENTER,CENTER*2)
         self.current = None
         self.isMoving=False
         self.width = WIDTH
@@ -115,11 +117,14 @@ class shapeBuilder(tk.Canvas):
         self.current=None
         self.label.config(text=f"you have {len(self.rectangles)} rectangles")
     def calculate(self):
-        A = 0
+        Ix = 0
+        Iy = 0
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
-            A += (pos[2]-pos[0]) * (pos[3]-pos[1])
-        self.label.config(text=f"area: {A}")
+            A = (pos[2]-pos[0]) * (pos[3]-pos[1])
+            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A*((pos[2]+pos[0])/2-CENTER)**2
+            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A*((pos[3]+pos[1])/2-CENTER)**2
+        self.label.config(text=f"A: {A}\nIx: {Ix}\nIy: {Iy}")
     def overwrite(self):
         self.width = float(self.e1.get().replace(',','.'))
         self.heigth = float(self.e2.get().replace(',','.'))
