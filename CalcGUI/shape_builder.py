@@ -1,40 +1,42 @@
 import tkinter as tk
-from tkinter.constants import CENTER
 WIDTH = 30
 EPSILON = 20
 STICKY = True
-CENTER = 250
+XCENTER = 400
+YCENTER = 300
 #TODO: Overleaping warning with different size rectangles
 #TODO: Sticking with different points
 #TODO: scaling
 #TODO: Coordinate system fix + sicking
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sm_sm):
-        super().__init__(root, bg=root.colors["main_color"])
+        super().__init__(root, bd=0, bg=root.colors["main_color"],highlightthickness=0)
         self.root=root
         #self.root.geometry("1000x600")
         self.sb_sm = sm_sm
         self.rectangles = []
-        self.label = tk.Label(self.sb_sm,text="")
+        self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
         self.label.pack()
         self.button = tk.Button(self.sb_sm, text="calculate", command=self.calculate)
         self.button.pack()
-        self.e1 = tk.Entry(self.sb_sm)
+        self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.e1.pack()
-        self.e2 = tk.Entry(self.sb_sm)
+        self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.e2.pack()
         self.button2 = tk.Button(self.sb_sm, text="give value", command=self.overwrite)
         self.button2.pack()
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
-        self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
-        self.x_axis = self.create_line(0,CENTER,CENTER*2,CENTER)
-        self.y_axis = self.create_line(CENTER,0,CENTER,CENTER*2)
+        self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap) 
+        self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
+        self.x_label = self.create_text(2*XCENTER-5,YCENTER+ 20,text="X") # X lavel
+        self.y_axis = self.create_line(XCENTER,10,XCENTER,YCENTER*2, arrow=tk.FIRST) #Drawing Y-axis
+        self.y_label = self.create_text(XCENTER +20 ,15,text="Y") # Y label
         self.current = None
         self.isMoving=False
         self.width = WIDTH
         self.heigth = WIDTH
         self.sticky = tk.BooleanVar()
-        self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False)
+        self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg='white', selectcolor='grey')
         self.is_sticky.pack()
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
         self.bind('<ButtonRelease-1>',self.release) #when you relase the left mose button
@@ -119,11 +121,13 @@ class shapeBuilder(tk.Canvas):
     def calculate(self):
         Ix = 0
         Iy = 0
+        A = 0
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
-            A = (pos[2]-pos[0]) * (pos[3]-pos[1])
-            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A*((pos[2]+pos[0])/2-CENTER)**2
-            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A*((pos[3]+pos[1])/2-CENTER)**2
+            A_current = (pos[2]-pos[0]) * (pos[3]-pos[1])
+            A += A_current
+            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*((pos[2]+pos[0])/2-XCENTER)**2
+            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*((pos[3]+pos[1])/2-YCENTER)**2
         self.label.config(text=f"A: {A}\nIx: {Ix}\nIy: {Iy}")
     def overwrite(self):
         self.width = float(self.e1.get().replace(',','.'))
