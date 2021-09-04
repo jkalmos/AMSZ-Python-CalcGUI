@@ -24,8 +24,6 @@ class starting_window(tk.Tk):
         self.after(4000, lambda: self.destroy())
 
 class main_window(tk.Tk):
-    # def onExit(self):
-    #     self.quit()
     def __init__(self):
         super().__init__()
 
@@ -40,6 +38,7 @@ class main_window(tk.Tk):
         
         # Default unit, default theme
         self.unit = settings["default_unit"]#"mm"
+        self.angle_unit = settings["angle_unit"] #! to settings
         self.theme = settings["theme"]#"dark"
 
         # Colors
@@ -77,14 +76,6 @@ class main_window(tk.Tk):
         # Menubar
         menubar = tk.Menu(self)
         self.config(menu=menubar)
-
-        # # Add cross section to menubar
-        # cross_section = tk.Menu(self, menubar, tearoff=0)
-        # cross_section.add_command(label="Téglalap", command = lambda: self.choose_object("Rectangle"))
-        # cross_section.add_command(label="Kör", command = lambda: self.choose_object("Circle"))
-        # cross_section.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
-        # cross_section.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
-        # menubar.add_cascade(label="Keresztmetszet", menu = cross_section)
 
         # Add settings to menubar
         settings_menu = tk.Menu(self, menubar, tearoff=0)
@@ -127,8 +118,10 @@ class main_window(tk.Tk):
             print(f"Theme set to {theme}")
 
     def unit_change(self, unit_type, unit):
-        self.unit = unit
-
+        if unit_type == "degree":
+            self.angle_unit = unit
+        else:
+            self.unit = unit
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
@@ -162,7 +155,9 @@ class main_window(tk.Tk):
     
     def get_entry(self, number_of_entries):
         vissza = []
-        for i in range(number_of_entries):
+        for i in range(number_of_entries + self.transformed_coordinate_on.get() * 3):
+            if i >= 1 and self.sm.shape == "Circle": #! Jujj de csúnya...
+                i+=1
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
                 self.sm.controls[i]["entry"].config({"background": "#475C6F"})
@@ -170,35 +165,47 @@ class main_window(tk.Tk):
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
                 vissza.append(None)
+        if self.thickness_on.get():
+            try:
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+            except:
+                print("Hiba")
+                self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                vissza.append(None)
+                t = None
+        else:
+            t = 0
         #self.sm.e2.config({"background": "#475C6F"})    
-        return vissza
+        return vissza,t
+
     def calculate(self, event=None):
         if self.sm.shape == "Rectangle":
-            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
-            if self.dimensions["a"] is None or self.dimensions["b"] is None:
+            vissza, t = self.get_entry(2)
+            if None in vissza:
                 return -1
-            self.values = Calc.Rectangle(self.dimensions["a"],self.dimensions["b"])
+            self.values = Calc.Rectangle(*vissza[:2], t, *vissza[2:], rad = self.angle_unit == "rad")
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
-            self.dimensions["d"] = self.get_entry(1)[0]
-            if self.dimensions["d"] is None:
+            vissza, t = self.get_entry(1)
+            if None in vissza:
                 return -1
-            self.values = Calc.Circle(self.dimensions["d"])
+            self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
-            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
-            if self.dimensions["a"] is None or self.dimensions["b"] is None:
+            vissza, t = self.get_entry(2)
+            if None in vissza:
                 return -1
-            self.values = Calc.Ellipse(self.dimensions["a"],self.dimensions["b"])
+            self.values = Calc.Ellipse(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
-            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
-            if self.dimensions["a"] is None or self.dimensions["b"] is None:
+            vissza, t = self.get_entry(2)
+            if None in vissza:
                 return -1
-            self.values = Calc.IsoscelesTriangle(self.dimensions["a"],self.dimensions["b"])
+            self.values = Calc.IsoscelesTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
@@ -215,7 +222,8 @@ DARK_THEME = {
         'text_color': '#FF4C29',
         'entry_color': '#334756',
         'draw_main': '#FF4C29',
-        'draw_secondary': 'grey'
+        'draw_secondary': 'black',
+        'draw_tertiary': 'grey'
         }
 LIGHT_THEME = {
         'main_color': '#FFFFFF',
@@ -223,7 +231,8 @@ LIGHT_THEME = {
         'text_color': '#000000',
         'entry_color': '#FFFFFF',
         'draw_main': '#1034A6',
-        'draw_secondary': 'grey'
+        'draw_secondary': 'black',
+        'draw_tertiary': 'grey'
         }
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
@@ -234,10 +243,10 @@ if __name__ == "__main__":
             settings = json.load(f)
     except:
         print("404 app_settings.json not found")
-        settings={'theme':'dark', 'default_unit':'mm'}
-    # master = starting_window()
-    # master.mainloop()
+        settings={'theme':'dark', 'default_unit':'mm', 'angle_unit':'rad'}
+    master = starting_window()
+    master.mainloop()
     root = main_window()
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
-        json.dump({'theme':root.theme, 'default_unit':root.unit}, json_file)
+        json.dump({'theme':root.theme, 'default_unit':root.unit, 'angle_unit':root.angle_unit}, json_file)

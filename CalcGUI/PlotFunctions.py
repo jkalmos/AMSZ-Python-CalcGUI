@@ -124,7 +124,7 @@ def set_dimensions(a, b):
 
 def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
     transparency = 1
-    color = colors['draw_secondary']
+    color = colors['draw_tertiary']
     hw = 0.015*x*y
     hl = 2*hw
     if circ == False:
@@ -167,7 +167,7 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
         line1_x = [-1, 1]
         line1_y = [1.732, -1.732]
 
-        ax.plot(line1_x, line1_y, 'grey',zorder=0)
+        ax.plot(line1_x, line1_y, 'grey',zorder=3)
         ax.arrow(line1_x[0], line1_y[0], 0.5, -0.866, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
         ax.arrow(line1_x[1], line1_y[1], -0.5, 0.866, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
 
@@ -218,7 +218,7 @@ def coordinate_system(x, y, ax, e, colors):
         alpha=transparency)
 
 def transformed_coordinate_system(x, y, ax, phi, colors):
-    color = colors['draw_secondary']
+    color = colors['draw_tertiary']
     hw = 0.015*x*y
     hl = 2*hw
     phi = phi/180*np.pi
@@ -232,16 +232,16 @@ def transformed_coordinate_system(x, y, ax, phi, colors):
     ar2_dy = y*3/2*np.cos(phi)
 
     ax.arrow(ar1_x, ar1_y, ar1_dx, ar1_dy,
-                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
     ax.arrow(ar2_x, ar2_y, ar2_dx, ar2_dy,
-                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
     ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$\xi$", horizontalalignment='center', color = color,
                         verticalalignment='center', size='large')
     ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$\eta$", horizontalalignment='center', color = color,
                         verticalalignment='center', size='large')
 
 def transformation_dimensions(x, y, ax, colors):
-    color = colors['draw_secondary']
+    color = colors['draw_tertiary']
     transparency = 0.7
     hw = 0.015*x*y
     hl = 2*hw
