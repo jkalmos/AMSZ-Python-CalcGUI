@@ -222,8 +222,8 @@ LIGHT_THEME = {
         'secondary_color': '#999999',
         'text_color': '#000000',
         'entry_color': '#FFFFFF',
-        'draw_main': 'black',
-        'draw_secondary': '#000000'
+        'draw_main': '#1034A6',
+        'draw_secondary': 'grey'
         }
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
@@ -235,8 +235,8 @@ if __name__ == "__main__":
     except:
         print("404 app_settings.json not found")
         settings={'theme':'dark', 'default_unit':'mm'}
-    master = starting_window()
-    master.mainloop()
+    # master = starting_window()
+    # master.mainloop()
     root = main_window()
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
