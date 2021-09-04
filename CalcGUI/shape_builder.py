@@ -1,4 +1,7 @@
 import tkinter as tk
+from tkinter.constants import CENTER
+
+from numpy.lib.arraypad import pad
 WIDTH = 30
 EPSILON = 20
 STICKY = True
@@ -16,15 +19,19 @@ class shapeBuilder(tk.Canvas):
         self.sb_sm = sm_sm
         self.rectangles = []
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
-        self.label.pack()
+        self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg='white')
+        self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg='white')
+        self.l_unit1 = tk.Label(self.sb_sm,text="mm", bg=self.sb_sm["background"], fg='white')
+        self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg='white')
+        #self.l_unit2.pack()
         self.button = tk.Button(self.sb_sm, text="calculate", command=self.calculate)
-        self.button.pack()
+        #self.button.pack()
         self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
-        self.e1.pack()
+        #self.e1.pack()
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
-        self.e2.pack()
+        #self.e2.pack()
         self.button2 = tk.Button(self.sb_sm, text="give value", command=self.overwrite)
-        self.button2.pack()
+        #self.button2.pack()
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap) 
         self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
@@ -37,13 +44,25 @@ class shapeBuilder(tk.Canvas):
         self.heigth = WIDTH
         self.sticky = tk.BooleanVar()
         self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg='white', selectcolor='grey')
-        self.is_sticky.pack()
+        #self.is_sticky.pack()
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
         self.bind('<ButtonRelease-1>',self.release) #when you relase the left mose button
         self.popup_menu = tk.Menu(self, tearoff=0) #right click menu
         self.popup_menu.add_command(label="Delete",command=self.delete_rectangle)
         self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
         self.bind("<Button-3>", self.popup) # right-click event
+        #self.label.pack()
+        #PAcking objects
+        self.l_width.grid(row=1,column=0)
+        self.e1.grid(row=1,column=1,columnspan=3)
+        self.l_unit1.grid(row=1,column=4)
+        self.l_heigth.grid(row=2,column=0)
+        self.e2.grid(row=2,column=1,columnspan=3)
+        self.l_unit2.grid(row=2,column=4)
+        self.is_sticky.grid(row=3,columnspan=5)
+        self.button.grid(row=4,column=1)
+        self.button2.grid(row=4, column=3)
+        self.label.grid(row=5,columnspan=5, pady= 50)
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
             for i in self.rectangles:
@@ -83,7 +102,7 @@ class shapeBuilder(tk.Canvas):
             #self.coords(self.current.canvas_repr,e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
-        self.label.config(text=f"x: {e.x} y: {e.y}")
+        self.label.config(text=f"x: {e.x-XCENTER} y: {YCENTER-e.y}")
     def release(self,e):
         #choosing object
         if self.sticky.get() and self.current:
@@ -117,7 +136,7 @@ class shapeBuilder(tk.Canvas):
             
         self.isMoving = False
         self.current=None
-        self.label.config(text=f"you have {len(self.rectangles)} rectangles")
+        self.label.config(text="")
     def calculate(self):
         Ix = 0
         Iy = 0
