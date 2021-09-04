@@ -40,10 +40,6 @@ class main_window(tk.Tk):
         
         # Default unit, default theme
         self.unit = settings["default_unit"]#"mm"
-<<<<<<< HEAD
-=======
-        self.angle_unit = settings["angle_unit"] #! to settings
->>>>>>> main
         self.theme = settings["theme"]#"dark"
 
         # Colors
@@ -131,10 +127,8 @@ class main_window(tk.Tk):
             print(f"Theme set to {theme}")
 
     def unit_change(self, unit_type, unit):
-        if unit_type == "degree":
-            self.angle_unit = unit
-        else:
-            self.unit = unit
+        self.unit = unit
+
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
@@ -168,9 +162,7 @@ class main_window(tk.Tk):
     
     def get_entry(self, number_of_entries):
         vissza = []
-        for i in range(number_of_entries + self.transformed_coordinate_on.get() * 3):
-            if i >= 1 and self.sm.shape == "Circle": #! Jujj de csúnya...
-                i+=1
+        for i in range(number_of_entries):
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
                 self.sm.controls[i]["entry"].config({"background": "#475C6F"})
@@ -178,51 +170,41 @@ class main_window(tk.Tk):
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
                 vissza.append(None)
-        if self.thickness_on.get():
-            try:
-                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
-            except:
-                print("Hiba")
-                self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                vissza.append(None)
-                t = None
-        else:
-            t = 0
         #self.sm.e2.config({"background": "#475C6F"})    
-        return vissza,t
-
+        return vissza
     def calculate(self, event=None):
         if self.sm.shape == "Rectangle":
-            vissza, t = self.get_entry(2)
-            if None in vissza:
+            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
+            if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
-            self.values = Calc.Rectangle(*vissza[:2], t, *vissza[2:], rad = self.angle_unit == "rad")
+            self.values = Calc.Rectangle(self.dimensions["a"],self.dimensions["b"])
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
-            vissza, t = self.get_entry(1)
-            if None in vissza:
+            self.dimensions["d"] = self.get_entry(1)[0]
+            if self.dimensions["d"] is None:
                 return -1
-            self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
+            self.values = Calc.Circle(self.dimensions["d"])
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
-            vissza, t = self.get_entry(2)
-            if None in vissza:
+            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
+            if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
-            self.values = Calc.Ellipse(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
+            self.values = Calc.Ellipse(self.dimensions["a"],self.dimensions["b"])
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
-            vissza, t = self.get_entry(2)
-            if None in vissza:
+            self.dimensions["a"], self.dimensions["b"] = self.get_entry(2)
+            if self.dimensions["a"] is None or self.dimensions["b"] is None:
                 return -1
-            self.values = Calc.IsoscelesTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
+            self.values = Calc.IsoscelesTriangle(self.dimensions["a"],self.dimensions["b"])
             self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
+        # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
@@ -244,24 +226,6 @@ LIGHT_THEME = {
         'draw_secondary': 'grey'
         }
 
-# VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
-DARK_THEME = {
-        'main_color': '#2C394B',
-        'secondary_color': '#082032',
-        'text_color': '#FF4C29',
-        'entry_color': '#334756',
-        'draw_main': '#FF4C29',
-        'draw_secondary': 'grey'
-        }
-LIGHT_THEME = {
-        'main_color': '#FFFFFF',
-        'secondary_color': '#999999',
-        'text_color': '#000000',
-        'entry_color': '#FFFFFF',
-        'draw_main': 'black',
-        'draw_secondary': '#000000'
-        }
-
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     # Load settings from JSON file
@@ -270,7 +234,6 @@ if __name__ == "__main__":
             settings = json.load(f)
     except:
         print("404 app_settings.json not found")
-<<<<<<< HEAD
         settings={'theme':'dark', 'default_unit':'mm'}
     # master = starting_window()
     # master.mainloop()
@@ -278,12 +241,3 @@ if __name__ == "__main__":
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
         json.dump({'theme':root.theme, 'default_unit':root.unit}, json_file)
-=======
-        settings={'theme':'dark', 'default_unit':'mm', 'angle_unit':'rad'}
-    master = starting_window()
-    master.mainloop()
-    root = main_window()
-    root.mainloop()
-    with open('app_settings.json', 'w') as json_file:
-        json.dump({'theme':root.theme, 'default_unit':root.unit, 'angle_unit':root.angle_unit}, json_file)
->>>>>>> main

@@ -38,15 +38,10 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         rect_y_th = [y/2-0.1, -y/2+0.1, -y/2+0.1, y/2-0.1, y/2-0.1]
         
         ax.plot(rect_x, rect_y, colors["draw_main"], lw=2)
-<<<<<<< HEAD
         ax.fill(rect_x,rect_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(rect_x_th, rect_y_th, colors["draw_main"], lw=2)
             ax.fill(rect_x_th,rect_y_th,color=colors["main_color"])
-=======
-        if thickness_on == True:
-            ax.plot(rect_x_th, rect_y_th, colors["draw_main"], lw=2)
->>>>>>> main
         coordinate_displacement = 0
     elif shape == "Ellipse":
         x, y = set_dimensions(a, b)
@@ -58,15 +53,10 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         ell_y_th = (y/2-0.1)*np.sin(t)
 
         ax.plot(ell_x, ell_y, colors["draw_main"], lw=2)
-<<<<<<< HEAD
         ax.fill(ell_x,ell_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(ell_x_th, ell_y_th, colors["draw_main"], lw=2)
             ax.fill(ell_x_th,ell_y_th,color=colors["main_color"])
-=======
-        if thickness_on == True:
-            ax.plot(ell_x_th, ell_y_th, colors["draw_main"], lw=2)
->>>>>>> main
         coordinate_displacement = 0
     elif shape == "Circle":
         t = np.linspace(0, 2*np.pi, 100)
@@ -80,15 +70,10 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         circ = True
 
         ax.plot(circ_x, circ_y, colors["draw_main"], lw=2)
-<<<<<<< HEAD
         ax.fill(circ_x,circ_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(circ_x_th, circ_y_th, colors["draw_main"], lw=2)
             ax.fill(circ_x_th,circ_y_th,color=colors["main_color"])
-=======
-        if thickness_on == True:
-            ax.plot(circ_x_th, circ_y_th, colors["draw_main"], lw=2)
->>>>>>> main
         coordinate_displacement = 0
     elif shape == "Isosceles_triangle":
         x, y = set_dimensions(a, b)
@@ -99,15 +84,10 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         tri_y_th = [-y/3+0.075, -y/3+0.075, y/3*2-0.1, -y/3+0.075]
 
         ax.plot(tri_x, tri_y, colors["draw_main"], lw=2)
-<<<<<<< HEAD
         ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
             ax.fill(tri_x_th,tri_y_th,color=colors["main_color"])
-=======
-        if thickness_on == True:
-            ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
->>>>>>> main
         coordinate_displacement = y/6
     elif shape == None:
         coordinate_on == False
@@ -143,11 +123,7 @@ def set_dimensions(a, b):
     return x, y
 
 def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
-<<<<<<< HEAD
     transparency = 1
-=======
-    transparency = 0.5
->>>>>>> main
     color = colors['draw_secondary']
     hw = 0.015*x*y
     hl = 2*hw
@@ -205,11 +181,7 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
             alpha=transparency)
 def coordinate_system(x, y, ax, e, colors):
     color = colors['draw_secondary']
-<<<<<<< HEAD
     transparency = 1
-=======
-    transparency = 0.5
->>>>>>> main
     hw = 0.015*x*y
     hl = 2*hw
     ax.arrow(

@@ -165,8 +165,6 @@ class SideMenu(tk.Frame):
             i["unit"].grid_forget()
         for i in self.indicators:
             i.config(text="")
-            #i.grid_forget()
-        for i in self.checkbox_indicators:
             i.grid_forget()
         for i in self.checkbox_indicators:
             i.grid_forget()
