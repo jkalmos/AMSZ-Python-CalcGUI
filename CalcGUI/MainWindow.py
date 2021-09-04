@@ -235,8 +235,8 @@ if __name__ == "__main__":
     except:
         print("404 app_settings.json not found")
         settings={'theme':'dark', 'default_unit':'mm'}
-    # master = starting_window()
-    # master.mainloop()
+    master = starting_window()
+    master.mainloop()
     root = main_window()
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
