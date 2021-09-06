@@ -9,7 +9,6 @@ class SideMenu(tk.Frame):
 
 # DEFINE SIDEMENU OBJECTS --------------------------------------------------------------------------------------------------------------
         self.canvas = tk.Canvas(self, bg=self["background"], highlightthickness=0)
-        self.canvas.create_text(50,10, anchor="nw", text="Click to lift button1")
         self.canvas.grid(row=0, column=0, sticky="nsew")
 
         # place holder label

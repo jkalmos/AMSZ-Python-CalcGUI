@@ -25,8 +25,6 @@ class starting_window(tk.Tk):
         self.after(4000, lambda: self.destroy())
 
 class main_window(tk.Tk):
-    # def onExit(self):
-    #     self.quit()
     def __init__(self):
         super().__init__()
 
@@ -79,14 +77,6 @@ class main_window(tk.Tk):
         # Menubar
         self.menubar = tk.Menu(self)
         self.config(menu=self.menubar)
-
-        # # Add cross section to menubar
-        # cross_section = tk.Menu(self, menubar, tearoff=0)
-        # cross_section.add_command(label="Téglalap", command = lambda: self.choose_object("Rectangle"))
-        # cross_section.add_command(label="Kör", command = lambda: self.choose_object("Circle"))
-        # cross_section.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
-        # cross_section.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
-        # menubar.add_cascade(label="Keresztmetszet", menu = cross_section)
 
         # Add settings to menubar
         settings_menu = tk.Menu(self, self.menubar, tearoff=0)
@@ -247,10 +237,11 @@ class main_window(tk.Tk):
             self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
+        # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
-
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
         'main_color': '#2C394B',
@@ -258,15 +249,17 @@ DARK_THEME = {
         'text_color': '#FF4C29',
         'entry_color': '#334756',
         'draw_main': '#FF4C29',
-        'draw_secondary': 'grey'
+        'draw_secondary': 'black',
+        'draw_tertiary': 'grey'
         }
 LIGHT_THEME = {
         'main_color': '#FFFFFF',
         'secondary_color': '#999999',
         'text_color': '#000000',
         'entry_color': '#FFFFFF',
-        'draw_main': 'black',
-        'draw_secondary': '#000000'
+        'draw_main': '#1034A6',
+        'draw_secondary': 'black',
+        'draw_tertiary': 'grey'
         }
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
