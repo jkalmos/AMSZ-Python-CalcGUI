@@ -187,7 +187,7 @@ class main_window(tk.Tk):
                 i+=1
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
-                self.sm.controls[i]["entry"].config({"background": "#475C6F"})
+                self.sm.controls[i]["entry"].config({"background": self.colors['secondary_color']})
             except:
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
@@ -195,7 +195,7 @@ class main_window(tk.Tk):
         if self.thickness_on.get():
             try:
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                self.sm.controls[-1]["entry"].config({"background": self.colors['secondary_color']})
             except:
                 print("Hiba")
                 self.sm.controls[-1]["entry"].config({"background": "#eb4034"})

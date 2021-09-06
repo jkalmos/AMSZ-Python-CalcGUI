@@ -10,7 +10,6 @@ import numpy as np
 import math
 def transform(func):
     def inner(*args, **kwargs):
-        print(args,kwargs)
         if len(args) >3:
             ans = func(*args[:-3])
             if not kwargs['rad']: #conversion if the default unit isnt radian

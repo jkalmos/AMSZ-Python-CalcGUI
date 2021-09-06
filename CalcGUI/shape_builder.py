@@ -23,13 +23,13 @@ class shapeBuilder(tk.Canvas):
         self.l_unit1 = tk.Label(self.sb_sm,text="mm", bg=self.sb_sm["background"], fg='white')
         self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg='white')
         #self.l_unit2.pack()
-        self.button = tk.Button(self.sb_sm, text="calculate", command=self.calculate)
+        self.button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
         #self.button.pack()
         self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         #self.e1.pack()
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         #self.e2.pack()
-        self.button2 = tk.Button(self.sb_sm, text="give value", command=self.overwrite)
+        self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         #self.button2.pack()
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap) 
@@ -164,8 +164,20 @@ class shapeBuilder(tk.Canvas):
             Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*((pos[3]+pos[1])/2-YCENTER)**2
         self.label.config(text=f"A: {A}\nIx: {Ix}\nIy: {Iy}")
     def overwrite(self):
-        self.width = float(self.e1.get().replace(',','.'))
-        self.heigth = float(self.e2.get().replace(',','.'))
+        try:
+            self.width = float(self.e1.get().replace(',','.'))
+            self.e1.config({"background": self.root.colors['secondary_color']})
+        except:
+            print("Hiba, az egyik mező nem olvashó be")
+            self.e1.config({"background": "#eb4034"})
+            return -1
+        try:
+            self.heigth = float(self.e2.get().replace(',','.'))
+            self.e2.config({"background": self.root.colors['secondary_color']})
+        except:
+            print("Hiba, az egyik mező nem olvashó be")
+            self.e2.config({"background": "#eb4034"})
+            return -1
         self.coords(self.alap_negyzet.canvas_repr, 10,10,10+self.width,10+self.heigth)
 class Rectangle():
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
