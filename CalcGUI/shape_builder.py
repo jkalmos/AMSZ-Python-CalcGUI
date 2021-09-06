@@ -8,9 +8,8 @@ STICKY = True
 XCENTER = 400
 YCENTER = 300
 #TODO: Overleaping warning with different size rectangles
-#TODO: Sticking with different points
 #TODO: scaling
-#TODO: Coordinate system fix + sicking
+
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sm_sm):
         super().__init__(root, bd=0, bg=root.colors["main_color"],highlightthickness=0)
@@ -180,6 +179,7 @@ class Rectangle():
         self.heigth = y2-y1
         self.area = self.width*self.heigth
         self.center=((x1-x2)/2, (y1-y2)/2)
+        self.overlapping_with = []
     def refresh(self,x1,y1,x2,y2):
         self.x1 = x1
         self.x2 = x2
@@ -195,12 +195,33 @@ class Rectangle():
         for i in self.canvas.rectangles:
             if self.x1 <i.x2 and self.x1> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top left corner is in the rectangle
                 self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-            if self.x1 <i.x2 and self.x1> i.x1 and self.y2 > i.y1 and self.y2 < i.y2: #bottom left corner is in the rectangle
+                self.overlapping_with.append(i)
+                i.overlapping_with.append(self)
+                self.canvas.itemconfig(i.canvas_repr, fill='red')
+            elif self.x1 <i.x2 and self.x1> i.x1 and self.y2 > i.y1 and self.y2 < i.y2: #bottom left corner is in the rectangle
                 self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-            if self.x2 <i.x2 and self.x2> i.x1 and self.y2 > i.y1 and self.y2 < i.y2: #bottom right corner is in the rectangle
+                self.overlapping_with.append(i)
+                i.overlapping_with.append(self)
+                self.canvas.itemconfig(i.canvas_repr, fill='red')
+            elif self.x2 <i.x2 and self.x2> i.x1 and self.y2 > i.y1 and self.y2 < i.y2: #bottom right corner is in the rectangle
                 self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-            if self.x2 <i.x2 and self.x2> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top right corner is in the rectangle
+                self.overlapping_with.append(i)
+                i.overlapping_with.append(self)
+                self.canvas.itemconfig(i.canvas_repr, fill='red')
+            elif self.x2 <i.x2 and self.x2> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top right corner is in the rectangle
                 self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
+                self.overlapping_with.append(i)
+                i.overlapping_with.append(self)
+                self.canvas.itemconfig(i.canvas_repr, fill='red')
+            elif i in self.overlapping_with:
+                self.overlapping_with.remove(i)
+                i.overlapping_with.remove(self)
+                if len(i.overlapping_with)==0:
+                    i.canvas.itemconfig(i.canvas_repr, fill='blue')
+        if len(self.overlapping_with) == 0:
+            self.canvas.itemconfig(self.canvas_repr, fill='blue')
+
+            
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
         super().__init__(root,width=30, bg=root.colors['secondary_color'])
