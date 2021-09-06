@@ -3,7 +3,7 @@ from tkinter.constants import CENTER
 
 from numpy.lib.arraypad import pad
 WIDTH = 30
-EPSILON = 20
+EPSILON = 10
 STICKY = True
 XCENTER = 400
 YCENTER = 300
@@ -128,7 +128,23 @@ class shapeBuilder(tk.Canvas):
                     self.current.refresh(i_pos[0]-self.current.width,i_pos[1],i_pos[0],i_pos[1]+self.current.heigth)
                     break
             else: #sicking to the coordinate system
-                pass
+                if abs(pos[0]-XCENTER) < EPSILON: #left side sticks to the coordinatsystem
+                    self.current.refresh(XCENTER,pos[1],XCENTER+self.current.width,pos[3])
+                    pos = self.coords(self.current.canvas_repr)
+                elif abs(pos[2]-XCENTER) < EPSILON: #right side sticks to the coordinatsystem
+                    self.current.refresh(XCENTER-self.current.width,pos[1],XCENTER,pos[3])
+                    pos = self.coords(self.current.canvas_repr)
+                if abs(pos[1]-YCENTER) < EPSILON: #top side sticks to the coordinatsystem
+                    self.current.refresh(pos[0],YCENTER,pos[2],YCENTER+self.current.heigth)
+                    pos = self.coords(self.current.canvas_repr)
+                elif abs(pos[3]-YCENTER) < EPSILON: #bottomí side sticks to the coordinatsystem
+                    self.current.refresh(pos[0],YCENTER-self.current.heigth,pos[2],YCENTER)
+                    pos = self.coords(self.current.canvas_repr)
+                #* Sticking with the center of the rectangle to the coordinate system
+                if abs(self.current.center[0]-XCENTER)<EPSILON:
+                    self.current.refresh(XCENTER-self.current.width/2,self.current.y1,XCENTER+self.current.width/2,self.current.y2)
+                if abs(self.current.center[1]-YCENTER)<EPSILON:
+                    self.current.refresh(self.current.x1,YCENTER-self.current.heigth/2,self.current.x2,YCENTER+self.current.heigth/2)
         if self.isMoving:
             self.itemconfig(self.current.canvas_repr, fill='blue')
             self.current.is_overleaping()
@@ -172,7 +188,7 @@ class Rectangle():
         self.width = self.x2-self.x1
         self.heigth = self.y2-self.y1
         self.area = self.width*self.heigth
-        self.center=((self.x1-self.x2)/2, (self.y1-self.y2)/2)
+        self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overleaping(self):
         #! with different-size rectangles doesm't works properly
