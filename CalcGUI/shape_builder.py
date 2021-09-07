@@ -1,15 +1,21 @@
 import tkinter as tk
-from tkinter.constants import CENTER
+from math import cos, sin, sqrt, atan, pi
+from tkinter.constants import TRUE
 
-from numpy.lib.arraypad import pad
 WIDTH = 30
 EPSILON = 10
 STICKY = True
 XCENTER = 400
 YCENTER = 300
 SCALE = 10
+SHOW_HAUPACHSEN = TRUE
 #TODO: Overleaping warning with different size rectangles
-#TODO: scaling
+#TODO: relative sticking
+#TODO: window resize
+#TODO: realative scaling
+#TODO: settings
+#TODO: colors
+#TODO: haupachsen arrow + alfa==0
 
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sm_sm):
@@ -27,7 +33,7 @@ class shapeBuilder(tk.Canvas):
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
-        self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap) 
+        self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
         self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
         self.x_label = self.create_text(2*XCENTER-5,YCENTER+ 20,text="X") # X lavel
         self.y_axis = self.create_line(XCENTER,10,XCENTER,YCENTER*2, arrow=tk.FIRST) #Drawing Y-axis
@@ -36,6 +42,8 @@ class shapeBuilder(tk.Canvas):
         self.isMoving=False
         self.width = WIDTH
         self.heigth = WIDTH
+        self.width_label = self.create_text(20+self.width,10+ self.heigth/2,text=str(self.width/10))
+        self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
         self.sticky = tk.BooleanVar(value=True)
         self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg='white', selectcolor='grey')
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
@@ -94,7 +102,7 @@ class shapeBuilder(tk.Canvas):
             #self.coords(self.current.canvas_repr,e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
-        self.label.config(text=f"x: {e.x-XCENTER} y: {YCENTER-e.y}")
+        self.label.config(text=f"x: {(e.x-XCENTER)/SCALE} y: {(YCENTER-e.y)/SCALE}")
     def release(self,e):
         #choosing object
         if self.sticky.get() and self.current:
@@ -148,14 +156,17 @@ class shapeBuilder(tk.Canvas):
     def calculate(self):
         Ix = 0
         Iy = 0
+        Ixy = 0
         A = 0
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
             A_current = (pos[2]-pos[0]) * (pos[3]-pos[1])
             A += A_current
-            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*((pos[2]+pos[0])/2-XCENTER)**2
-            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*((pos[3]+pos[1])/2-YCENTER)**2
-        self.label.config(text=f"A: {A/100} mm\nIx: {Ix/10000}\nIy mm: {Iy/10000} mm")
+            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)**2 #!check
+            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*(pos[1]+(pos[3]-pos[1])/2-YCENTER)**2 #!check
+            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)*(YCENTER-pos[1]-(pos[3]-pos[1])/2) #!ROSSZ
+        self.label.config(text=f"A: {A/SCALE**2} mm\nIx: {Ix/SCALE**4} mm\nIy: {Iy/SCALE**4} mm\nIxy: {Ixy/SCALE**4}")
+        print(self.hauptachsen(Ix/SCALE**4,Iy/SCALE**4,Ixy/SCALE**4))
     def overwrite(self):
         try:
             self.width = float(self.e1.get().replace(',','.'))*10
@@ -172,6 +183,22 @@ class shapeBuilder(tk.Canvas):
             self.e2.config({"background": "#eb4034"})
             return -1
         self.coords(self.alap_negyzet.canvas_repr, 10,10,10+self.width,10+self.heigth)
+        self.coords(self.width_label,25+self.width,10+ self.heigth/2)
+        self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
+        self.itemconfig(self.height_label, text=str(self.width/10))
+        self.itemconfig(self.width_label,text=str(self.heigth/10))
+    def hauptachsen(self, Ix, Iy, Ixy):
+        I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
+        I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
+        if Ix != Iy and Ixy !=0:
+            alfa = atan((Ix-Iy)/Ixy)
+        else:
+            alfa = 0
+        if SHOW_HAUPACHSEN and alfa != 0:
+            self.h1 = self.create_line(XCENTER-300*cos(alfa),YCENTER-300*sin(alfa),XCENTER+300*cos(alfa),YCENTER+300*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'])
+            self.h2 = self.create_line(XCENTER-300*cos(alfa+pi/2),YCENTER-300*sin(alfa+pi/2),XCENTER+300*cos(alfa+pi/2),YCENTER+300*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'])
+        return I1, I2, alfa
+
 class Rectangle():
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
         self.canvas = canvas
