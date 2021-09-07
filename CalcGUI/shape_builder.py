@@ -7,6 +7,7 @@ EPSILON = 10
 STICKY = True
 XCENTER = 400
 YCENTER = 300
+SCALE = 10
 #TODO: Overleaping warning with different size rectangles
 #TODO: scaling
 
@@ -14,23 +15,17 @@ class shapeBuilder(tk.Canvas):
     def __init__(self, root, sm_sm):
         super().__init__(root, bd=0, bg=root.colors["main_color"],highlightthickness=0)
         self.root=root
-        #self.root.geometry("1000x600")
-        self.sb_sm = sm_sm
+        self.sb_sm = sm_sm #own side menu
         self.rectangles = []
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
         self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg='white')
         self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg='white')
         self.l_unit1 = tk.Label(self.sb_sm,text="mm", bg=self.sb_sm["background"], fg='white')
         self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg='white')
-        #self.l_unit2.pack()
         self.button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
-        #self.button.pack()
         self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
-        #self.e1.pack()
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
-        #self.e2.pack()
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
-        #self.button2.pack()
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap) 
         self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
@@ -41,16 +36,14 @@ class shapeBuilder(tk.Canvas):
         self.isMoving=False
         self.width = WIDTH
         self.heigth = WIDTH
-        self.sticky = tk.BooleanVar()
+        self.sticky = tk.BooleanVar(value=True)
         self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg='white', selectcolor='grey')
-        #self.is_sticky.pack()
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
         self.bind('<ButtonRelease-1>',self.release) #when you relase the left mose button
         self.popup_menu = tk.Menu(self, tearoff=0) #right click menu
         self.popup_menu.add_command(label="Delete",command=self.delete_rectangle)
         self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
         self.bind("<Button-3>", self.popup) # right-click event
-        #self.label.pack()
         #PAcking objects
         self.l_width.grid(row=1,column=0)
         self.e1.grid(row=1,column=1,columnspan=3)
@@ -162,17 +155,17 @@ class shapeBuilder(tk.Canvas):
             A += A_current
             Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*((pos[2]+pos[0])/2-XCENTER)**2
             Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*((pos[3]+pos[1])/2-YCENTER)**2
-        self.label.config(text=f"A: {A}\nIx: {Ix}\nIy: {Iy}")
+        self.label.config(text=f"A: {A/100} mm\nIx: {Ix/10000}\nIy mm: {Iy/10000} mm")
     def overwrite(self):
         try:
-            self.width = float(self.e1.get().replace(',','.'))
+            self.width = float(self.e1.get().replace(',','.'))*10
             self.e1.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
             self.e1.config({"background": "#eb4034"})
             return -1
         try:
-            self.heigth = float(self.e2.get().replace(',','.'))
+            self.heigth = float(self.e2.get().replace(',','.'))*10
             self.e2.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
