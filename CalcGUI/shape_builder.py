@@ -7,8 +7,8 @@ EPSILON = 10
 STICKY = True
 XCENTER = 400
 YCENTER = 300
-SCALE = 10
 SHOW_HAUPACHSEN = TRUE
+
 #TODO: Overleaping warning with different size rectangles
 #TODO: relative sticking
 #TODO: window resize
@@ -22,6 +22,7 @@ class shapeBuilder(tk.Canvas):
         super().__init__(root, bd=0, bg=root.colors["main_color"],highlightthickness=0)
         self.root=root
         self.sb_sm = sm_sm #own side menu
+        self.scale = 10 #scale between drawing and given value
         self.rectangles = []
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
         self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg='white')
@@ -102,8 +103,13 @@ class shapeBuilder(tk.Canvas):
             #self.coords(self.current.canvas_repr,e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
-        self.label.config(text=f"x: {(e.x-XCENTER)/SCALE} y: {(YCENTER-e.y)/SCALE}")
+        self.label.config(text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
     def release(self,e):
+        try:
+            self.delete(self.h1)
+            self.delete(self.h2)
+        except:
+            pass
         #choosing object
         if self.sticky.get() and self.current:
             pos = self.coords(self.current.canvas_repr)
@@ -145,7 +151,7 @@ class shapeBuilder(tk.Canvas):
                     self.current.refresh(XCENTER-self.current.width/2,self.current.y1,XCENTER+self.current.width/2,self.current.y2)
                 if abs(self.current.center[1]-YCENTER)<EPSILON:
                     self.current.refresh(self.current.x1,YCENTER-self.current.heigth/2,self.current.x2,YCENTER+self.current.heigth/2)
-        if self.isMoving:
+        if self.isMoving and self.current is not None:
             self.itemconfig(self.current.canvas_repr, fill='blue')
             self.current.is_overleaping()
             self.rectangles.append(self.current)
@@ -162,11 +168,11 @@ class shapeBuilder(tk.Canvas):
             pos = self.coords(i.canvas_repr)
             A_current = (pos[2]-pos[0]) * (pos[3]-pos[1])
             A += A_current
-            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)**2 #!check
-            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*(pos[1]+(pos[3]-pos[1])/2-YCENTER)**2 #!check
-            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)*(YCENTER-pos[1]-(pos[3]-pos[1])/2) #!ROSSZ
-        self.label.config(text=f"A: {A/SCALE**2} mm\nIx: {Ix/SCALE**4} mm\nIy: {Iy/SCALE**4} mm\nIxy: {Ixy/SCALE**4}")
-        print(self.hauptachsen(Ix/SCALE**4,Iy/SCALE**4,Ixy/SCALE**4))
+            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)**2
+            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*(pos[1]+(pos[3]-pos[1])/2-YCENTER)**2 
+            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)*(YCENTER-pos[1]-(pos[3]-pos[1])/2) 
+        self.label.config(text=f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}")
+        print(self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4))
     def overwrite(self):
         try:
             self.width = float(self.e1.get().replace(',','.'))*10
@@ -194,10 +200,20 @@ class shapeBuilder(tk.Canvas):
             alfa = atan((Ix-Iy)/Ixy)
         else:
             alfa = 0
-        if SHOW_HAUPACHSEN and alfa != 0:
-            self.h1 = self.create_line(XCENTER-300*cos(alfa),YCENTER-300*sin(alfa),XCENTER+300*cos(alfa),YCENTER+300*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'])
-            self.h2 = self.create_line(XCENTER-300*cos(alfa+pi/2),YCENTER-300*sin(alfa+pi/2),XCENTER+300*cos(alfa+pi/2),YCENTER+300*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'])
+        if SHOW_HAUPACHSEN:
+            self.h1 = self.create_line(XCENTER-250*cos(alfa),YCENTER-250*sin(alfa),XCENTER+250*cos(alfa),YCENTER+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'])
+            self.h2 = self.create_line(XCENTER-250*cos(alfa+pi/2),YCENTER-250*sin(alfa+pi/2),XCENTER+250*cos(alfa+pi/2),YCENTER+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'])
+            #self.lower(self.h1)
+            #self.lower(self.h2)
         return I1, I2, alfa
+    def rescale(self,scale):
+        self.scale *= scale
+        print(self.scale)
+        print(f"rescale {len(self.rectangles)=}")
+        for i in self.rectangles:
+            i.refresh(XCENTER-(XCENTER-i.x1)*scale, YCENTER-(YCENTER-i.y1)*scale, XCENTER-(XCENTER - i.x2)*scale, YCENTER-(YCENTER-i.y2)*scale)
+        print(f"after rescale{len(self.rectangles)=}")
+        
 
 class Rectangle():
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
@@ -258,10 +274,3 @@ class sb_side_menu(tk.Frame):
     def __init__(self,root):
         super().__init__(root,width=30, bg=root.colors['secondary_color'])
         self.root = root
-
-if __name__=="__main__":
-    app = tk.Tk()
-    app.minsize(width=200, height=200)
-    a = shapeBuilder(app)
-    a.pack(expand=tk.YES, fill=tk.BOTH)
-    app.mainloop()
