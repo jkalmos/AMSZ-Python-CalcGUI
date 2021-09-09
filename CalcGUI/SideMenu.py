@@ -155,7 +155,7 @@ class SideMenu(tk.Frame):
             i.config({"background": color["secondary_color"]})
 
 
-# USEFUL FUNCTIONS --------------------------------------------------------------------------------------
+## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
     def clear(self):
         for i in self.controls:
             i["name"].grid_forget()

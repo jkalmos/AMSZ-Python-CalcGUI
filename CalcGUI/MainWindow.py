@@ -5,7 +5,9 @@ import json
 from SideMenu import SideMenu
 from tkvideo import tkvideo
 from PlotFunctions import plot
+import shape_builder
 
+## ANIMATION WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class starting_window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -23,6 +25,7 @@ class starting_window(tk.Tk):
         player.play()
         self.after(4000, lambda: self.destroy())
 
+## MAIN WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class main_window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -35,7 +38,7 @@ class main_window(tk.Tk):
         self.coordinate_on.set(True)
         self.dimension_lines_on.set(True)
         self.plotted = tk.BooleanVar(False)
-        
+        self.shape_builder_mode = False
         # Default unit, default theme
         self.unit = settings["default_unit"]#"mm"
         self.angle_unit = settings["angle_unit"] #! to settings
@@ -57,16 +60,6 @@ class main_window(tk.Tk):
         # Canvas for drawing
         self.canvas = None
 
-        # # Toolbar
-        # self.toolbar = tk.Frame(self, bd=1, relief=tk.RAISED, bg=self.colors['main_color'])
-        # self.img = Image.open("calc_button.png")
-        # self.eimg = ImageTk.PhotoImage(self.img)
-        # self.exitButton = tk.Button(self.toolbar, image=self.eimg, relief=tk.FLAT,
-        #     command=self.quit)
-        # self.exitButton.image = self.eimg
-        # self.exitButton.pack(side=tk.LEFT, padx=2, pady=2)
-        # self.toolbar.pack(side=tk.TOP, fill=tk.X)
-
         # Side Menu
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, fill=tk.Y)
@@ -74,12 +67,12 @@ class main_window(tk.Tk):
         self.bind('<Return>', self.calculate)
 
         # Menubar
-        menubar = tk.Menu(self)
-        self.config(menu=menubar)
+        self.menubar = tk.Menu(self)
+        self.config(menu=self.menubar)
 
         # Add settings to menubar
-        settings_menu = tk.Menu(self, menubar, tearoff=0)
-        menubar.add_cascade(label="Beállítások", menu = settings_menu)
+        settings_menu = tk.Menu(self, self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
 
         # Add units menu to settings menu
         units_menu = tk.Menu(self, settings_menu, tearoff=0)
@@ -96,9 +89,12 @@ class main_window(tk.Tk):
         themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
         settings_menu.add_cascade(label="Téma", menu=themes_menu)
 
+        #Changing to shape builder
+        self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
         # Add exit button to menubar
-        menubar.add_command(label="Kilépés", command=self.destroy)
-    ## USEFUL FUNCTIONS -----------------------------------------------------------
+        self.menubar.add_command(label="Kilépés", command=self.destroy)
+        
+    ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
@@ -125,6 +121,30 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
+
+    def build_shape(self):
+        if not self.shape_builder_mode:
+            print("opening sb")
+            self.shape_builder_mode = True
+            self.sm.pack_forget()
+            self.sb_sm = shape_builder.sb_side_menu(self)
+            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
+            self.menubar.entryconfig(2,label="Alap alakzatok")
+            self.menubar.entryconfig(1, state="disabled")
+            if self.plotted==True:
+                self.canvas._tkcanvas.destroy()
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH)
+        else:
+            print("closing sb")
+            self.sb.pack_forget()
+            self.sb_sm.pack_forget()
+            self.sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.plotted = False
+            self.shape_builder_mode = False
+            self.menubar.entryconfig(2,label="Saját alakzat")
+            self.menubar.entryconfig(1, state="normal")
+
 
     def choose_object(self, shape = None):
         self.dimensions = {
@@ -160,7 +180,7 @@ class main_window(tk.Tk):
                 i+=1
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
-                self.sm.controls[i]["entry"].config({"background": "#475C6F"})
+                self.sm.controls[i]["entry"].config({"background": self.colors['secondary_color']})
             except:
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
@@ -168,7 +188,7 @@ class main_window(tk.Tk):
         if self.thickness_on.get():
             try:
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                self.sm.controls[-1]["entry"].config({"background": self.colors['secondary_color']})
             except:
                 print("Hiba")
                 self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
