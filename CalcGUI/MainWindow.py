@@ -52,6 +52,7 @@ class main_window(tk.Tk):
 
         # Window 
         self.title("Statika számító")
+        # self.state("zoomed")          # Fullscreen
         self.geometry("1000x600")
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
@@ -264,8 +265,8 @@ if __name__ == "__main__":
     except:
         print("404 app_settings.json not found")
         settings={'theme':'dark', 'default_unit':'mm', 'angle_unit':'rad'}
-    master = starting_window()
-    master.mainloop()
+    # master = starting_window()
+    # master.mainloop()
     root = main_window()
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
