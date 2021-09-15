@@ -50,42 +50,43 @@ class SideMenu(tk.Frame):
         ellipse_open = tk.BooleanVar(False)
         isosceles_open = tk.BooleanVar(False)
         def combo_clear():
-            if default_open.get() == True:
-                self.combo_default.grid_forget()
-                self.combo_rectangle.place_forget()
-                self.combo_circle.place_forget()
-                self.combo_ellipse.place_forget()
-                self.combo_isosceles.place_forget()
-                default_open.set(False)
-                combo_open.set(False)
-            elif rectangle_open.get() == True:
-                self.combo_rectangle.grid_forget()
-                self.combo_circle.place_forget()
-                self.combo_ellipse.place_forget()
-                self.combo_isosceles.place_forget()
-                rectangle_open.set(False)
-                combo_open.set(False)
-            elif circle_open.get() == True:
-                self.combo_rectangle.place_forget()
-                self.combo_circle.grid_forget()
-                self.combo_ellipse.place_forget()
-                self.combo_isosceles.place_forget()
-                circle_open.set(False)
-                combo_open.set(False)
-            elif ellipse_open.get() == True:
-                self.combo_rectangle.place_forget()
-                self.combo_circle.place_forget()
-                self.combo_ellipse.grid_forget()
-                self.combo_isosceles.place_forget()
-                ellipse_open.set(False)
-                combo_open.set(False)
-            elif isosceles_open.get() == True:
-                self.combo_rectangle.place_forget()
-                self.combo_circle.place_forget()
-                self.combo_ellipse.place_forget()
-                self.combo_isosceles.grid_forget()
-                isosceles_open.set(False)
-                combo_open.set(False)
+            if combo_open.get() == True:
+                if default_open.get() == True:
+                    self.combo_default.grid_forget()
+                    self.combo_rectangle.place_forget()
+                    self.combo_circle.place_forget()
+                    self.combo_ellipse.place_forget()
+                    self.combo_isosceles.place_forget()
+                    default_open.set(False)
+                    combo_open.set(False)
+                elif rectangle_open.get() == True:
+                    self.combo_rectangle.grid_forget()
+                    self.combo_circle.place_forget()
+                    self.combo_ellipse.place_forget()
+                    self.combo_isosceles.place_forget()
+                    rectangle_open.set(False)
+                    combo_open.set(False)
+                elif circle_open.get() == True:
+                    self.combo_rectangle.place_forget()
+                    self.combo_circle.grid_forget()
+                    self.combo_ellipse.place_forget()
+                    self.combo_isosceles.place_forget()
+                    circle_open.set(False)
+                    combo_open.set(False)
+                elif ellipse_open.get() == True:
+                    self.combo_rectangle.place_forget()
+                    self.combo_circle.place_forget()
+                    self.combo_ellipse.grid_forget()
+                    self.combo_isosceles.place_forget()
+                    ellipse_open.set(False)
+                    combo_open.set(False)
+                elif isosceles_open.get() == True:
+                    self.combo_rectangle.place_forget()
+                    self.combo_circle.place_forget()
+                    self.combo_ellipse.place_forget()
+                    self.combo_isosceles.grid_forget()
+                    isosceles_open.set(False)
+                    combo_open.set(False)
 
         def rectangle_click():
             if combo_open.get() == False:
@@ -192,6 +193,8 @@ class SideMenu(tk.Frame):
         
         # self.canvas.tag_bind(self.combo_default, '<Button>', print('clicked'))
         # self.canvas.delete(self.combo_default))
+
+        self.root.bind("<Button-1>", func=combo_clear())
 
         # # combobox
         # self.n = tk.StringVar()
