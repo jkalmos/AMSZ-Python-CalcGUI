@@ -1,6 +1,6 @@
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
-from tkinter.constants import TRUE
+from tkinter.constants import ANCHOR, TRUE
 
 WIDTH = 30
 EPSILON = 10
@@ -35,6 +35,7 @@ class shapeBuilder(tk.Canvas):
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         self.plus = tk.Button(self, text="+", command=lambda: self.rescale(2))
         self.minus = tk.Button(self, text="-", command=lambda: self.rescale(0.5))
+        self.cls = tk.Button(self.sb_sm, text="Minden törlése", command=self.clear_all)
         button1_window = self.create_window(self.root.winfo_width()-300, self.root.winfo_height()-50, window=self.plus)
         button2_window = self.create_window(self.root.winfo_width()-270, self.root.winfo_height()-50, window=self.minus)
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
@@ -68,6 +69,7 @@ class shapeBuilder(tk.Canvas):
         self.button.grid(row=4,column=1)
         self.button2.grid(row=4, column=3)
         self.label.grid(row=5,columnspan=5, pady= 50)
+        self.cls.grid(row=6)
         #self.plus.grid(row=6,column=1)
         #self.minus.grid(row=6, column=3)
     def popup(self, e): #right cklick menu shows up
@@ -208,7 +210,11 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         self.itemconfig(self.height_label, text=str(self.width/self.scale))
         self.itemconfig(self.width_label,text=str(self.heigth/self.scale))
-        
+    def clear_all(self):
+        self.rectangles = []
+        self.delete("rect") 
+        self.delete("hauptachse")
+        self.label.config(text="")   
     def hauptachsen(self, Ix, Iy, Ixy):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
@@ -217,8 +223,8 @@ class shapeBuilder(tk.Canvas):
         else:
             alfa = 0
         if SHOW_HAUPACHSEN:
-            self.h1 = self.create_line(XCENTER-250*cos(alfa),YCENTER-250*sin(alfa),XCENTER+250*cos(alfa),YCENTER+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'])
-            self.h2 = self.create_line(XCENTER-250*cos(alfa+pi/2),YCENTER-250*sin(alfa+pi/2),XCENTER+250*cos(alfa+pi/2),YCENTER+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'])
+            self.h1 = self.create_line(XCENTER-250*cos(alfa),YCENTER-250*sin(alfa),XCENTER+250*cos(alfa),YCENTER+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h2 = self.create_line(XCENTER-250*cos(alfa+pi/2),YCENTER-250*sin(alfa+pi/2),XCENTER+250*cos(alfa+pi/2),YCENTER+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
             #self.lower(self.h1)
             #self.lower(self.h2)
         return I1, I2, alfa
