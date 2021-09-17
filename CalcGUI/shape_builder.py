@@ -184,14 +184,20 @@ class shapeBuilder(tk.Canvas):
         print(self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4))
     def overwrite(self):
         try:
-            self.width = float(self.e1.get().replace(',','.'))*self.scale
+            w=float(self.e1.get().replace(',','.'))*self.scale
+            if w <=0:
+                raise ValueError
+            self.width = w
             self.e1.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
             self.e1.config({"background": "#eb4034"})
             return -1
         try:
-            self.heigth = float(self.e2.get().replace(',','.'))*self.scale
+            h = float(self.e2.get().replace(',','.'))*self.scale
+            if h <=0:
+                raise ValueError
+            self.heigth = h
             self.e2.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
@@ -202,6 +208,7 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         self.itemconfig(self.height_label, text=str(self.width/self.scale))
         self.itemconfig(self.width_label,text=str(self.heigth/self.scale))
+        
     def hauptachsen(self, Ix, Iy, Ixy):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
@@ -217,7 +224,7 @@ class shapeBuilder(tk.Canvas):
         return I1, I2, alfa
     def rescale(self,scale):
         self.scale *= scale
-        self.alap_negyzet.refresh(10,10,10+self.alap_negyzet.width*scale,10+self.alap_negyzet.heigth*scale)
+        self.alap_negyzet.refresh(10,10,10+self.width*scale,10+self.heigth*scale)
         self.width *= scale
         self.heigth *= scale
         print(self.scale)
