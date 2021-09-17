@@ -18,10 +18,10 @@ SHOW_HAUPACHSEN = TRUE
 #TODO: haupachsen arrow + alfa==0
 
 class shapeBuilder(tk.Canvas):
-    def __init__(self, root, sm_sm):
+    def __init__(self, root, sb_sm):
         super().__init__(root, bd=0, bg=root.colors["main_color"],highlightthickness=0)
         self.root=root
-        self.sb_sm = sm_sm #own side menu
+        self.sb_sm = sb_sm #own side menu
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
@@ -33,6 +33,10 @@ class shapeBuilder(tk.Canvas):
         self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
+        self.plus = tk.Button(self, text="+", command=lambda: self.rescale(2))
+        self.minus = tk.Button(self, text="-", command=lambda: self.rescale(0.5))
+        button1_window = self.create_window(self.root.winfo_width()-300, self.root.winfo_height()-50, window=self.plus)
+        button2_window = self.create_window(self.root.winfo_width()-270, self.root.winfo_height()-50, window=self.minus)
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
         self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
@@ -64,6 +68,8 @@ class shapeBuilder(tk.Canvas):
         self.button.grid(row=4,column=1)
         self.button2.grid(row=4, column=3)
         self.label.grid(row=5,columnspan=5, pady= 50)
+        #self.plus.grid(row=6,column=1)
+        #self.minus.grid(row=6, column=3)
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
             for i in self.rectangles:
@@ -94,7 +100,7 @@ class shapeBuilder(tk.Canvas):
         else:
             pos = self.coords(self.alap_negyzet.canvas_repr)
             if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
-                self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue"))
+                self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current:
             return -1
@@ -153,8 +159,11 @@ class shapeBuilder(tk.Canvas):
                     self.current.refresh(self.current.x1,YCENTER-self.current.heigth/2,self.current.x2,YCENTER+self.current.heigth/2)
         if self.isMoving and self.current is not None:
             self.itemconfig(self.current.canvas_repr, fill='blue')
-            self.current.is_overleaping()
             self.rectangles.append(self.current)
+            for k in self.rectangles:
+                k.is_overlapping()
+            #self.current.is_overlapping()
+            
             
         self.isMoving = False
         self.current=None
@@ -175,14 +184,14 @@ class shapeBuilder(tk.Canvas):
         print(self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4))
     def overwrite(self):
         try:
-            self.width = float(self.e1.get().replace(',','.'))*10
+            self.width = float(self.e1.get().replace(',','.'))*self.scale
             self.e1.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
             self.e1.config({"background": "#eb4034"})
             return -1
         try:
-            self.heigth = float(self.e2.get().replace(',','.'))*10
+            self.heigth = float(self.e2.get().replace(',','.'))*self.scale
             self.e2.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
@@ -191,8 +200,8 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.alap_negyzet.canvas_repr, 10,10,10+self.width,10+self.heigth)
         self.coords(self.width_label,25+self.width,10+ self.heigth/2)
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
-        self.itemconfig(self.height_label, text=str(self.width/10))
-        self.itemconfig(self.width_label,text=str(self.heigth/10))
+        self.itemconfig(self.height_label, text=str(self.width/self.scale))
+        self.itemconfig(self.width_label,text=str(self.heigth/self.scale))
     def hauptachsen(self, Ix, Iy, Ixy):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
@@ -208,11 +217,15 @@ class shapeBuilder(tk.Canvas):
         return I1, I2, alfa
     def rescale(self,scale):
         self.scale *= scale
+        self.alap_negyzet.refresh(10,10,10+self.alap_negyzet.width*scale,10+self.alap_negyzet.heigth*scale)
+        self.width *= scale
+        self.heigth *= scale
         print(self.scale)
-        print(f"rescale {len(self.rectangles)=}")
+        #self.itemconfig('rect', fill='white')
+        self.coords(self.width_label,25+self.width,10+ self.heigth/2)
+        self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         for i in self.rectangles:
             i.refresh(XCENTER-(XCENTER-i.x1)*scale, YCENTER-(YCENTER-i.y1)*scale, XCENTER-(XCENTER - i.x2)*scale, YCENTER-(YCENTER-i.y2)*scale)
-        print(f"after rescale{len(self.rectangles)=}")
         
 
 class Rectangle():
@@ -238,7 +251,24 @@ class Rectangle():
         self.area = self.width*self.heigth
         self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
-    def is_overleaping(self):
+    def is_overlapping(self):
+        print(f"Testing overl for {self.canvas_repr}")
+        a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
+        a.remove(self.canvas_repr)
+        #self.canvas.itemconfig(self.canvas_repr, fill='red')
+        #self.overlapping_with.append(a[:])
+        in_overlapping = False
+        for i in self.canvas.rectangles:
+            if i.canvas_repr in a:
+                if len({self.x1,self.x2}.intersection({i.x1,i.x2}))==0 and len({self.y1,self.y2}.intersection({i.y1,i.y2}))==0:
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        if not in_overlapping:
+            self.canvas.itemconfig(self.canvas_repr, fill='blue')
+                #self.overlapping_with.append(i)
+                #i.overlapping_with.append(self)
+                #self.canvas.itemconfig(i.canvas_repr, fill='red')
+    def is_overlapping_old(self):
         #! with different-size rectangles doesm't works properly
         for i in self.canvas.rectangles:
             if self.x1 <i.x2 and self.x1> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top left corner is in the rectangle
