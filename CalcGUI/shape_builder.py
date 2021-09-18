@@ -1,7 +1,7 @@
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
 from tkinter.constants import ANCHOR, TRUE
-
+from PIL import ImageTk,Image
 WIDTH = 30
 EPSILON = 10
 STICKY = True
@@ -9,7 +9,7 @@ XCENTER = 400
 YCENTER = 300
 SHOW_HAUPACHSEN = TRUE
 
-#TODO: Overleaping warning with different size rectangles
+#TODO: +,- buttons -> top level
 #TODO: relative sticking
 #TODO: window resize
 #TODO: realative scaling
@@ -24,6 +24,14 @@ class shapeBuilder(tk.Canvas):
         self.sb_sm = sb_sm #own side menu
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
+
+        #########* Basic constants #########
+        self.current = None
+        self.isMoving=False
+        self.width = WIDTH
+        self.heigth = WIDTH
+
+        #############* Creating objects for side menu ##############
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
         self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg='white')
         self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg='white')
@@ -33,23 +41,33 @@ class shapeBuilder(tk.Canvas):
         self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
-        self.plus = tk.Button(self, text="+", command=lambda: self.rescale(2))
-        self.minus = tk.Button(self, text="-", command=lambda: self.rescale(0.5))
-        self.cls = tk.Button(self.sb_sm, text="Minden törlése", command=self.clear_all)
-        button1_window = self.create_window(self.root.winfo_width()-300, self.root.winfo_height()-50, window=self.plus)
-        button2_window = self.create_window(self.root.winfo_width()-270, self.root.winfo_height()-50, window=self.minus)
+        self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
+        
+        #############* Creating + and - buttons ##############
+        self.img= (Image.open("plus.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.plus_img= ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open("minus.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.minus_img= ImageTk.PhotoImage(resized_image)
+        self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img)
+        self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img)
+        self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(2))
+        self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.5))
+        
+        ###########* Creating the basic, green rectangle #############
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
+        self.width_label = self.create_text(20+self.width,10+ self.heigth/2,text=str(self.width/10))
+        self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
+
+        ##########* Creating axis #############
         self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
         self.x_label = self.create_text(2*XCENTER-5,YCENTER+ 20,text="X") # X lavel
         self.y_axis = self.create_line(XCENTER,10,XCENTER,YCENTER*2, arrow=tk.FIRST) #Drawing Y-axis
         self.y_label = self.create_text(XCENTER +20 ,15,text="Y") # Y label
-        self.current = None
-        self.isMoving=False
-        self.width = WIDTH
-        self.heigth = WIDTH
-        self.width_label = self.create_text(20+self.width,10+ self.heigth/2,text=str(self.width/10))
-        self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
+
+        #########* Evensts and other stuff ############
         self.sticky = tk.BooleanVar(value=True)
         self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg='white', selectcolor='grey')
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
@@ -58,7 +76,8 @@ class shapeBuilder(tk.Canvas):
         self.popup_menu.add_command(label="Delete",command=self.delete_rectangle)
         self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
         self.bind("<Button-3>", self.popup) # right-click event
-        #PAcking objects
+
+        ##############* Packing objects ###############
         self.l_width.grid(row=1,column=0)
         self.e1.grid(row=1,column=1,columnspan=3)
         self.l_unit1.grid(row=1,column=4)
