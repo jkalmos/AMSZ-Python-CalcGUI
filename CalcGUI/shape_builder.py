@@ -1,18 +1,21 @@
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
-from tkinter.constants import ANCHOR, TRUE
+from tkinter.constants import ANCHOR, FALSE, TRUE
 from PIL import ImageTk,Image
 WIDTH = 30
 EPSILON = 10
 STICKY = True
 XCENTER = 400
 YCENTER = 300
-SHOW_HAUPACHSEN = TRUE
+SHOW_HAUPACHSEN = False
+FIXED_AXIS = False
 
+#TODO: Schwerachsen -> rescale 
+#TODO: Sticking with different corners
+#TODO: fixed axis vs Schwerpunkt
 #TODO: +,- buttons -> top level
-#TODO: relative sticking
 #TODO: window resize
-#TODO: realative scaling
+#TODO: scrolling
 #TODO: settings
 #TODO: colors
 #TODO: haupachsen arrow + alfa==0
@@ -89,8 +92,7 @@ class shapeBuilder(tk.Canvas):
         self.button2.grid(row=4, column=3)
         self.label.grid(row=5,columnspan=5, pady= 50)
         self.cls.grid(row=6)
-        #self.plus.grid(row=6,column=1)
-        #self.minus.grid(row=6, column=3)
+        
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
             for i in self.rectangles:
@@ -132,11 +134,8 @@ class shapeBuilder(tk.Canvas):
             self.isMoving = True
         self.label.config(text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
     def release(self,e):
-        try:
-            self.delete(self.h1)
-            self.delete(self.h2)
-        except:
-            pass
+        self.delete("hauptachse")
+        self.delete("s_axis")
         #choosing object
         if self.sticky.get() and self.current:
             pos = self.coords(self.current.canvas_repr)
@@ -194,13 +193,34 @@ class shapeBuilder(tk.Canvas):
         Iy = 0
         Ixy = 0
         A = 0
+        if not FIXED_AXIS:
+            Sx=0
+            Sy=0
+            for i in self.rectangles:
+                A += i.area
+                Sx += (i.center[0]-XCENTER)*i.area
+                Sy += (YCENTER-i.center[1])*i.area
+            Sx /= A
+            Sy /= A
+            Sx += XCENTER
+            Sy = YCENTER- Sy
+            self.sx_axis = self.create_line(10,Sy,Sx*2,Sy, arrow=tk.LAST, tags=("s_axis")) #Drawing X-axis
+            self.sx_label = self.create_text(2*Sx-5,Sy+ 20,text="X",tags=("s_axis")) # X lavel
+            self.sy_axis = self.create_line(Sx,10,Sx,Sy*2, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
+            self.sy_label = self.create_text(Sx +20 ,15,text="Y",tags=("s_axis")) # Y label
+            print(Sx/self.scale,Sy/self.scale)
+        else:
+            Sx = XCENTER
+            Sy = YCENTER
+        A = 0
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
             A_current = (pos[2]-pos[0]) * (pos[3]-pos[1])
             A += A_current
-            Ix += (pos[2]-pos[0]) * (pos[3]-pos[1])**3 /12 + A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)**2
-            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12 + A_current*(pos[1]+(pos[3]-pos[1])/2-YCENTER)**2 
-            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-XCENTER)*(YCENTER-pos[1]-(pos[3]-pos[1])/2) 
+            Ix += ((pos[2]-pos[0]) * (pos[3]-pos[1])**3 )/12+ A_current*(Sy-pos[1]-(pos[3]-pos[1])/2)**2
+            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12+ A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)**2
+              
+            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2) 
         self.label.config(text=f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}")
         print(self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4))
     def overwrite(self):
@@ -233,12 +253,13 @@ class shapeBuilder(tk.Canvas):
         self.rectangles = []
         self.delete("rect") 
         self.delete("hauptachse")
+        self.delete("s_axis")
         self.label.config(text="")   
     def hauptachsen(self, Ix, Iy, Ixy):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         if Ix != Iy and Ixy !=0:
-            alfa = atan((Ix-Iy)/Ixy)
+            alfa = atan((Ix-I1)/Ixy)
         else:
             alfa = 0
         if SHOW_HAUPACHSEN:
@@ -252,7 +273,6 @@ class shapeBuilder(tk.Canvas):
         self.alap_negyzet.refresh(10,10,10+self.width*scale,10+self.heigth*scale)
         self.width *= scale
         self.heigth *= scale
-        print(self.scale)
         #self.itemconfig('rect', fill='white')
         self.coords(self.width_label,25+self.width,10+ self.heigth/2)
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
@@ -284,7 +304,6 @@ class Rectangle():
         self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overlapping(self):
-        print(f"Testing overl for {self.canvas_repr}")
         a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
         a.remove(self.canvas_repr)
         #self.canvas.itemconfig(self.canvas_repr, fill='red')
