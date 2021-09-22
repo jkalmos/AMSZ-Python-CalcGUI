@@ -9,9 +9,9 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
 
-    a = 2
-    b = 1
-    d = 1
+    a = 1.6
+    b = 0.8
+    d = 0.8
     circ = False
 
     fig = Figure()
