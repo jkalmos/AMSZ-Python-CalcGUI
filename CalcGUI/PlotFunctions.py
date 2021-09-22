@@ -8,9 +8,7 @@ import numpy as np
 def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on, thickness_on, colors):
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
-    # else:
-    #     parent.logo_image.pack_forget()
-    #     parent.sm.pack(side=tk.LEFT, fill=tk.Y)
+
     a = 2
     b = 1
     d = 1
@@ -19,12 +17,12 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     fig = Figure()
     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
     parent.canvas.get_tk_widget().pack()
-    parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1)
+    parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1,padx = (10,20), pady = 20)
     parent.plotted = True
 
     ax = fig.add_subplot(111)
     ax.set_aspect("equal")
-    fig.patch.set_facecolor(colors["main_color"])
+    fig.patch.set_facecolor(colors["secondary_color"])
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
     ax.set_frame_on(False)
@@ -41,7 +39,7 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         ax.fill(rect_x,rect_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(rect_x_th, rect_y_th, colors["draw_main"], lw=2)
-            ax.fill(rect_x_th,rect_y_th,color=colors["main_color"])
+            ax.fill(rect_x_th,rect_y_th,color=colors["secondary_color"])
         coordinate_displacement = 0
     elif shape == "Ellipse":
         x, y = set_dimensions(a, b)
@@ -56,7 +54,7 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         ax.fill(ell_x,ell_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(ell_x_th, ell_y_th, colors["draw_main"], lw=2)
-            ax.fill(ell_x_th,ell_y_th,color=colors["main_color"])
+            ax.fill(ell_x_th,ell_y_th,color=colors["secondary_color"])
         coordinate_displacement = 0
     elif shape == "Circle":
         t = np.linspace(0, 2*np.pi, 100)
@@ -87,7 +85,7 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
-            ax.fill(tri_x_th,tri_y_th,color=colors["main_color"])
+            ax.fill(tri_x_th,tri_y_th,color=colors["secondary_color"])
         coordinate_displacement = y/6
     elif shape == None:
         coordinate_on == False

@@ -285,6 +285,7 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result1)
         self.indicators.append(self.result2)
         self.indicators.append(self.lbl)
+        self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)
 
         self.checkbox_indicators = []

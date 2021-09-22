@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+from tkinter.constants import BOTH
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
 import json
@@ -29,6 +31,13 @@ class starting_window(tk.Tk):
 class main_window(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.overrideredirect(1)
+        
+
+        # Position the window in the center of the page.
+        positionRight = int(self.winfo_screenwidth()/2 - 500)
+        positionDown = int(self.winfo_screenheight()/2 - 300)
+        self.geometry("+{}+{}".format(positionRight, positionDown))
 
         # Variables
         self.coordinate_on = tk.BooleanVar(False)
@@ -57,13 +66,55 @@ class main_window(tk.Tk):
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
+        self.iconbitmap("AMSZ.ico")
+
+        # resize labels
+        # self.separator = ttk.Separator(self, orient='horizontal',cursor="sizing", ="black")
+        # self.separator.pack(side =tk.TOP, fill=tk.X)
+        self.left_resize = tk.LabelFrame(self,cursor="sb_h_double_arrow", bg='black', fg='black', width=2, border=0)
+        self.left_resize.pack(side = tk.LEFT, fill=tk.Y)
+
+        self.right_resize = tk.LabelFrame(self,cursor="sb_h_double_arrow", bg='black', width=2, border=0)
+        self.right_resize.pack(side = tk.RIGHT, fill=tk.Y)
+
+        self.top_resize = tk.LabelFrame(self,cursor="sb_v_double_arrow", bg='black', height=2, border=0)
+        self.top_resize.pack(side = tk.TOP, fill=tk.X)
+
+        self.bottom_resize = tk.LabelFrame(self,cursor="sb_v_double_arrow", bg='black', height=2, border=0)
+        self.bottom_resize.pack(side = tk.BOTTOM, fill=tk.X)
+
+        self.topleft_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', fg='black', width=2, border=0)
+        self.topleft_resize.pack(side=tk.TOP, anchor=tk.W)
+
+        self.topright_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', width=2, border=0)
+        self.topright_resize.pack(side=tk.TOP, anchor=tk.E)
+
+        self.bottomleft_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', height=2, border=0)
+        self.bottomleft_resize.pack(side=tk.BOTTOM, anchor=tk.W)
+
+        self.bottomright_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', height=2, border=0)
+        self.bottomright_resize.pack(side=tk.BOTTOM, anchor=tk.E)
+
+        # titlebar
+        self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=100)
+        self.menu_canvas.pack(fill = tk.X)
+        self.menu_canvas.bind("<ButtonPress-1>", self.start_move)
+        self.menu_canvas.bind("<ButtonRelease-1>", self.stop_move)
+        self.menu_canvas.bind("<B1-Motion>", self.do_move)
+        # titlebar objects
+        self.exit_button_img = tk.PhotoImage(file='figures/titlebar/exit.png')
+        self.exit_button = tk.Button(self.menu_canvas, image=self.exit_button_img, bg=self.colors['secondary_color'], activebackground=self.colors['secondary_color'], command=self.destroy)
+        self.exit_button["border"] = "0"
+        self.exit_button.pack(side=tk.RIGHT)
+
 
         # Canvas for drawing
         self.canvas = None
 
         # Side Menu
         self.sm = SideMenu(self)
-        self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
+        # self.sm.pack(side=tk.LEFT, fill=tk.Y)
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
 
@@ -96,6 +147,21 @@ class main_window(tk.Tk):
         self.menubar.add_command(label="Kilépés", command=self.destroy)
         
     ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    def start_move(self, event):
+        self.x = event.x
+        self.y = event.y
+
+    def stop_move(self,event):
+        self.x = None
+        self.y = None
+
+    def do_move(self, event):
+        deltax = event.x - self.x
+        deltay = event.y - self.y
+        x = self.winfo_x() + deltax
+        y = self.winfo_y() + deltay
+        self.geometry(f"+{x}+{y}")
+    
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
@@ -135,12 +201,12 @@ class main_window(tk.Tk):
             self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
-            self.sb.pack(expand=tk.YES, fill=tk.BOTH)
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
         else:
             print("closing sb")
             self.sb.pack_forget()
             self.sb_sm.pack_forget()
-            self.sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             self.plotted = False
             self.shape_builder_mode = False
             self.menubar.entryconfig(2,label="Saját alakzat")
@@ -238,8 +304,10 @@ class main_window(tk.Tk):
         print("Ez a funkció jelenleg nem elérhető...")
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        'main_color': '#2C394B',
-        'secondary_color': '#082032',
+        # 'main_color': '#2C394B',
+        # 'secondary_color': '#082032',
+        'main_color': '#082032',
+        'secondary_color': '#2C394B',
         'text_color': '#FF4C29',
         'entry_color': '#334756',
         'draw_main': '#FF4C29',
