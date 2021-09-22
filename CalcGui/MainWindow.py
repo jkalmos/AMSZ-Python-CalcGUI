@@ -175,15 +175,38 @@ class main_window(tk.Tk):
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
                 vissza.append(None)
+
         if self.thickness_on.get():
-            try:
-                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
-            except:
-                print("Hiba")
-                self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                vissza.append(None)
-                t = None
+            t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) # ITT VALAMI NEM JÓ MÉG
+            a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+            b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+            a_fel = a/2
+            b_fel = b/2
+            print(t)
+            print(a_fel)
+            print(b_fel)
+            if t < a/2 and t < b/2:
+                print("lehetseges")     
+                try:
+                    t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                    self.sm.controls[-1]["entry"].config({"bacWkground": "#475C6F"})
+                except:
+                    print("Hiba")
+                    self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                    t = None
+            else:
+                if t >= a/2 and t <= b/2:
+                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                elif t >= b/2 and t <= a/2:
+                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                elif t >= b/2 and t >= a/2:
+                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                
         else:
             t = 0
         #self.sm.e2.config({"background": "#475C6F"})    
@@ -195,29 +218,44 @@ class main_window(tk.Tk):
             if None in vissza:
                 return -1
             self.values = Calc.Rectangle(*vissza[:2], t, *vissza[2:], rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
             vissza, t = self.get_entry(1)
             if None in vissza:
                 return -1
             self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = Iᵧ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
             vissza, t = self.get_entry(2)
             if None in vissza:
                 return -1
             self.values = Calc.Ellipse(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
             vissza, t = self.get_entry(2)
             if None in vissza:
                 return -1
             self.values = Calc.IsoscelesTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
 
@@ -226,8 +264,8 @@ class main_window(tk.Tk):
 
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        'main_color': '#2C394B',
-        'secondary_color': '#082032',
+        'main_color': '#252526',
+        'secondary_color': '#333333',
         'text_color': '#FF4C29',
         'entry_color': '#334756',
         'draw_main': '#FF4C29',

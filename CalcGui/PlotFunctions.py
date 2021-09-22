@@ -29,6 +29,17 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     ax.yaxis.set_visible(False)
     ax.set_frame_on(False)
 
+
+    pic = fig.add_subplot(111) 
+    pic.set_aspect("equal")
+    fig.patch.set_facecolor(colors["main_color"])
+    pic.xaxis.set_visible(False)
+    pic.yaxis.set_visible(False)
+    pic.set_frame_on(False)
+
+    image = np.array(np.random.random((1024,1024))*100,dtype=int)
+
+
     if shape == "Rectangle":
         x, y = set_dimensions(a, b)
         rect_x = [-x/2, -x/2, x/2, x/2, -x/2]
@@ -41,6 +52,9 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         if thickness_on == True:
             ax.plot(rect_x_th, rect_y_th, colors["draw_main"], lw=2)
         coordinate_displacement = 0
+
+        #pic.imshow(image)
+
     elif shape == "Ellipse":
         x, y = set_dimensions(a, b)
         t = np.linspace(0, 2*np.pi, 100)
