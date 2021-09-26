@@ -45,7 +45,9 @@ class shapeBuilder(tk.Canvas):
         self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
-        
+        #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg='white')
+        self.pos_lbl = self.create_text(15 ,15,text="Pos",fill= "white") # position label
+
         #############* Creating + and - buttons ##############
         self.img= (Image.open("plus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
@@ -65,10 +67,10 @@ class shapeBuilder(tk.Canvas):
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
 
         ##########* Creating axis #############
-        self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST) #Drawing X-axis
-        self.x_label = self.create_text(2*XCENTER-5,YCENTER+ 20,text="X") # X lavel
-        self.y_axis = self.create_line(XCENTER,10,XCENTER,YCENTER*2, arrow=tk.FIRST) #Drawing Y-axis
-        self.y_label = self.create_text(XCENTER +20 ,15,text="Y") # Y label
+        self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST, fill= "gray", tags=("orig_axes")) #Drawing X-axis
+        self.x_label = self.create_text(2*XCENTER-5,YCENTER+ 20,text="X",fill= "gray",tags=("orig_axes")) # X lavel
+        self.y_axis = self.create_line(XCENTER,10,XCENTER,YCENTER*2, arrow=tk.FIRST,fill= "gray",tags=("orig_axes")) #Drawing Y-axis
+        self.y_label = self.create_text(XCENTER +20 ,15,text="Y",fill= "gray",tags=("orig_axes")) # Y label
 
         #########* Evensts and other stuff ############
         self.sticky = tk.BooleanVar(value=True)
@@ -78,7 +80,9 @@ class shapeBuilder(tk.Canvas):
         self.popup_menu = tk.Menu(self, tearoff=0) #right click menu
         self.popup_menu.add_command(label="Delete",command=self.delete_rectangle)
         self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
+        self.popup_menu.add_command(label="Info",command=self.rectangle_info)
         self.bind("<Button-3>", self.popup) # right-click event
+        self.bind("<Configure>", self.resize_canvas)
 
         ##############* Packing objects ###############
         self.l_width.grid(row=1,column=0)
@@ -111,7 +115,11 @@ class shapeBuilder(tk.Canvas):
     def resize_rectangle(self):
         self.current.refresh(self.current.x1, self.current.y1, self.current.x1 + self.width, self.current.y1 + self.heigth)
         self.current = None
+    def rectangle_info(self):
+        self.label.config(text=f"Szélesség = {self.current.width/self.scale}\nMagasság = {self.current.heigth/self.scale}\nKözéppont = ({(self.current.center[0]-XCENTER)/self.scale},{(YCENTER-self.current.center[1])/self.scale})" )
+        print(self.current.width, self.current.heigth, self.current.center)
     def move(self,e):
+        self.itemconfig(self.pos_lbl, text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
         #choosing object
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
@@ -132,10 +140,14 @@ class shapeBuilder(tk.Canvas):
             #self.coords(self.current.canvas_repr,e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
-        self.label.config(text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
+        self.label.config(text=f"")
+        #self.itemconfig(self.pos_lbl, text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
+        #self.label.config(text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
     def release(self,e):
         self.delete("hauptachse")
         self.delete("s_axis")
+        self.itemconfigure("orig_axes",state="normal")
+        self.itemconfig(self.pos_lbl, text="")
         #choosing object
         if self.sticky.get() and self.current:
             pos = self.coords(self.current.canvas_repr)
@@ -208,6 +220,7 @@ class shapeBuilder(tk.Canvas):
             self.sx_label = self.create_text(2*Sx-5,Sy+ 20,text="X",tags=("s_axis")) # X lavel
             self.sy_axis = self.create_line(Sx,10,Sx,Sy*2, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
             self.sy_label = self.create_text(Sx +20 ,15,text="Y",tags=("s_axis")) # Y label
+            self.itemconfigure("orig_axes",state="hidden")
             print(Sx/self.scale,Sy/self.scale)
         else:
             Sx = XCENTER
@@ -278,7 +291,12 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         for i in self.rectangles:
             i.refresh(XCENTER-(XCENTER-i.x1)*scale, YCENTER-(YCENTER-i.y1)*scale, XCENTER-(XCENTER - i.x2)*scale, YCENTER-(YCENTER-i.y2)*scale)
+    def resize_canvas(self,e):
+        self.coords(self.minus, e.width-45, e.height-50)
+        self.coords(self.plus, e.width-80, e.height-50)
+        self.coords(self.pos_lbl, e.width-50, 30)
         
+
 
 class Rectangle():
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
