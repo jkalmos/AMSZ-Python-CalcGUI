@@ -5,8 +5,7 @@ from PIL import ImageTk,Image
 WIDTH = 30
 EPSILON = 10
 STICKY = True
-XCENTER = 400
-YCENTER = 300
+
 SHOW_HAUPACHSEN = False
 FIXED_AXIS = False
 
@@ -27,6 +26,8 @@ class shapeBuilder(tk.Canvas):
         self.sb_sm = sb_sm #own side menu
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
+        self.Xcenter = 400
+        self.Ycenter = 300
 
         #########* Basic constants #########
         self.current = None
@@ -46,7 +47,7 @@ class shapeBuilder(tk.Canvas):
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
         #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg='white')
-        self.pos_lbl = self.create_text(15 ,15,text="Pos",fill= "white") # position label
+        self.pos_lbl = self.create_text(15 ,15,text="",fill= "white") # position label
 
         #############* Creating + and - buttons ##############
         self.img= (Image.open("plus.png"))
@@ -67,10 +68,10 @@ class shapeBuilder(tk.Canvas):
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
 
         ##########* Creating axis #############
-        self.x_axis = self.create_line(10,YCENTER,XCENTER*2,YCENTER, arrow=tk.LAST, fill= "gray", tags=("orig_axes")) #Drawing X-axis
-        self.x_label = self.create_text(2*XCENTER-5,YCENTER+ 20,text="X",fill= "gray",tags=("orig_axes")) # X lavel
-        self.y_axis = self.create_line(XCENTER,10,XCENTER,YCENTER*2, arrow=tk.FIRST,fill= "gray",tags=("orig_axes")) #Drawing Y-axis
-        self.y_label = self.create_text(XCENTER +20 ,15,text="Y",fill= "gray",tags=("orig_axes")) # Y label
+        self.x_axis = self.create_line(10,self.Ycenter,self.Xcenter*2,self.Ycenter, arrow=tk.LAST, fill= "gray", tags=("orig_axes")) #Drawing X-axis
+        self.x_label = self.create_text(2*self.Xcenter-5,self.Ycenter+ 20,text="X",fill= "gray",tags=("orig_axes")) # X lavel
+        self.y_axis = self.create_line(self.Xcenter,10,self.Xcenter,self.Ycenter*2, arrow=tk.FIRST,fill= "gray",tags=("orig_axes")) #Drawing Y-axis
+        self.y_label = self.create_text(self.Xcenter +20 ,15,text="Y",fill= "gray",tags=("orig_axes")) # Y label
 
         #########* Evensts and other stuff ############
         self.sticky = tk.BooleanVar(value=True)
@@ -116,10 +117,10 @@ class shapeBuilder(tk.Canvas):
         self.current.refresh(self.current.x1, self.current.y1, self.current.x1 + self.width, self.current.y1 + self.heigth)
         self.current = None
     def rectangle_info(self):
-        self.label.config(text=f"Szélesség = {self.current.width/self.scale}\nMagasság = {self.current.heigth/self.scale}\nKözéppont = ({(self.current.center[0]-XCENTER)/self.scale},{(YCENTER-self.current.center[1])/self.scale})" )
+        self.label.config(text=f"Szélesség = {self.current.width/self.scale}\nMagasság = {self.current.heigth/self.scale}\nKözéppont = ({(self.current.center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.current.center[1])/self.scale})" )
         print(self.current.width, self.current.heigth, self.current.center)
     def move(self,e):
-        self.itemconfig(self.pos_lbl, text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
+        self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
         #choosing object
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
@@ -172,23 +173,23 @@ class shapeBuilder(tk.Canvas):
                     self.current.refresh(i_pos[0]-self.current.width,i_pos[1],i_pos[0],i_pos[1]+self.current.heigth)
                     break
             else: #sicking to the coordinate system
-                if abs(pos[0]-XCENTER) < EPSILON: #left side sticks to the coordinatsystem
-                    self.current.refresh(XCENTER,pos[1],XCENTER+self.current.width,pos[3])
+                if abs(pos[0]-self.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
+                    self.current.refresh(self.Xcenter,pos[1],self.Xcenter+self.current.width,pos[3])
                     pos = self.coords(self.current.canvas_repr)
-                elif abs(pos[2]-XCENTER) < EPSILON: #right side sticks to the coordinatsystem
-                    self.current.refresh(XCENTER-self.current.width,pos[1],XCENTER,pos[3])
+                elif abs(pos[2]-self.Xcenter) < EPSILON: #right side sticks to the coordinatsystem
+                    self.current.refresh(self.Xcenter-self.current.width,pos[1],self.Xcenter,pos[3])
                     pos = self.coords(self.current.canvas_repr)
-                if abs(pos[1]-YCENTER) < EPSILON: #top side sticks to the coordinatsystem
-                    self.current.refresh(pos[0],YCENTER,pos[2],YCENTER+self.current.heigth)
+                if abs(pos[1]-self.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
+                    self.current.refresh(pos[0],self.Ycenter,pos[2],self.Ycenter+self.current.heigth)
                     pos = self.coords(self.current.canvas_repr)
-                elif abs(pos[3]-YCENTER) < EPSILON: #bottomí side sticks to the coordinatsystem
-                    self.current.refresh(pos[0],YCENTER-self.current.heigth,pos[2],YCENTER)
+                elif abs(pos[3]-self.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
+                    self.current.refresh(pos[0],self.Ycenter-self.current.heigth,pos[2],self.Ycenter)
                     pos = self.coords(self.current.canvas_repr)
                 #* Sticking with the center of the rectangle to the coordinate system
-                if abs(self.current.center[0]-XCENTER)<EPSILON:
-                    self.current.refresh(XCENTER-self.current.width/2,self.current.y1,XCENTER+self.current.width/2,self.current.y2)
-                if abs(self.current.center[1]-YCENTER)<EPSILON:
-                    self.current.refresh(self.current.x1,YCENTER-self.current.heigth/2,self.current.x2,YCENTER+self.current.heigth/2)
+                if abs(self.current.center[0]-self.Xcenter)<EPSILON:
+                    self.current.refresh(self.Xcenter-self.current.width/2,self.current.y1,self.Xcenter+self.current.width/2,self.current.y2)
+                if abs(self.current.center[1]-self.Ycenter)<EPSILON:
+                    self.current.refresh(self.current.x1,self.Ycenter-self.current.heigth/2,self.current.x2,self.Ycenter+self.current.heigth/2)
         if self.isMoving and self.current is not None:
             self.itemconfig(self.current.canvas_repr, fill='blue')
             self.rectangles.append(self.current)
@@ -210,12 +211,12 @@ class shapeBuilder(tk.Canvas):
             Sy=0
             for i in self.rectangles:
                 A += i.area
-                Sx += (i.center[0]-XCENTER)*i.area
-                Sy += (YCENTER-i.center[1])*i.area
+                Sx += (i.center[0]-self.Xcenter)*i.area
+                Sy += (self.Ycenter-i.center[1])*i.area
             Sx /= A
             Sy /= A
-            Sx += XCENTER
-            Sy = YCENTER- Sy
+            Sx += self.Xcenter
+            Sy = self.Ycenter- Sy
             self.sx_axis = self.create_line(10,Sy,Sx*2,Sy, arrow=tk.LAST, tags=("s_axis")) #Drawing X-axis
             self.sx_label = self.create_text(2*Sx-5,Sy+ 20,text="X",tags=("s_axis")) # X lavel
             self.sy_axis = self.create_line(Sx,10,Sx,Sy*2, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
@@ -223,8 +224,8 @@ class shapeBuilder(tk.Canvas):
             self.itemconfigure("orig_axes",state="hidden")
             print(Sx/self.scale,Sy/self.scale)
         else:
-            Sx = XCENTER
-            Sy = YCENTER
+            Sx = self.Xcenter
+            Sy = self.Ycenter
         A = 0
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
@@ -276,8 +277,8 @@ class shapeBuilder(tk.Canvas):
         else:
             alfa = 0
         if SHOW_HAUPACHSEN:
-            self.h1 = self.create_line(XCENTER-250*cos(alfa),YCENTER-250*sin(alfa),XCENTER+250*cos(alfa),YCENTER+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
-            self.h2 = self.create_line(XCENTER-250*cos(alfa+pi/2),YCENTER-250*sin(alfa+pi/2),XCENTER+250*cos(alfa+pi/2),YCENTER+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h1 = self.create_line(self.Xcenter-250*cos(alfa),self.Ycenter-250*sin(alfa),self.Xcenter+250*cos(alfa),self.Ycenter+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h2 = self.create_line(self.Xcenter-250*cos(alfa+pi/2),self.Ycenter-250*sin(alfa+pi/2),self.Xcenter+250*cos(alfa+pi/2),self.Ycenter+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
             #self.lower(self.h1)
             #self.lower(self.h2)
         return I1, I2, alfa
@@ -290,13 +291,23 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.width_label,25+self.width,10+ self.heigth/2)
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         for i in self.rectangles:
-            i.refresh(XCENTER-(XCENTER-i.x1)*scale, YCENTER-(YCENTER-i.y1)*scale, XCENTER-(XCENTER - i.x2)*scale, YCENTER-(YCENTER-i.y2)*scale)
+            i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
     def resize_canvas(self,e):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
         self.coords(self.pos_lbl, e.width-50, 30)
-        
-
+        self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
+    def translation(self, dx, dy):
+        self.Xcenter += dx
+        self.Ycenter += dy
+        # Basic coord system
+        self.coords(self.x_axis,10,self.Ycenter,self.Xcenter*2,self.Ycenter)
+        self.coords(self.y_axis,self.Xcenter,10,self.Xcenter,self.Ycenter*2)
+        self.coords(self.x_label,2*self.Xcenter-5,self.Ycenter+ 20)
+        self.coords(self.y_label,self.Xcenter +20 ,15)
+        #Rectangles
+        for i in self.rectangles:
+            i.refresh(i.x1+dx,i.y1+dy,i.x2+dx,i.y2+dy)
 
 class Rectangle():
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
