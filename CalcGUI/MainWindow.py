@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+from tkinter.constants import BOTH
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
 import json
@@ -7,6 +9,7 @@ from tkvideo import tkvideo
 from PlotFunctions import plot
 import shape_builder
 
+## ANIMATION WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class starting_window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -24,9 +27,20 @@ class starting_window(tk.Tk):
         player.play()
         self.after(4000, lambda: self.destroy())
 
+## MAIN WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class main_window(tk.Tk):
     def __init__(self):
         super().__init__()
+        # self.overrideredirect(1)
+
+        win_width = 1600
+        win_height = 900
+        
+
+        # Position the window in the center of the page.
+        positionRight = int(self.winfo_screenwidth()/2 - win_width/2)
+        positionDown = int(self.winfo_screenheight()/2 - win_height/2)
+        self.geometry("+{}+{}".format(positionRight, positionDown))
 
         # Variables
         self.coordinate_on = tk.BooleanVar(False)
@@ -50,27 +64,60 @@ class main_window(tk.Tk):
 
         # Window 
         self.title("Statika számító")
-        self.geometry("1000x600")
+        # self.state("zoomed")          # Fullscreen
+        self.geometry(f"{win_width}x{win_height}")
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
+        self.iconbitmap("AMSZ.ico")
+
+        # # resize labels
+        # # self.separator = ttk.Separator(self, orient='horizontal',cursor="sizing", ="black")
+        # # self.separator.pack(side =tk.TOP, fill=tk.X)
+        # self.left_resize = tk.LabelFrame(self,cursor="sb_h_double_arrow", bg='black', fg='black', width=2, border=0)
+        # self.left_resize.pack(side = tk.LEFT, fill=tk.Y)
+
+        # self.right_resize = tk.LabelFrame(self,cursor="sb_h_double_arrow", bg='black', width=2, border=0)
+        # self.right_resize.pack(side = tk.RIGHT, fill=tk.Y)
+
+        # self.top_resize = tk.LabelFrame(self,cursor="sb_v_double_arrow", bg='black', height=2, border=0)
+        # self.top_resize.pack(side = tk.TOP, fill=tk.X)
+
+        # self.bottom_resize = tk.LabelFrame(self,cursor="sb_v_double_arrow", bg='black', height=2, border=0)
+        # self.bottom_resize.pack(side = tk.BOTTOM, fill=tk.X)
+
+        # self.topleft_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', fg='black', width=2, border=0)
+        # self.topleft_resize.pack(side=tk.TOP, anchor=tk.W)
+
+        # self.topright_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', width=2, border=0)
+        # self.topright_resize.pack(side=tk.TOP, anchor=tk.E)
+
+        # self.bottomleft_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', height=2, border=0)
+        # self.bottomleft_resize.pack(side=tk.BOTTOM, anchor=tk.W)
+
+        # self.bottomright_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', height=2, border=0)
+        # self.bottomright_resize.pack(side=tk.BOTTOM, anchor=tk.E)
+
+        # # titlebar
+        # self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=100)
+        # self.menu_canvas.pack(fill = tk.X)
+        # self.menu_canvas.bind("<ButtonPress-1>", self.start_move)
+        # self.menu_canvas.bind("<ButtonRelease-1>", self.stop_move)
+        # self.menu_canvas.bind("<B1-Motion>", self.do_move)
+        # # titlebar objects
+        # self.exit_button_img = tk.PhotoImage(file='figures/titlebar/exit.png')
+        # self.exit_button = tk.Button(self.menu_canvas, image=self.exit_button_img, bg=self.colors['secondary_color'], activebackground=self.colors['secondary_color'], command=self.destroy)
+        # self.exit_button["border"] = "0"
+        # self.exit_button.pack(side=tk.RIGHT)
+
 
         # Canvas for drawing
         self.canvas = None
 
-        # # Toolbar
-        # self.toolbar = tk.Frame(self, bd=1, relief=tk.RAISED, bg=self.colors['main_color'])
-        # self.img = Image.open("calc_button.png")
-        # self.eimg = ImageTk.PhotoImage(self.img)
-        # self.exitButton = tk.Button(self.toolbar, image=self.eimg, relief=tk.FLAT,
-        #     command=self.quit)
-        # self.exitButton.image = self.eimg
-        # self.exitButton.pack(side=tk.LEFT, padx=2, pady=2)
-        # self.toolbar.pack(side=tk.TOP, fill=tk.X)
-
         # Side Menu
         self.sm = SideMenu(self)
-        self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
+        # self.sm.pack(side=tk.LEFT, fill=tk.Y)
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
 
@@ -101,7 +148,23 @@ class main_window(tk.Tk):
         self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
         # Add exit button to menubar
         self.menubar.add_command(label="Kilépés", command=self.destroy)
-    ## USEFUL FUNCTIONS -----------------------------------------------------------
+        
+    ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    def start_move(self, event):
+        self.x = event.x
+        self.y = event.y
+
+    def stop_move(self,event):
+        self.x = None
+        self.y = None
+
+    def do_move(self, event):
+        deltax = event.x - self.x
+        deltay = event.y - self.y
+        x = self.winfo_x() + deltax
+        y = self.winfo_y() + deltay
+        self.geometry(f"+{x}+{y}")
+    
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
@@ -141,12 +204,12 @@ class main_window(tk.Tk):
             self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
-            self.sb.pack(expand=tk.YES, fill=tk.BOTH)
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
         else:
             print("closing sb")
             self.sb.pack_forget()
             self.sb_sm.pack_forget()
-            self.sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             self.plotted = False
             self.shape_builder_mode = False
             self.menubar.entryconfig(2,label="Saját alakzat")
@@ -193,14 +256,30 @@ class main_window(tk.Tk):
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
                 vissza.append(None)
         if self.thickness_on.get():
-            try:
-                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                self.sm.controls[-1]["entry"].config({"background": self.colors['secondary_color']})
-            except:
-                print("Hiba")
-                self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                vissza.append(None)
-                t = None
+            t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) # ITT VALAMI NEM JÓ MÉG
+            a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+            b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+            if t < a/2 and t < b/2:    
+                try:
+                    t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                    self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                except:
+                    print("Hiba")
+                    self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                    t = None
+            else:
+                if t >= a/2 and t <= b/2:
+                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                elif t >= b/2 and t <= a/2:
+                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                elif t >= b/2 and t >= a/2:
+                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                    vissza.append(None)
+                
         else:
             t = 0
         #self.sm.e2.config({"background": "#475C6F"})    
@@ -212,29 +291,44 @@ class main_window(tk.Tk):
             if None in vissza:
                 return -1
             self.values = Calc.Rectangle(*vissza[:2], t, *vissza[2:], rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
             vissza, t = self.get_entry(1)
             if None in vissza:
                 return -1
             self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = Iᵧ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
             vissza, t = self.get_entry(2)
             if None in vissza:
                 return -1
             self.values = Calc.Ellipse(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
             vissza, t = self.get_entry(2)
             if None in vissza:
                 return -1
             self.values = Calc.IsoscelesTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
-            self.sm.result1.config(text="I_x = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result2.config(text="I_y = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
         # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
@@ -244,8 +338,10 @@ class main_window(tk.Tk):
         print("Ez a funkció jelenleg nem elérhető...")
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        'main_color': '#2C394B',
-        'secondary_color': '#082032',
+        # 'main_color': '#2C394B',
+        # 'secondary_color': '#082032',
+        'main_color': '#082032',
+        'secondary_color': '#2C394B',
         'text_color': '#FF4C29',
         'entry_color': '#334756',
         'draw_main': '#FF4C29',
@@ -271,8 +367,8 @@ if __name__ == "__main__":
     except:
         print("404 app_settings.json not found")
         settings={'theme':'dark', 'default_unit':'mm', 'angle_unit':'rad'}
-    master = starting_window()
-    master.mainloop()
+    # master = starting_window()
+    # master.mainloop()
     root = main_window()
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
