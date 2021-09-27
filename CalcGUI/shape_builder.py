@@ -9,15 +9,14 @@ STICKY = True
 SHOW_HAUPACHSEN = False
 FIXED_AXIS = False
 
-#TODO: Schwerachsen -> rescale 
+
 #TODO: Sticking with different corners
 #TODO: fixed axis vs Schwerpunkt
 #TODO: +,- buttons -> top level
-#TODO: window resize
 #TODO: scrolling
 #TODO: settings
 #TODO: colors
-#TODO: haupachsen arrow + alfa==0
+
 
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
@@ -56,8 +55,8 @@ class shapeBuilder(tk.Canvas):
         self.img= (Image.open("minus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.minus_img= ImageTk.PhotoImage(resized_image)
-        self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img)
-        self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img)
+        self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
+        self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
         self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(2))
         self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.5))
         
@@ -97,7 +96,17 @@ class shapeBuilder(tk.Canvas):
         self.button2.grid(row=4, column=3)
         self.label.grid(row=5,columnspan=5, pady= 50)
         self.cls.grid(row=6)
-        
+        """
+        ###############* Scrollbar ################
+        self.scroll_x = tk.Scrollbar(self.root, orient="horizontal", command=self.xview)
+        #self.scroll_x.pack(anchor=tk.S, fill=tk.X)
+
+        self.scroll_y = tk.Scrollbar(self.root, orient="vertical", command=self.yview)
+        #self.scroll_y.pack(anchor=tk.E,fill=tk.Y)
+
+        self.configure(yscrollcommand=self.scroll_y.set, xscrollcommand=self.scroll_x.set)
+        self.configure(scrollregion=self.bbox("all"))
+        """
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
             for i in self.rectangles:
@@ -201,6 +210,8 @@ class shapeBuilder(tk.Canvas):
         self.isMoving = False
         self.current=None
         self.label.config(text="")
+        self.tag_raise("plus_minus")
+        self.tag_raise(self.pos_lbl)
     def calculate(self):
         Ix = 0
         Iy = 0
@@ -297,6 +308,7 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.plus, e.width-80, e.height-50)
         self.coords(self.pos_lbl, e.width-50, 30)
         self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
+        #self.configure(scrollregion=self.bbox("all"))
     def translation(self, dx, dy):
         self.Xcenter += dx
         self.Ycenter += dy
