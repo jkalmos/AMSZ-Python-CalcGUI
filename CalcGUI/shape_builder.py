@@ -1,7 +1,9 @@
+import re
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
-from tkinter.constants import ANCHOR, FALSE, TRUE
+from tkinter.constants import ANCHOR, FALSE, NO, TRUE
 from PIL import ImageTk,Image
+import keyboard
 WIDTH = 30
 EPSILON = 10
 STICKY = True
@@ -33,6 +35,7 @@ class shapeBuilder(tk.Canvas):
         self.isMoving=False
         self.width = WIDTH
         self.heigth = WIDTH
+        self.last_click_pos = None
 
         #############* Creating objects for side menu ##############
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
@@ -129,6 +132,13 @@ class shapeBuilder(tk.Canvas):
         self.label.config(text=f"Szélesség = {self.current.width/self.scale}\nMagasság = {self.current.heigth/self.scale}\nKözéppont = ({(self.current.center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.current.center[1])/self.scale})" )
         print(self.current.width, self.current.heigth, self.current.center)
     def move(self,e):
+        if keyboard.is_pressed("Ctrl"):
+            if self.last_click_pos is None:
+                self.last_click_pos = (e.x, e.y)
+            else:
+                self.translation(e.x-self.last_click_pos[0],e.y-self.last_click_pos[1])
+                self.last_click_pos = (e.x, e.y)
+            return 0
         self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
         #choosing object
         for i in self.rectangles:
@@ -212,6 +222,7 @@ class shapeBuilder(tk.Canvas):
         self.label.config(text="")
         self.tag_raise("plus_minus")
         self.tag_raise(self.pos_lbl)
+        self.last_click_pos = None
     def calculate(self):
         Ix = 0
         Iy = 0
@@ -321,7 +332,7 @@ class shapeBuilder(tk.Canvas):
         for i in self.rectangles:
             i.refresh(i.x1+dx,i.y1+dy,i.x2+dx,i.y2+dy)
 
-class Rectangle():
+class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
         self.canvas = canvas
         self.canvas_repr = canvas_repr
