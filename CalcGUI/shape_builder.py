@@ -176,21 +176,30 @@ class shapeBuilder(tk.Canvas):
             for i in self.rectangles:
                 i_pos = self.coords(i.canvas_repr)
                 if abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # current rect goes under the another 
-                    #self.coords(self.current.canvas_repr, i_pos[0],i_pos[3],i_pos[0]+self.current.width,i_pos[3]+self.current.heigth)
                     self.current.refresh(i_pos[0],i_pos[3],i_pos[0]+self.current.width,i_pos[3]+self.current.heigth)
                     break
                 elif abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # TOP
-                    #self.coords(self.current.canvas_repr, i_pos[0],i_pos[1]-self.current.heigth,i_pos[0]+self.current.width,i_pos[1])
                     self.current.refresh(i_pos[0],i_pos[1]-self.current.heigth,i_pos[0]+self.current.width,i_pos[1])
                     break
                 elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[0] - i_pos[2]) < EPSILON: # RIGHT
-                    #self.coords(self.current.canvas_repr, i_pos[2],i_pos[1],i_pos[2]+self.current.width,i_pos[1]+self.current.heigth)
                     self.current.refresh(i_pos[2],i_pos[1],i_pos[2]+self.current.width,i_pos[1]+self.current.heigth)
                     break
                 elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[2] - i_pos[0]) < EPSILON: # LEFT
-                    #self.coords(self.current.canvas_repr, i_pos[0]-self.current.width,i_pos[1],i_pos[0],i_pos[1]+self.current.heigth)
                     self.current.refresh(i_pos[0]-self.current.width,i_pos[1],i_pos[0],i_pos[1]+self.current.heigth)
                     break
+                elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # ??
+                    self.current.refresh(i_pos[2]-self.current.width,i_pos[1]-self.current.heigth,i_pos[2],i_pos[1])
+                    break
+                elif abs(pos[2] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # ??
+                    self.current.refresh(i_pos[0]-self.current.width,i_pos[3]-self.current.heigth,i_pos[0],i_pos[3])
+                    break
+                elif abs(pos[0] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # !
+                    self.current.refresh(i_pos[2],i_pos[3]-self.current.heigth,i_pos[2]+self.current.width,i_pos[3])
+                    break
+                elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # !
+                    self.current.refresh(i_pos[2]-self.current.width,i_pos[3],i_pos[2],i_pos[3]+self.current.heigth)
+                    break
+                
             else: #sicking to the coordinate system
                 if abs(pos[0]-self.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
                     self.current.refresh(self.Xcenter,pos[1],self.Xcenter+self.current.width,pos[3])
