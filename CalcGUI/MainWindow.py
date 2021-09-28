@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import BooleanVar, Toplevel, ttk
 from tkinter.constants import BOTH
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
@@ -33,13 +33,13 @@ class main_window(tk.Tk):
         super().__init__()
         # self.overrideredirect(1)
 
-        win_width = 1600
-        win_height = 900
+        self.win_width = 1200
+        self.win_height = 650
         
 
         # Position the window in the center of the page.
-        positionRight = int(self.winfo_screenwidth()/2 - win_width/2)
-        positionDown = int(self.winfo_screenheight()/2 - win_height/2)
+        positionRight = int(self.winfo_screenwidth()/2 - self.win_width/2)
+        positionDown = int(self.winfo_screenheight()/2 - self.win_height/2)
         self.geometry("+{}+{}".format(positionRight, positionDown))
 
         # Variables
@@ -64,52 +64,123 @@ class main_window(tk.Tk):
 
         # Window 
         self.title("Statika számító")
-        # self.state("zoomed")          # Fullscreen
-        self.geometry(f"{win_width}x{win_height}")
+        self.state("zoomed")          # Fullscreen
+        self.geometry(f"{self.win_width}x{self.win_height}")
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
         self.iconbitmap("AMSZ.ico")
 
-        # # resize labels
-        # # self.separator = ttk.Separator(self, orient='horizontal',cursor="sizing", ="black")
-        # # self.separator.pack(side =tk.TOP, fill=tk.X)
-        # self.left_resize = tk.LabelFrame(self,cursor="sb_h_double_arrow", bg='black', fg='black', width=2, border=0)
-        # self.left_resize.pack(side = tk.LEFT, fill=tk.Y)
 
-        # self.right_resize = tk.LabelFrame(self,cursor="sb_h_double_arrow", bg='black', width=2, border=0)
-        # self.right_resize.pack(side = tk.RIGHT, fill=tk.Y)
+        # custom menubar
+        self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
+        self.menu_canvas.pack(fill = tk.X)
+        # custom menubar objects
+        self.setting_button_img = tk.PhotoImage(file='figures/menubar/settings.png')
+        self.setting_button = self.menu_canvas.create_image(0,0,anchor=tk.NW,image=self.setting_button_img)
+        self.menu_canvas.tag_bind(self.setting_button, '<Button-1>', lambda e: settings_window(self))
 
-        # self.top_resize = tk.LabelFrame(self,cursor="sb_v_double_arrow", bg='black', height=2, border=0)
-        # self.top_resize.pack(side = tk.TOP, fill=tk.X)
+        self.basic_button_img = tk.PhotoImage(file='figures/menubar/basic.png')
+        self.change_button_img = tk.PhotoImage(file='figures/menubar/change.png')
+        self.change_button = self.menu_canvas.create_image(143,0,anchor=tk.NW,image=self.change_button_img)
+        self.menu_canvas.tag_bind(self.change_button, '<Button-1>', lambda e: self.build_shape())
 
-        # self.bottom_resize = tk.LabelFrame(self,cursor="sb_v_double_arrow", bg='black', height=2, border=0)
-        # self.bottom_resize.pack(side = tk.BOTTOM, fill=tk.X)
+        def settings_window(self):
+            # Variables:
+            unit_clicked = BooleanVar(False)
+            theme_clicked = BooleanVar(False)
 
-        # self.topleft_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', fg='black', width=2, border=0)
-        # self.topleft_resize.pack(side=tk.TOP, anchor=tk.W)
+            win_width = 330
+            win_height = 220
+            # Position the window in the center of the page.
+            positionRight = int(self.winfo_screenwidth()/2 - win_width/2)
+            positionDown = int(self.winfo_screenheight()/2 - win_height/2)
 
-        # self.topright_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', width=2, border=0)
-        # self.topright_resize.pack(side=tk.TOP, anchor=tk.E)
+            self.settings_window = tk.Toplevel(self, takefocus = True, bg=self.colors['main_color'])
+            self.settings_window.geometry("+{}+{}".format(positionRight, positionDown))
+            self.settings_window.lift()
+            self.settings_window.wm_attributes('-topmost',True)
+            self.settings_window.title("Beállítások")
+            self.settings_window.geometry(f"{win_width}x{win_height}")
+            self.settings_window.resizable(0, 0)
 
-        # self.bottomleft_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', height=2, border=0)
-        # self.bottomleft_resize.pack(side=tk.BOTTOM, anchor=tk.W)
+            # setting window menubar
+            self.settings_menu = tk.Canvas(self.settings_window, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
+            self.settings_menu.pack(fill = tk.X)
 
-        # self.bottomright_resize = tk.LabelFrame(self,cursor="size_nw_se", bg='black', height=2, border=0)
-        # self.bottomright_resize.pack(side=tk.BOTTOM, anchor=tk.E)
+            self.settings_menu_options = tk.Canvas(self.settings_window, bg=self.colors['main_color'], highlightthickness=0)
+            self.settings_menu_options.pack(fill = tk.BOTH)
 
-        # # titlebar
-        # self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=100)
-        # self.menu_canvas.pack(fill = tk.X)
-        # self.menu_canvas.bind("<ButtonPress-1>", self.start_move)
-        # self.menu_canvas.bind("<ButtonRelease-1>", self.stop_move)
-        # self.menu_canvas.bind("<B1-Motion>", self.do_move)
-        # # titlebar objects
-        # self.exit_button_img = tk.PhotoImage(file='figures/titlebar/exit.png')
-        # self.exit_button = tk.Button(self.menu_canvas, image=self.exit_button_img, bg=self.colors['secondary_color'], activebackground=self.colors['secondary_color'], command=self.destroy)
-        # self.exit_button["border"] = "0"
-        # self.exit_button.pack(side=tk.RIGHT)
+            # menubar objects
+            self.unit_button_img = tk.PhotoImage(file='figures/settings/unit.png')
+            self.unit_button = self.settings_menu.create_image(0,0,anchor=tk.NW,image=self.unit_button_img)
+            self.settings_menu.tag_bind(self.unit_button, '<Button-1>', lambda e:unit_button_click())
 
+            self.mm_img = tk.PhotoImage(file='figures/settings/mm.png')
+            self.cm_img = tk.PhotoImage(file='figures/settings/cm.png')
+            self.m_img = tk.PhotoImage(file='figures/settings/m.png')
+            self.deg_img = tk.PhotoImage(file='figures/settings/deg.png')
+            self.rad_img = tk.PhotoImage(file='figures/settings/rad.png')
+            self.mm_clicked_img = tk.PhotoImage(file='figures/settings/mm_clicked.png')
+            self.cm_clicked_img = tk.PhotoImage(file='figures/settings/cm_clicked.png')
+            self.m_clicked_img = tk.PhotoImage(file='figures/settings/m_clicked.png')
+            self.deg_clicked_img = tk.PhotoImage(file='figures/settings/deg_clicked.png')
+            self.rad_clicked_img = tk.PhotoImage(file='figures/settings/rad_clicked.png')
+
+            self.theme_button_img = tk.PhotoImage(file='figures/settings/theme.png')
+            self.theme_button = self.settings_menu.create_image(135,0,anchor=tk.NW,image=self.theme_button_img)
+            self.settings_menu.tag_bind(self.theme_button, '<Button-1>', lambda e:theme_button_click())
+
+            self.light_img = tk.PhotoImage(file='figures/settings/light.png')
+            self.dark_img = tk.PhotoImage(file='figures/settings/dark.png')
+            self.light_clicked_img = tk.PhotoImage(file='figures/settings/light_clicked.png')
+            self.dark_clicked_img = tk.PhotoImage(file='figures/settings/dark_clicked.png')
+
+            self.ok_img = tk.PhotoImage(file='figures/settings/ok.png')
+
+            def unit_button_click():
+                if unit_clicked.get() == False:
+                    unit_clicked.set(True)
+                    if theme_clicked.get() == False:
+                        theme_clicked.set(False)
+                        self.mm = self.settings_menu_options.create_image(20,20,anchor=tk.NW,image=self.mm_img)
+                        self.cm = self.settings_menu_options.create_image(20,41,anchor=tk.NW,image=self.cm_img)
+                        self.m = self.settings_menu_options.create_image(20,62,anchor=tk.NW,image=self.m_img)
+                        self.deg = self.settings_menu_options.create_image(173,20,anchor=tk.NW,image=self.deg_img)
+                        self.rad = self.settings_menu_options.create_image(173,41,anchor=tk.NW,image=self.rad_img)
+                        self.ok = self.settings_menu_options.create_image(190,150,anchor=tk.NW,image=self.ok_img)
+                    else:
+                        theme_clicked.set(False)
+                        self.settings_menu_options.delete('all')
+                        self.mm = self.settings_menu_options.create_image(20,20,anchor=tk.NW,image=self.mm_img)
+                        self.cm = self.settings_menu_options.create_image(20,41,anchor=tk.NW,image=self.cm_img)
+                        self.m = self.settings_menu_options.create_image(20,62,anchor=tk.NW,image=self.m_img)
+                        self.deg = self.settings_menu_options.create_image(173,20,anchor=tk.NW,image=self.deg_img)
+                        self.rad = self.settings_menu_options.create_image(173,41,anchor=tk.NW,image=self.rad_img)
+                        self.ok = self.settings_menu_options.create_image(190,150,anchor=tk.NW,image=self.ok_img)
+                        # self.settings_menu_options.delete(self.light)
+                        # self.settings_menu_options.delete(self.dark)
+                        # self.settings_menu_options.delete(self.ok)
+            def theme_button_click():
+                if theme_clicked.get() == False:
+                    theme_clicked.set(True)
+                    if unit_clicked.get() == False:
+                        unit_clicked.set(False)
+                        self.light = self.settings_menu_options.create_image(30,20,anchor=tk.NW,image=self.light_img)
+                        self.dark = self.settings_menu_options.create_image(180,20,anchor=tk.NW,image=self.dark_img)
+                        self.ok = self.settings_menu_options.create_image(190,150,anchor=tk.NW,image=self.ok_img)
+                    else:
+                        unit_clicked.set(False)
+                        self.settings_menu_options.delete('all')
+                        self.light = self.settings_menu_options.create_image(30,20,anchor=tk.NW,image=self.light_img)
+                        self.dark = self.settings_menu_options.create_image(180,20,anchor=tk.NW,image=self.dark_img)
+                        self.ok = self.settings_menu_options.create_image(190,150,anchor=tk.NW,image=self.ok_img)
+                        # self.settings_menu_options.delete(self.mm)
+                        # self.settings_menu_options.delete(self.cm)
+                        # self.settings_menu_options.delete(self.m)
+                        # self.settings_menu_options.delete(self.deg)
+                        # self.settings_menu_options.delete(self.rad)
+                        # self.settings_menu_options.delete(self.ok)
 
         # Canvas for drawing
         self.canvas = None
@@ -121,49 +192,49 @@ class main_window(tk.Tk):
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
 
-        # Menubar
-        self.menubar = tk.Menu(self)
-        self.config(menu=self.menubar)
+        # # Menubar
+        # self.menubar = tk.Menu(self)
+        # self.config(menu=self.menubar)
 
-        # Add settings to menubar
-        settings_menu = tk.Menu(self, self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
+        # # Add settings to menubar
+        # settings_menu = tk.Menu(self, self.menubar, tearoff=0)
+        # self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
 
-        # Add units menu to settings menu
-        units_menu = tk.Menu(self, settings_menu, tearoff=0)
-        units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
-        units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
-        units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
-        units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
-        units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
-        settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
+        # # Add units menu to settings menu
+        # units_menu = tk.Menu(self, settings_menu, tearoff=0)
+        # units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
+        # units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
+        # units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
+        # units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
+        # units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
+        # settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
 
-        # Add themes menu to setting menu
-        themes_menu = tk.Menu(self, settings_menu, tearoff=0)
-        themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
-        themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
-        settings_menu.add_cascade(label="Téma", menu=themes_menu)
+        # # Add themes menu to setting menu
+        # themes_menu = tk.Menu(self, settings_menu, tearoff=0)
+        # themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
+        # themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
+        # settings_menu.add_cascade(label="Téma", menu=themes_menu)
 
-        #Changing to shape builder
-        self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
-        # Add exit button to menubar
-        self.menubar.add_command(label="Kilépés", command=self.destroy)
+        # #Changing to shape builder
+        # self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
+        # # Add exit button to menubar
+        # self.menubar.add_command(label="Kilépés", command=self.destroy)
         
     ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
-    def start_move(self, event):
-        self.x = event.x
-        self.y = event.y
+    # def start_move(self, event):
+    #     self.x = event.x
+    #     self.y = event.y
 
-    def stop_move(self,event):
-        self.x = None
-        self.y = None
+    # def stop_move(self,event):
+    #     self.x = None
+    #     self.y = None
 
-    def do_move(self, event):
-        deltax = event.x - self.x
-        deltay = event.y - self.y
-        x = self.winfo_x() + deltax
-        y = self.winfo_y() + deltay
-        self.geometry(f"+{x}+{y}")
+    # def do_move(self, event):
+    #     deltax = event.x - self.x
+    #     deltay = event.y - self.y
+    #     x = self.winfo_x() + deltax
+    #     y = self.winfo_y() + deltay
+    #     self.geometry(f"+{x}+{y}")
     
     def theme_change(self, theme):
         if self.theme != theme:
@@ -200,8 +271,9 @@ class main_window(tk.Tk):
             self.sb_sm = shape_builder.sb_side_menu(self)
             self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
             self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
-            self.menubar.entryconfig(2,label="Alap alakzatok")
-            self.menubar.entryconfig(1, state="disabled")
+            self.menu_canvas.itemconfig (self.change_button, image=self.basic_button_img)
+            # self.menubar.entryconfig(2,label="Alap alakzatok")
+            # self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
             self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
@@ -212,8 +284,9 @@ class main_window(tk.Tk):
             self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             self.plotted = False
             self.shape_builder_mode = False
-            self.menubar.entryconfig(2,label="Saját alakzat")
-            self.menubar.entryconfig(1, state="normal")
+            self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
+            # self.menubar.entryconfig(2,label="Saját alakzat")
+            # self.menubar.entryconfig(1, state="normal")
 
 
     def choose_object(self, shape = None):
@@ -340,12 +413,12 @@ class main_window(tk.Tk):
 DARK_THEME = {
         # 'main_color': '#2C394B',
         # 'secondary_color': '#082032',
-        'main_color': '#082032',
-        'secondary_color': '#2C394B',
-        'text_color': '#FF4C29',
+        'main_color': '#1a1a1a',
+        'secondary_color': '#333333',
+        'text_color': '#cccccc',
         'entry_color': '#334756',
-        'draw_main': '#FF4C29',
-        'draw_secondary': 'black',
+        'draw_main': '#87aade',
+        'draw_secondary': '#1a1a1a',
         'draw_tertiary': 'grey'
         }
 LIGHT_THEME = {

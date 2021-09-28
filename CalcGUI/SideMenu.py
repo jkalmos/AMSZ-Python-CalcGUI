@@ -8,16 +8,57 @@ class SideMenu(tk.Frame):
         self.root = root
         self.shape = None
 
+        self.update()
+        self.width = self.winfo_width()
+        self.height = self.root.winfo_height()/2
+
 # DEFINE SIDEMENU OBJECTS --------------------------------------------------------------------------------------------------------------
-        self.canvas = tk.Canvas(self, bg=self["background"], highlightthickness=0)
-        self.canvas.grid(row=0, column=0, sticky="NSEW")
+        self.entry_canvas = tk.Canvas(self, bg=root.colors['secondary_color'], height=self.height, highlightthickness=0)
+        self.entry_canvas.grid(row=0, column=0, sticky="NSEW")
+
+        self.result_canvas = tk.Canvas(self, bg=root.colors['secondary_color'], height=self.height, highlightthickness=0)
+        self.result_canvas.grid(row=1, column=0, sticky="NSEW")
+
+        # self.grid_rowconfigure(0,weight=1)
+        # self.grid_rowconfigure(1,weight=1)
+
+        def round_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):
+            points = [x1+radius, y1,
+                        x1+radius, y1,
+                        x2-radius, y1,
+                        x2-radius, y1,
+                        x2, y1,
+                        x2, y1+radius,
+                        x2, y1+radius,
+                        x2, y2-radius,
+                        x2, y2-radius,
+                        x2, y2,
+                        x2-radius, y2,
+                        x2-radius, y2,
+                        x1+radius, y2,
+                        x1+radius, y2,
+                        x1, y2,
+                        x1, y2-radius,
+                        x1, y2-radius,
+                        x1, y1+radius,
+                        x1, y1+radius,
+                        x1, y1]
+            canvas.create_polygon(points, **kwargs, smooth=True)
+
+        self.result_canvas.update()
+        self.result_width = self.result_canvas.winfo_width()
+        self.resul_height = self.root.winfo_height()/2
+        self.result_rect = round_rectangle(self.result_canvas, 0, 0, self.result_width, self.resul_height, radius=20, fill=root.colors['main_color'])
+
+        # self.reslbl = tk.Label(self.result_canvas, width = 50, bg = self["background"] , fg='white')
+        # self.reslbl.grid(row=0, column=1)
 
         # place holder label
-        self.lbl = tk.Label(self.canvas, width = 50, bg = self["background"] , fg='white')
+        self.lbl = tk.Label(self.entry_canvas, width = 50, bg = self["background"] , fg='white')
         self.lbl.grid(row=0, column=1)
 
-        self.lbl2 = tk.Label(self.canvas, height = 300, bg = self["background"] , fg='white')
-        self.lbl2.grid(row=200, column=1)
+        self.lbl2 = tk.Label(self.entry_canvas, height = 300, bg = self["background"] , fg='white')
+        # self.lbl2.grid(row=200, column=1)
 
         def callback(shape):
             self.root.choose_object(shape)
@@ -170,23 +211,23 @@ class SideMenu(tk.Frame):
 
         # Custom combobox
         self.combo_default_img = tk.PhotoImage(file='combo_default.png')
-        self.combo_default = tk.Button(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"], command=combo_click)
+        self.combo_default = tk.Button(self.entry_canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"], command=combo_click)
         self.combo_default.grid(row=1, column=0, columnspan=5)
         self.combo_default["border"] = "0"
 
         self.combo_under_img = tk.PhotoImage(file='combo_under.png')
-        self.combo_under = tk.Label(self.canvas, image=self.combo_under_img, bg=self["background"])
+        self.combo_under = tk.Label(self.entry_canvas, image=self.combo_under_img, bg=self["background"])
         self.combo_rectangle_img = tk.PhotoImage(file='combo_rectangle.png')
-        self.combo_rectangle = tk.Button(self.canvas, image=self.combo_rectangle_img, bg=self["background"], activebackground=self["background"], command=rectangle_click)
+        self.combo_rectangle = tk.Button(self.entry_canvas, image=self.combo_rectangle_img, bg=self["background"], activebackground=self["background"], command=rectangle_click)
         self.combo_rectangle["border"] = "0"
         self.combo_circle_img = tk.PhotoImage(file='combo_circle.png')
-        self.combo_circle = tk.Button(self.canvas, image=self.combo_circle_img, bg=self["background"], activebackground=self["background"], command=circle_click)
+        self.combo_circle = tk.Button(self.entry_canvas, image=self.combo_circle_img, bg=self["background"], activebackground=self["background"], command=circle_click)
         self.combo_circle["border"] = "0"
         self.combo_ellipse_img = tk.PhotoImage(file='combo_ellipse.png')
-        self.combo_ellipse = tk.Button(self.canvas, image=self.combo_ellipse_img, bg=self["background"], activebackground=self["background"], command=ellipse_click)
+        self.combo_ellipse = tk.Button(self.entry_canvas, image=self.combo_ellipse_img, bg=self["background"], activebackground=self["background"], command=ellipse_click)
         self.combo_ellipse["border"] = "0"
         self.combo_isosceles_img = tk.PhotoImage(file='combo_isosceles.png')
-        self.combo_isosceles = tk.Button(self.canvas, image=self.combo_isosceles_img, bg=self["background"], activebackground=self["background"], command=isosceles_click)
+        self.combo_isosceles = tk.Button(self.entry_canvas, image=self.combo_isosceles_img, bg=self["background"], activebackground=self["background"], command=isosceles_click)
         self.combo_isosceles["border"] = "0"
 
         self.combo_circle_hover_img = tk.PhotoImage(file='combo_circle_hover.png')
@@ -196,14 +237,14 @@ class SideMenu(tk.Frame):
         image=self.combo_circle_img))
         # self.combo_default.bind("<Leave><Button>", func=combo_clear())
         
-        # self.canvas.tag_bind(self.combo_default, '<Button>', print('clicked'))
-        # self.canvas.delete(self.combo_default))
+        # self.entry_canvas.tag_bind(self.combo_default, '<Button>', print('clicked'))
+        # self.entry_canvas.delete(self.combo_default))
 
         self.root.bind("<Button-1>", func=combo_clear())
 
         # # combobox
         # self.n = tk.StringVar()
-        # self.choose_shape = ttk.Combobox(self.canvas, width = 25, textvariable=self.n, state='readonly', text="x", justify='center')
+        # self.choose_shape = ttk.Combobox(self.entry_canvas, width = 25, textvariable=self.n, state='readonly', text="x", justify='center')
         # self.choose_shape.set('Alakzat...')
         # self.choose_shape['values'] = ('Téglalap', 
         #                         'Kör',
@@ -215,38 +256,38 @@ class SideMenu(tk.Frame):
 
 
         # dimension input labels
-        self.l1 = tk.Label(self.canvas, text="Width", bg=self["background"], fg='white', font=input_font)
-        self.m1 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
-        self.l2 = tk.Label(self.canvas, text="Heigth", bg=self["background"], fg='white', font=input_font)
-        self.m2 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.l1 = tk.Label(self.entry_canvas, text="Width", bg=self["background"], fg='white', font=input_font)
+        self.m1 = tk.Label(self.entry_canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.l2 = tk.Label(self.entry_canvas, text="Heigth", bg=self["background"], fg='white', font=input_font)
+        self.m2 = tk.Label(self.entry_canvas, text="mm", bg=self["background"], fg='white', font=input_font)
 
         # dimension input entries
-        self.e1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white')
-        self.e2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white')
+        self.e1 = tk.Entry(self.entry_canvas, width = 10, bg=self["background"], fg='white')
+        self.e2 = tk.Entry(self.entry_canvas, width = 10, bg=self["background"], fg='white')
 
         # transformed coordinate system input labels
-        self.tl1 = tk.Label(self.canvas, text="x", bg=self["background"], fg='white', font=input_font)
-        self.tm1 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
-        self.tl2 = tk.Label(self.canvas, text="y", bg=self["background"], fg='white', font=input_font)
-        self.tm2 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
-        self.tl3 = tk.Label(self.canvas, text="phi", bg=self["background"], fg='white', font=input_font)
-        self.tm3 = tk.Label(self.canvas, text="rad", bg=self["background"], fg='white', font=input_font)
+        self.tl1 = tk.Label(self.entry_canvas, text="x", bg=self["background"], fg='white', font=input_font)
+        self.tm1 = tk.Label(self.entry_canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.tl2 = tk.Label(self.entry_canvas, text="y", bg=self["background"], fg='white', font=input_font)
+        self.tm2 = tk.Label(self.entry_canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.tl3 = tk.Label(self.entry_canvas, text="phi", bg=self["background"], fg='white', font=input_font)
+        self.tm3 = tk.Label(self.entry_canvas, text="rad", bg=self["background"], fg='white', font=input_font)
 
         # transformed coordinate system input entries
-        self.te1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
-        self.te2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
-        self.te3 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
+        self.te1 = tk.Entry(self.entry_canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
+        self.te2 = tk.Entry(self.entry_canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
+        self.te3 = tk.Entry(self.entry_canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
 
         # thickness input labels
-        self.thl1 = tk.Label(self.canvas, text="t", bg=self["background"], fg='white', font=input_font)
-        self.thm1 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.thl1 = tk.Label(self.entry_canvas, text="t", bg=self["background"], fg='white', font=input_font)
+        self.thm1 = tk.Label(self.entry_canvas, text="mm", bg=self["background"], fg='white', font=input_font)
 
         # thickness input entry
-        self.the1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
+        self.the1 = tk.Entry(self.entry_canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
 
         # calculate button
         self.buttonimage = tk.PhotoImage(file="calc_button.png")
-        self.calc = tk.Button(self.canvas, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate(), activebackground=self["background"])
+        self.calc = tk.Button(self.entry_canvas, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate(), activebackground=self["background"])
         # self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
         self.calc["bg"] = self["background"]
         self.calc["border"] = "0"
@@ -254,12 +295,12 @@ class SideMenu(tk.Frame):
         self.calc["height"] = "21"
 
         # result labels
-        self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result2 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result3 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result4 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result5 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result6 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result1 = tk.Label(self.entry_canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result2 = tk.Label(self.entry_canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result3 = tk.Label(self.entry_canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result4 = tk.Label(self.entry_canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result5 = tk.Label(self.entry_canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result6 = tk.Label(self.entry_canvas, text="", bg=self["background"], fg='white', font=result_font)
         self.result1.grid(row=12, column = 1, columnspan=3, padx=5, pady=5)
         self.result2.grid(row=13, column = 1, columnspan=3, padx=5, pady=5)
         self.result3.grid(row=14, column = 1, columnspan=3, padx=5, pady=5)
@@ -269,7 +310,7 @@ class SideMenu(tk.Frame):
 
         # Checkbox: set thickness
         self.thickness = tk.Checkbutton(
-            self.canvas, text = "Falvastagság hozzáadása",
+            self.entry_canvas, text = "Falvastagság hozzáadása",
             variable = self.root.thickness_on, onvalue=True, offvalue=False, font=input_font, 
             bg = self["background"], fg='white', selectcolor='grey',
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
@@ -277,7 +318,7 @@ class SideMenu(tk.Frame):
 
         # Checkbox: transformed coordinate system
         self.transformed_coordinate_system = tk.Checkbutton(
-            self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
+            self.entry_canvas, text = "Transzformált koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
             bg = self["background"], fg='white', selectcolor='grey',
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
@@ -316,9 +357,13 @@ class SideMenu(tk.Frame):
             elif var.get() == True:
                 entry.configure(state='normal')
 
+        ### VARIABLES-------------------------------------------------------------------------------
+        # y-paddign between input widgets
+        self.pady_val = 1
+
     def change_color(self, color):
         self["background"] = color["secondary_color"]
-        self.canvas["bg"] = self["background"]
+        self.entry_canvas["bg"] = self["background"]
         for i in self.controls:
             i["entry"].config({"background": color["entry_color"]})
             i["entry"].config({"fg": color["text_color"]})
@@ -349,151 +394,151 @@ class SideMenu(tk.Frame):
         self.calc.grid_forget()
         self.thickness.grid_forget()
         self.transformed_coordinate_system.grid_forget()
-        
+    
     def change_to_recrangle(self):
         self.lbl.grid(row=1, column=0, columnspan=5, pady=10)
         # size a
         self.controls[0]["name"].config(text="a")
-        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=5)
-        self.controls[0]["entry"].grid(row=2,column=2, pady=5)
-        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=5)
+        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=self.pady_val)
+        self.controls[0]["entry"].grid(row=2,column=2, pady=self.pady_val)
+        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=self.pady_val)
         # size b
         self.controls[1]["name"].config(text="b")
-        self.controls[1]["name"].grid(row=3,column=1, sticky='e', pady=5)
-        self.controls[1]["entry"].grid(row=3,column=2, pady=5)
-        self.controls[1]["unit"].grid(row=3,column=3, sticky='w', pady=5)
+        self.controls[1]["name"].grid(row=3,column=1, sticky='e', pady=self.pady_val)
+        self.controls[1]["entry"].grid(row=3,column=2, pady=self.pady_val)
+        self.controls[1]["unit"].grid(row=3,column=3, sticky='w', pady=self.pady_val)
         # transformed checkbox
-        self.transformed_coordinate_system.grid(row=4, column=1, columnspan=3, pady=5)
+        self.transformed_coordinate_system.grid(row=4, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # transformed x
         self.controls[2]["name"].config(text="x")
-        self.controls[2]["name"].grid(row=5,column=1, sticky='e', pady=5)
-        self.controls[2]["entry"].grid(row=5,column=2, pady=5)
-        self.controls[2]["unit"].grid(row=5,column=3, sticky='w', pady=5)
+        self.controls[2]["name"].grid(row=5,column=1, sticky='e', pady=self.pady_val)
+        self.controls[2]["entry"].grid(row=5,column=2, pady=self.pady_val)
+        self.controls[2]["unit"].grid(row=5,column=3, sticky='w', pady=self.pady_val)
         # transformed y
         self.controls[3]["name"].config(text="y")
-        self.controls[3]["name"].grid(row=6,column=1, sticky='e', pady=5)
-        self.controls[3]["entry"].grid(row=6,column=2, pady=5)
-        self.controls[3]["unit"].grid(row=6,column=3, sticky='w', pady=5)
+        self.controls[3]["name"].grid(row=6,column=1, sticky='e', pady=self.pady_val)
+        self.controls[3]["entry"].grid(row=6,column=2, pady=self.pady_val)
+        self.controls[3]["unit"].grid(row=6,column=3, sticky='w', pady=self.pady_val)
         # transformed phi
         self.controls[4]["name"].config(text="φ")
-        self.controls[4]["name"].grid(row=7,column=1, sticky='e', pady=5)
-        self.controls[4]["entry"].grid(row=7,column=2, pady=5)
-        self.controls[4]["unit"].grid(row=7,column=3, sticky='w', pady=5)
+        self.controls[4]["name"].grid(row=7,column=1, sticky='e', pady=self.pady_val)
+        self.controls[4]["entry"].grid(row=7,column=2, pady=self.pady_val)
+        self.controls[4]["unit"].grid(row=7,column=3, sticky='w', pady=self.pady_val)
         # thickness checkbox
-        self.thickness.grid(row=8, column=1, columnspan=3, pady=5)
+        self.thickness.grid(row=8, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # thickness t
         self.controls[5]["name"].config(text="t")
-        self.controls[5]["name"].grid(row=9,column=1, sticky='e', pady=5)
-        self.controls[5]["entry"].grid(row=9,column=2, pady=5)
-        self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=5)
+        self.controls[5]["name"].grid(row=9,column=1, sticky='e', pady=self.pady_val)
+        self.controls[5]["entry"].grid(row=9,column=2, pady=self.pady_val)
+        self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=5)
+        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
     def change_to_circle(self):
         self.lbl.grid(row=1, column=0, columnspan=5, pady=10)
         # diameter d
         self.controls[0]["name"].config(text="d")
-        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=5)
-        self.controls[0]["entry"].grid(row=2,column=2, pady=5)
-        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=5)
+        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=self.pady_val)
+        self.controls[0]["entry"].grid(row=2,column=2, pady=self.pady_val)
+        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=self.pady_val)
         # transformed checkbox
-        self.transformed_coordinate_system.grid(row=3, column=1, columnspan=3, pady=5)
+        self.transformed_coordinate_system.grid(row=3, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # transformed x
         self.controls[2]["name"].config(text="x")
-        self.controls[2]["name"].grid(row=4,column=1, sticky='e', pady=5)
-        self.controls[2]["entry"].grid(row=4,column=2, pady=5)
-        self.controls[2]["unit"].grid(row=4,column=3, sticky='w', pady=5)
+        self.controls[2]["name"].grid(row=4,column=1, sticky='e', pady=self.pady_val)
+        self.controls[2]["entry"].grid(row=4,column=2, pady=self.pady_val)
+        self.controls[2]["unit"].grid(row=4,column=3, sticky='w', pady=self.pady_val)
         # transformed y
         self.controls[3]["name"].config(text="y")
-        self.controls[3]["name"].grid(row=5,column=1, sticky='e', pady=5)
-        self.controls[3]["entry"].grid(row=5,column=2, pady=5)
-        self.controls[3]["unit"].grid(row=5,column=3, sticky='w', pady=5)
+        self.controls[3]["name"].grid(row=5,column=1, sticky='e', pady=self.pady_val)
+        self.controls[3]["entry"].grid(row=5,column=2, pady=self.pady_val)
+        self.controls[3]["unit"].grid(row=5,column=3, sticky='w', pady=self.pady_val)
         # transformed phi
         self.controls[4]["name"].config(text="φ")
-        self.controls[4]["name"].grid(row=6,column=1, sticky='e', pady=5)
-        self.controls[4]["entry"].grid(row=6,column=2, pady=5)
-        self.controls[4]["unit"].grid(row=6,column=3, sticky='w', pady=5)
+        self.controls[4]["name"].grid(row=6,column=1, sticky='e', pady=self.pady_val)
+        self.controls[4]["entry"].grid(row=6,column=2, pady=self.pady_val)
+        self.controls[4]["unit"].grid(row=6,column=3, sticky='w', pady=self.pady_val)
         # thickness checkbox
-        self.thickness.grid(row=7, column=1, columnspan=3)
+        self.thickness.grid(row=7, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # thickness t
         self.controls[5]["name"].config(text="t")
-        self.controls[5]["name"].grid(row=8,column=1, sticky='e', pady=5)
-        self.controls[5]["entry"].grid(row=8,column=2, pady=5)
-        self.controls[5]["unit"].grid(row=8,column=3, sticky='w', pady=5)
+        self.controls[5]["name"].grid(row=8,column=1, sticky='e', pady=self.pady_val)
+        self.controls[5]["entry"].grid(row=8,column=2, pady=self.pady_val)
+        self.controls[5]["unit"].grid(row=8,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=5)
+        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
     def change_to_ellipse(self):
         self.lbl.grid(row=1, column=0, columnspan=5, pady=10)
         # size a
         self.controls[0]["name"].config(text="a")
-        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=5)
-        self.controls[0]["entry"].grid(row=2,column=2, pady=5)
-        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=5)
+        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=self.pady_val)
+        self.controls[0]["entry"].grid(row=2,column=2, pady=self.pady_val)
+        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=self.pady_val)
         # size b
         self.controls[1]["name"].config(text="b")
-        self.controls[1]["name"].grid(row=3,column=1, sticky='e', pady=5)
-        self.controls[1]["entry"].grid(row=3,column=2, pady=5)
-        self.controls[1]["unit"].grid(row=3,column=3, sticky='w', pady=5)
+        self.controls[1]["name"].grid(row=3,column=1, sticky='e', pady=self.pady_val)
+        self.controls[1]["entry"].grid(row=3,column=2, pady=self.pady_val)
+        self.controls[1]["unit"].grid(row=3,column=3, sticky='w', pady=self.pady_val)
         # transformed checkbox
-        self.transformed_coordinate_system.grid(row=4, column=1, columnspan=3, pady=5)
+        self.transformed_coordinate_system.grid(row=4, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # transformed x
         self.controls[2]["name"].config(text="x")
-        self.controls[2]["name"].grid(row=5,column=1, sticky='e', pady=5)
-        self.controls[2]["entry"].grid(row=5,column=2, pady=5)
-        self.controls[2]["unit"].grid(row=5,column=3, sticky='w', pady=5)
+        self.controls[2]["name"].grid(row=5,column=1, sticky='e', pady=self.pady_val)
+        self.controls[2]["entry"].grid(row=5,column=2, pady=self.pady_val)
+        self.controls[2]["unit"].grid(row=5,column=3, sticky='w', pady=self.pady_val)
         # transformed y
         self.controls[3]["name"].config(text="y")
-        self.controls[3]["name"].grid(row=6,column=1, sticky='e', pady=5)
-        self.controls[3]["entry"].grid(row=6,column=2, pady=5)
-        self.controls[3]["unit"].grid(row=6,column=3, sticky='w', pady=5)
+        self.controls[3]["name"].grid(row=6,column=1, sticky='e', pady=self.pady_val)
+        self.controls[3]["entry"].grid(row=6,column=2, pady=self.pady_val)
+        self.controls[3]["unit"].grid(row=6,column=3, sticky='w', pady=self.pady_val)
         # transformed phi
         self.controls[4]["name"].config(text="φ")
-        self.controls[4]["name"].grid(row=7,column=1, sticky='e', pady=5)
-        self.controls[4]["entry"].grid(row=7,column=2, pady=5)
-        self.controls[4]["unit"].grid(row=7,column=3, sticky='w', pady=5)
+        self.controls[4]["name"].grid(row=7,column=1, sticky='e', pady=self.pady_val)
+        self.controls[4]["entry"].grid(row=7,column=2, pady=self.pady_val)
+        self.controls[4]["unit"].grid(row=7,column=3, sticky='w', pady=self.pady_val)
         # thickness checkbox
-        self.thickness.grid(row=8, column=1, columnspan=3, pady=5)
+        self.thickness.grid(row=8, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # thickness t
         self.controls[5]["name"].config(text="t")
-        self.controls[5]["name"].grid(row=9,column=1, sticky='e', pady=5)
-        self.controls[5]["entry"].grid(row=9,column=2, pady=5)
-        self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=5)
+        self.controls[5]["name"].grid(row=9,column=1, sticky='e', pady=self.pady_val)
+        self.controls[5]["entry"].grid(row=9,column=2, pady=self.pady_val)
+        self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=5)
+        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
     def change_to_isosceles_triangle(self):
         self.lbl.grid(row=1, column=0, columnspan=5, pady=10)
         # size a
         self.controls[0]["name"].config(text="a")
-        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=5)
-        self.controls[0]["entry"].grid(row=2,column=2, pady=5)
-        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=5)
+        self.controls[0]["name"].grid(row=2,column=1, sticky='e', pady=self.pady_val)
+        self.controls[0]["entry"].grid(row=2,column=2, pady=self.pady_val)
+        self.controls[0]["unit"].grid(row=2,column=3, sticky='w', pady=self.pady_val)
         # size b
         self.controls[1]["name"].config(text="b")
-        self.controls[1]["name"].grid(row=3,column=1, sticky='e', pady=5)
-        self.controls[1]["entry"].grid(row=3,column=2, pady=5)
-        self.controls[1]["unit"].grid(row=3,column=3, sticky='w', pady=5)
+        self.controls[1]["name"].grid(row=3,column=1, sticky='e', pady=self.pady_val)
+        self.controls[1]["entry"].grid(row=3,column=2, pady=self.pady_val)
+        self.controls[1]["unit"].grid(row=3,column=3, sticky='w', pady=self.pady_val)
         # transformed checkbox
-        self.transformed_coordinate_system.grid(row=4, column=1, columnspan=3, pady=5)
+        self.transformed_coordinate_system.grid(row=4, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # transformed x
         self.controls[2]["name"].config(text="x")
-        self.controls[2]["name"].grid(row=5,column=1, sticky='e', pady=5)
-        self.controls[2]["entry"].grid(row=5,column=2, pady=5)
-        self.controls[2]["unit"].grid(row=5,column=3, sticky='w', pady=5)
+        self.controls[2]["name"].grid(row=5,column=1, sticky='e', pady=self.pady_val)
+        self.controls[2]["entry"].grid(row=5,column=2, pady=self.pady_val)
+        self.controls[2]["unit"].grid(row=5,column=3, sticky='w', pady=self.pady_val)
         # transformed y
         self.controls[3]["name"].config(text="y")
-        self.controls[3]["name"].grid(row=6,column=1, sticky='e', pady=5)
-        self.controls[3]["entry"].grid(row=6,column=2, pady=5)
-        self.controls[3]["unit"].grid(row=6,column=3, sticky='w', pady=5)
+        self.controls[3]["name"].grid(row=6,column=1, sticky='e', pady=self.pady_val)
+        self.controls[3]["entry"].grid(row=6,column=2, pady=self.pady_val)
+        self.controls[3]["unit"].grid(row=6,column=3, sticky='w', pady=self.pady_val)
         # transformed phi
         self.controls[4]["name"].config(text="φ")
-        self.controls[4]["name"].grid(row=7,column=1, sticky='e', pady=5)
-        self.controls[4]["entry"].grid(row=7,column=2, pady=5)
-        self.controls[4]["unit"].grid(row=7,column=3, sticky='w', pady=5)
+        self.controls[4]["name"].grid(row=7,column=1, sticky='e', pady=self.pady_val)
+        self.controls[4]["entry"].grid(row=7,column=2, pady=self.pady_val)
+        self.controls[4]["unit"].grid(row=7,column=3, sticky='w', pady=self.pady_val)
         # thickness checkbox
-        self.thickness.grid(row=8, column=1, columnspan=3)
+        self.thickness.grid(row=8, column=0, columnspan=4, pady=self.pady_val, padx=(5,0), sticky=tk.W)
         # thickness t
         self.controls[5]["name"].config(text="t")
-        self.controls[5]["name"].grid(row=9,column=1, sticky='e', pady=5)
-        self.controls[5]["entry"].grid(row=9,column=2, pady=5)
-        self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=5)
+        self.controls[5]["name"].grid(row=9,column=1, sticky='e', pady=self.pady_val)
+        self.controls[5]["entry"].grid(row=9,column=2, pady=self.pady_val)
+        self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=5)
+        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
