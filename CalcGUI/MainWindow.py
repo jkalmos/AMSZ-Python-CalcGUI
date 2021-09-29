@@ -31,11 +31,19 @@ class starting_window(tk.Tk):
 class main_window(tk.Tk):
     def __init__(self):
         super().__init__()
-        # self.overrideredirect(1)
 
+        # main window opening size
         self.win_width = 1200
         self.win_height = 650
-        
+
+        # screen size
+        self.screen_width = self.winfo_screenwidth()
+        self.screen_height = self.winfo_screenheight()
+
+        # boolean to decide if the window can fit to the screen
+        self.size_ok = tk.BooleanVar(False)
+        if self.win_width<self.screen_width/4*3 or self.win_height<self.screen_height/4*3:
+            self.size_ok.set(True)
 
         # Position the window in the center of the page.
         positionRight = int(self.winfo_screenwidth()/2 - self.win_width/2)
@@ -64,23 +72,24 @@ class main_window(tk.Tk):
 
         # Window 
         self.title("Statika számító")
-        self.state("zoomed")          # Fullscreen
+        if self.size_ok.get() == False:
+            self.state("zoomed")          # Fullscreen
         self.geometry(f"{self.win_width}x{self.win_height}")
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
-        self.iconbitmap("AMSZ.ico")
+        # self.iconbitmap("AMSZ.ico")
 
 
         # custom menubar
         self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
         self.menu_canvas.pack(fill = tk.X)
         # custom menubar objects
-        self.setting_button_img = tk.PhotoImage(file='figures/menubar/settings.png')
+        self.setting_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/settings.png")
         self.setting_button = self.menu_canvas.create_image(0,0,anchor=tk.NW,image=self.setting_button_img)
         self.menu_canvas.tag_bind(self.setting_button, '<Button-1>', lambda e: settings_window(self))
 
-        self.basic_button_img = tk.PhotoImage(file='figures/menubar/basic.png')
+        self.basic_button_img = tk.PhotoImage(file=f"{self.colors['path']}/menubar/basic.png")
         self.change_button_img = tk.PhotoImage(file='figures/menubar/change.png')
         self.change_button = self.menu_canvas.create_image(143,0,anchor=tk.NW,image=self.change_button_img)
         self.menu_canvas.tag_bind(self.change_button, '<Button-1>', lambda e: self.build_shape())
@@ -419,7 +428,8 @@ DARK_THEME = {
         'entry_color': '#334756',
         'draw_main': '#87aade',
         'draw_secondary': '#1a1a1a',
-        'draw_tertiary': 'grey'
+        'draw_tertiary': 'grey',
+        'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
         'main_color': '#FFFFFF',
@@ -428,7 +438,8 @@ LIGHT_THEME = {
         'entry_color': '#FFFFFF',
         'draw_main': '#1034A6',
         'draw_secondary': 'black',
-        'draw_tertiary': 'grey'
+        'draw_tertiary': 'grey',
+        'path': 'figures/light_theme/'
         }
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
