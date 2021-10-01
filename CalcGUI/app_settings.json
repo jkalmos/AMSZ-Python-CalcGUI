@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 {"theme": "dark", "default_unit": "mm", "angle_unit": "\u00b0"}
+=======
+{"theme": "dark", "default_unit": "cm", "angle_unit": "rad", "logo_enabled": "False"}
+>>>>>>> Stashed changes
