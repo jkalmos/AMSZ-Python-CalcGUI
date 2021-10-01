@@ -73,18 +73,9 @@ class SideMenu(tk.Frame):
         input_font = "Roboto", 11
         
         ## Custom combobox ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        # self.combo_buttons = []
-        # self.combo_buttons.append(self.combo_rectangle)
-        # self.combo_buttons.append(self.combo_circle)
-        # self.combo_buttons.append(self.combo_ellipse)
-        # self.combo_buttons.append(self.combo_isosceles)
         
         combo_open = tk.BooleanVar(False)
-        # default_open = tk.BooleanVar(False)
-        # rectangle_open = tk.BooleanVar(False)
-        # circle_open = tk.BooleanVar(False)
-        # ellipse_open = tk.BooleanVar(False)
-        # isosceles_open = tk.BooleanVar(False)
+
         def combo_show():
             combo_open.set(True)
             self.combo_default.grid(row=1, column=0, columnspan=5)
@@ -103,56 +94,12 @@ class SideMenu(tk.Frame):
             self.combo_circle.place_forget()
             self.combo_ellipse.place_forget()
             self.combo_isosceles.place_forget()
-            # if combo_open.get() == True:
-            #     if default_open.get() == True:
-            #         self.combo_default.grid_forget()
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.place_forget()
-            #         default_open.set(False)
-            #         combo_open.set(False)
-            #     elif rectangle_open.get() == True:
-            #         self.combo_rectangle.grid_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.place_forget()
-            #         rectangle_open.set(False)
-            #         combo_open.set(False)
-            #     elif circle_open.get() == True:
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.grid_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.place_forget()
-            #         circle_open.set(False)
-            #         combo_open.set(False)
-            #     elif ellipse_open.get() == True:
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.grid_forget()
-            #         self.combo_isosceles.place_forget()
-            #         ellipse_open.set(False)
-            #         combo_open.set(False)
-            #     elif isosceles_open.get() == True:
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.grid_forget()
-            #         isosceles_open.set(False)
-            #         combo_open.set(False)
 
         def rectangle_click():
             if combo_open.get() == False:
                 self.combo_rectangle.grid_forget()
                 combo_show()
-                # self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=51, anchor=tk.N)
-                # self.combo_circle.lift()
-                # self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=81, anchor=tk.N)
-                # self.combo_ellipse.lift()
-                # self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=111, anchor=tk.N)
-                # self.combo_isosceles.lift()
-                # rectangle_open.set(True)
-                # combo_open.set(True)
+            
             else:
                 combo_clear()
                 self.combo_rectangle.grid(row=1, column=0, columnspan=5)
@@ -167,14 +114,7 @@ class SideMenu(tk.Frame):
             if combo_open.get() == False:
                 self.combo_circle.grid_forget()
                 combo_show()
-                # self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=51, anchor=tk.N)
-                # self.combo_rectangle.lift()
-                # self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=81, anchor=tk.N)
-                # self.combo_ellipse.lift()
-                # self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=111, anchor=tk.N)
-                # self.combo_isosceles.lift()
-                # circle_open.set(True)
-                # combo_open.set(True)
+            
             else:
                 combo_clear()
                 self.combo_circle.grid(row=1, column=0, columnspan=5)
@@ -189,14 +129,7 @@ class SideMenu(tk.Frame):
             if combo_open.get() == False:
                 self.combo_ellipse.grid_forget()
                 combo_show()
-                # self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=51, anchor=tk.N)
-                # self.combo_rectangle.lift()
-                # self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=81, anchor=tk.N)
-                # self.combo_circle.lift()
-                # self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=111, anchor=tk.N)
-                # self.combo_isosceles.lift()
-                # ellipse_open.set(True)
-                # combo_open.set(True)
+            
             else:
                 combo_clear()
                 self.combo_ellipse.grid(row=1, column=0, columnspan=5)
@@ -210,14 +143,7 @@ class SideMenu(tk.Frame):
             if combo_open.get() == False:
                 self.combo_isosceles.grid_forget()
                 combo_show()
-                # self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=51, anchor=tk.N)
-                # self.combo_rectangle.lift()
-                # self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=81, anchor=tk.N)
-                # self.combo_circle.lift()
-                # self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=111, anchor=tk.N)
-                # self.combo_ellipse.lift()
-                # isosceles_open.set(True)
-                # combo_open.set(True)
+            
             else:
                 combo_clear()
                 self.combo_isosceles.grid(row=1, column=0, columnspan=5)
@@ -231,50 +157,10 @@ class SideMenu(tk.Frame):
             if combo_open.get() == False:
                 self.combo_default.grid_forget()
                 combo_show()
-                # self.combo_under.place(bordermode=tk.OUTSIDE, x=31,y=20)
-                # self.combo_under.lift()
-                # self.combo_default.lift()
-                # self.combo_rectangle = self.canvas.create_image(70,50,anchor=tk.NW,image=self.combo_rectangle_img)
-                # self.combo_circle = self.canvas.create_image(70,80,anchor=tk.NW,image=self.combo_circle_img)
-                # self.combo_ellipse = self.canvas.create_image(70,110,anchor=tk.NW,image=self.combo_ellipse_img)
-                # self.combo_isosceles = self.canvas.create_image(70,140,anchor=tk.NW,image=self.combo_isosceles_img)
 
-                # self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=51, anchor=tk.N)
-                # self.combo_rectangle.lift()
-                # self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=72, anchor=tk.N)
-                # self.combo_circle.lift()
-                # self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=111, anchor=tk.N)
-                # self.combo_ellipse.lift()
-                # self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=141, anchor=tk.N)
-                # self.combo_isosceles.lift()
-                # default_open.set(True)
-                # combo_open.set(True)
             else:
                 combo_clear()
                 self.combo_default.grid(row=1, column=0, columnspan=5)
-
-        # Custom combobox
-        # self.combo_place_holder = tk.Label(self.canvas, height=0,  bg=self["background"], activebackground=self["background"])
-        # self.combo_place_holder.grid(row=1, column=0)
-
-        # self.canvas.update()
-        # self.canvas.update_idletasks()
-        # print(self.canvas.winfo_width())
-            #self.combo_default_img = tk.PhotoImage(file='combo_default.png')
-            #self.combo_rectangle_img = tk.PhotoImage(file='combo_rectangle.png')
-            #self.combo_circle_img = tk.PhotoImage(file='combo_circle.png')
-            #self.combo_ellipse_img = tk.PhotoImage(file='combo_ellipse.png')
-            #self.combo_isosceles_img = tk.PhotoImage(file='combo_isosceles.png')
-
-        #self.combo_circle_hover_img = tk.PhotoImage(file='combo_circle_hover.png')
-
-        # self.combo_default = self.canvas.create_image(70,20,anchor=tk.NW,image=self.combo_default_img)
-        # self.canvas.tag_bind(self.combo_default, '<Button-1>', lambda e: combo_click())
-        # self.menu_canvas.tag_bind(self.setting_button, '<Button-1>', lambda e: settings_window(self))
-        # self.combo_rectangle = self.canvas.create_image(100,40,anchor=tk.NW,image=self.combo_rectangle_img)
-        # self.combo_circle = self.canvas.create_image(100,40,anchor=tk.NW,image=self.combo_circle_img)
-        # self.combo_ellipse = self.canvas.create_image(100,40,anchor=tk.NW,image=self.combo_ellipse_img)
-        # self.combo_isosceles = self.canvas.create_image(100,40,anchor=tk.NW,image=self.combo_isosceles_img)
 
         self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_default.png")
         self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
@@ -317,28 +203,6 @@ class SideMenu(tk.Frame):
         self.combo_isosceles_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles_hover.png")
         self.combo_isosceles.bind("<Enter>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_hover_img))
         self.combo_isosceles.bind("<Leave>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_img))
-
-
-        # self.combo_default.bind("<Leave><Button>", func=combo_clear())
-        
-        # self.canvas.tag_bind(self.combo_default, '<Button>', print('clicked'))
-        # self.canvas.delete(self.combo_default))
-
-        # self.root.bind("<Button-1>", func=lambda e:combo_clear())
-        # self.root.bind("<Button-1>", func=lambda e:combo_clear())
-        # self.canvas.bind("<Button-1>", func=lambda e:combo_clear())
-
-        # # combobox
-        # self.n = tk.StringVar()
-        # self.choose_shape = ttk.Combobox(self.canvas, width = 25, textvariable=self.n, state='readonly', text="x", justify='center')
-        # self.choose_shape.set('Alakzat...')
-        # self.choose_shape['values'] = ('Téglalap', 
-        #                         'Kör',
-        #                         'Ellipszis',
-        #                         'Egyenlőszárú háromszög')
-        # # self.choose_shape.place(x=0, y=0)
-        # self.choose_shape.grid(row=1, column=1)
-        # self.choose_shape.bind('<<ComboboxSelected>>', shape_changed)
 
         # place holder label
         self.lbl = tk.Label(self.canvas, width = 40, bg = self["background"] , fg=root.colors['text_color'])
