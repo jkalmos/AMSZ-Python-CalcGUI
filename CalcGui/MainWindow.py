@@ -272,31 +272,77 @@ class main_window(tk.Tk):
             except:
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
+                for i in self.sm.indicators:
+                        i.config(text="")
+                self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                 vissza.append(None)
-        if self.thickness_on.get():
-            t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) # ITT VALAMI NEM JÓ MÉG
-            a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
-            b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-            if t < a/2 and t < b/2:    
-                try:
+        if self.thickness_on.get(): #TODO HÁROMSZÖGNÉL A FALVASTAGSÁGNAK AZ OLDAFELEZŐ MER: FELÉNÉL KELL KISEBBNEK LENNIE
+            if self.sm.shape == "Circle":
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                d = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                if t <= d/2:
+                    print("kor lehetseges")
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                     self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
-                except:
+                else:
                     print("Hiba")
                     self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    for i in self.sm.indicators:
+                        i.config(text="")
+                    self.sm.result1.config(text="Hiba a falvastagságban!")
                     vissza.append(None)
                     t = None
             else:
-                if t >= a/2 and t <= b/2:
-                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                    vissza.append(None)
-                elif t >= b/2 and t <= a/2:
-                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                    vissza.append(None)
-                elif t >= b/2 and t >= a/2:
-                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                    vissza.append(None)
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) 
+                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                if t < a/2 and t < b/2:
+                    print("lehetseges")     
+                    try:
+                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                        self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                    except:
+                        print("Hiba")
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        t = None
+                else:
+                    if t >= a/2 and a == b:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                    if t >= a/2 and t <= b/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= b/2 and t <= a/2:
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= b/2 and t >= a/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
                 
         else:
             t = 0
