@@ -75,7 +75,7 @@
      inkscape:snap-bbox="true"
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="layer7"
+     inkscape:current-layer="g1411"
      inkscape:document-units="mm"
      inkscape:cy="151.6744"
      inkscape:cx="321.73358"
@@ -1837,10 +1837,39 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="g1411"
+     inkscape:label="combo_rectangle_hover"
+     style="display:inline">
+    <path
+       id="path1405"
+       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       d="m 14.134598,46.571159 h 63.110538 c 0.888404,0 1.606801,0.71522 1.603617,1.603618 -0.02446,6.825297 -0.03675,6.839546 -0.03675,6.839546 L 12.530981,55.00096 v -6.826183 c 0,-0.888404 0.715213,-1.603618 1.603617,-1.603618 z"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="sssccss"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_hover.png"
+       inkscape:export-xdpi="75.208755"
+       inkscape:export-ydpi="75.208755" />
+    <text
+       inkscape:export-ydpi="75.208755"
+       inkscape:export-xdpi="75.208755"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_hover.png"
+       id="text1409"
+       y="52.407833"
+       x="16.273014"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.264583"
+         y="52.407833"
+         x="16.273014"
+         id="tspan1407"
+         sodipodi:role="line">Téglalap</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="combo_circle"
-     sodipodi:insensitive="true"
-     style="display:none">
+     style="display:none"
+     sodipodi:insensitive="true">
     <rect
        inkscape:export-ydpi="35"
        inkscape:export-xdpi="35"
@@ -1865,6 +1894,38 @@
          y="60.980358"
          x="15.904145"
          id="tspan998-0-4"
+         sodipodi:role="line">Kör</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g1115"
+     inkscape:label="combo_circle_hover"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       inkscape:export-ydpi="75.208755"
+       inkscape:export-xdpi="75.208755"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_hover.png"
+       ry="0"
+       y="55.242172"
+       x="12.530981"
+       height="8.4431639"
+       width="66.317772"
+       id="rect1109"
+       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
+    <text
+       inkscape:export-ydpi="75.208755"
+       inkscape:export-xdpi="75.208755"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_hover.png"
+       id="text1113"
+       y="60.980358"
+       x="15.904145"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.264583"
+         y="60.980358"
+         x="15.904145"
+         id="tspan1111"
          sodipodi:role="line">Kör</tspan></text>
   </g>
   <g
@@ -1901,6 +1962,38 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="g2630"
+     inkscape:label="combo_ellipse_hover"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       ry="0"
+       y="63.913177"
+       x="12.530981"
+       height="8.4431639"
+       width="66.317772"
+       id="rect2624"
+       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_hover.png"
+       inkscape:export-xdpi="75.208794"
+       inkscape:export-ydpi="75.208794" />
+    <text
+       id="text2628"
+       y="69.608162"
+       x="15.837999"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_hover.png"
+       inkscape:export-xdpi="75.208794"
+       inkscape:export-ydpi="75.208794"><tspan
+         style="stroke-width:0.264583"
+         y="69.608162"
+         x="15.837999"
+         id="tspan2626"
+         sodipodi:role="line">Ellipszis</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="combo_isosceles"
      style="display:none"
@@ -1927,6 +2020,36 @@
          y="78.209404"
          x="15.904145"
          id="tspan998-2-8"
+         sodipodi:role="line">Egyenlőszárú háromszög</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g3771"
+     inkscape:label="combo_isosceles_hover"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <path
+       sodipodi:nodetypes="cccsscc"
+       inkscape:connector-curvature="0"
+       d="m 12.553333,72.571152 h 66.289772 c 0,0 0.0056,4.864305 0.0056,6.884012 0,0.86377 -0.695382,1.559152 -1.559152,1.559152 h -63.19942 c -0.86377,0 -1.559152,-0.695382 -1.559152,-1.559152 0.02235,-6.884012 0.02235,-6.884012 0.02235,-6.884012 z"
+       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       id="path3765"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_hover.png"
+       inkscape:export-xdpi="75.208794"
+       inkscape:export-ydpi="75.208794" />
+    <text
+       id="text3769"
+       y="78.209404"
+       x="15.904145"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_hover.png"
+       inkscape:export-xdpi="75.208794"
+       inkscape:export-ydpi="75.208794"><tspan
+         style="stroke-width:0.264583"
+         y="78.209404"
+         x="15.904145"
+         id="tspan3767"
          sodipodi:role="line">Egyenlőszárú háromszög</tspan></text>
   </g>
   <g

@@ -302,9 +302,21 @@ class SideMenu(tk.Frame):
         self.combo_isosceles.bind('<Button-1>', func=lambda e:isosceles_click())
         self.combo_isosceles["border"] = "0"
 
-        self.combo_circle_hover_img = tk.PhotoImage(file='combo_circle_hover.png')
-        #self.combo_circle.bind("<Enter>", func=lambda e: self.combo_circle.config(image=self.combo_circle_hover_img))
-        #self.combo_circle.bind("<Leave>", func=lambda e: self.combo_circle.config(image=self.combo_circle_img))
+        self.combo_rectangle_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_rectangle_hover.png")
+        self.combo_rectangle.bind("<Enter>", func=lambda e: self.combo_rectangle.config(image=self.combo_rectangle_hover_img))
+        self.combo_rectangle.bind("<Leave>", func=lambda e: self.combo_rectangle.config(image=self.combo_rectangle_img))
+        
+        self.combo_circle_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_circle_hover.png")
+        self.combo_circle.bind("<Enter>", func=lambda e: self.combo_circle.config(image=self.combo_circle_hover_img))
+        self.combo_circle.bind("<Leave>", func=lambda e: self.combo_circle.config(image=self.combo_circle_img))
+
+        self.combo_ellipse_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_ellipse_hover.png")
+        self.combo_ellipse.bind("<Enter>", func=lambda e: self.combo_ellipse.config(image=self.combo_ellipse_hover_img))
+        self.combo_ellipse.bind("<Leave>", func=lambda e: self.combo_ellipse.config(image=self.combo_ellipse_img))
+
+        self.combo_isosceles_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles_hover.png")
+        self.combo_isosceles.bind("<Enter>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_hover_img))
+        self.combo_isosceles.bind("<Leave>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_img))
 
 
         # self.combo_default.bind("<Leave><Button>", func=combo_clear())
