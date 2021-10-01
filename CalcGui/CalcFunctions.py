@@ -108,8 +108,7 @@ def RectangularHS(w2, h2, w1, h1):
 def Ellipse(a, b, t = 0):
     if t == 0:
         A = a * b * np.pi
-        Ix = a * b ** 3 * np.pi / 4 # Ez a képlet féltengelyekre vonatkozik, ahol "a" az "x" irányban lévő féltengely, "b" pedig 
-                                    # az "y" tengely irányában lévő féltengely. Függvény átírása.
+        Ix = a * b ** 3 * np.pi / 4
         Iy = a ** 3 * b * np.pi / 4
         Ixy = 0
         Kx = Ix / b
@@ -146,13 +145,13 @@ def Ellipse(a, b, t = 0):
     return properties
 
 @transform
-def IsoscelesTriangle(w, h, t = 0): 
+def IsoscelesTriangle(w, h, t = 0):
     if t == 0:
         A = w * h / 2
         Ix = w * h ** 3 / 36
-        Iy = w ** 3 * h / 48 
+        Iy = w ** 3 * h / 48
         Ixy = 0
-        Kx = 3 * Ix / 2 / h 
+        Kx = 3 * Ix / 2 / h
         Ky = 2 * Iy / w
         if Iy > Ix:
             alpha = np.pi / 2

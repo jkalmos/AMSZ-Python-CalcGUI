@@ -1,11 +1,16 @@
 import tkinter as tk
+from tkinter import BooleanVar, Toplevel, ttk
+from tkinter.constants import BOTH
 from PIL import Image, ImageTk
 import CalcFunctions as Calc
 import json
 from SideMenu import SideMenu
 from tkvideo import tkvideo
 from PlotFunctions import plot
+import shape_builder
+from SettingsWindow import settings_window
 
+## ANIMATION WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class starting_window(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -21,13 +26,30 @@ class starting_window(tk.Tk):
         my_label.pack()
         player = tkvideo("AMSZ_animation_short.mp4", my_label, loop = 0, size = (480,240))
         player.play()
-        self.after(4000, lambda: self.destroy())
+        self.after(4500, lambda: self.destroy())
 
+## MAIN WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class main_window(tk.Tk):
-    # def onExit(self):
-    #     self.quit()
     def __init__(self):
         super().__init__()
+
+        # main window opening size
+        self.win_width = 1200
+        self.win_height = 650
+
+        # screen size
+        self.screen_width = self.winfo_screenwidth()
+        self.screen_height = self.winfo_screenheight()
+
+        # boolean to decide if the window can fit to the screen
+        self.size_ok = tk.BooleanVar(False)
+        if self.win_width<self.screen_width/4*3 or self.win_height<self.screen_height/4*3:
+            self.size_ok.set(True)
+
+        # Position the window in the center of the page.
+        positionRight = int(self.winfo_screenwidth()/2 - self.win_width/2)
+        positionDown = int(self.winfo_screenheight()/2 - self.win_height/2)
+        self.geometry("+{}+{}".format(positionRight, positionDown))
 
         # Variables
         self.coordinate_on = tk.BooleanVar(False)
@@ -37,11 +59,20 @@ class main_window(tk.Tk):
         self.coordinate_on.set(True)
         self.dimension_lines_on.set(True)
         self.plotted = tk.BooleanVar(False)
-        
+        self.shape_builder_mode = False
+        self.window_open = BooleanVar(False)
         # Default unit, default theme
         self.unit = settings["default_unit"]#"mm"
         self.angle_unit = settings["angle_unit"] #! to settings
         self.theme = settings["theme"]#"dark"
+        self.logo_enabled = settings["logo_enabled"]
+
+        # Play AMSZ logo on startup
+        self.play_logo = tk.BooleanVar(False)
+        if self.logo_enabled == 'True':
+            self.play_logo.set(True)
+        else:
+            self.play_logo.set(False)
 
         # Colors
         if self.theme == "dark":
@@ -49,81 +80,116 @@ class main_window(tk.Tk):
         else:
             self.colors = LIGHT_THEME
 
-        # Window 
+        ## Window -------------------------------------------------------------------------------------------------------------------------------------------------------------------
         self.title("Statika számító")
-        self.geometry("1000x600")
+        if self.size_ok.get() == False:
+            self.state("zoomed")          # Fullscreen
+        self.geometry(f"{self.win_width}x{self.win_height}")
         self.configure(bg=self.colors['main_color'])
         self.minsize(width=200, height=200)
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
+        # self.iconbitmap("AMSZ.ico")
+
+
+        ## custom menubar -----------------------------------------------------------------------------------------------------------------------------------------------------------
+        self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
+        self.menu_canvas.pack(fill = tk.X)
+        # custom menubar objects
+        self.setting_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/settings.png")
+        self.setting_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/settings_hover.png")
+        self.setting_button = self.menu_canvas.create_image(0,0,anchor=tk.NW,image=self.setting_button_img)
+        self.menu_canvas.tag_bind(self.setting_button, '<Button-1>', lambda e: settings_window(self))
+        self.menu_canvas.tag_bind(self.setting_button, '<Enter>', lambda e:self.menu_canvas.itemconfig(self.setting_button,
+        image=self.setting_button_hover_img))
+        self.menu_canvas.tag_bind(self.setting_button, '<Leave>', lambda e:self.menu_canvas.itemconfig(self.setting_button,
+        image=self.setting_button_img))
+
+        self.basic_button_img = tk.PhotoImage(file=f"{self.colors['path']}/menubar/basic.png")
+        self.basic_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}/menubar/basic_hover.png")
+        self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
+        self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
+        self.change_button = self.menu_canvas.create_image(93,0,anchor=tk.NW,image=self.change_button_img)
+        self.menu_canvas.tag_bind(self.change_button, '<Button-1>', lambda e: self.build_shape())
+        self.menu_canvas.tag_bind(self.change_button, '<Enter>', lambda e:self.menu_canvas.itemconfig(self.change_button,
+        image=self.change_button_hover_img))
+        self.menu_canvas.tag_bind(self.change_button, '<Leave>', lambda e:self.menu_canvas.itemconfig(self.change_button,
+        image=self.change_button_img))
 
         # Canvas for drawing
         self.canvas = None
 
-        # # Toolbar
-        # self.toolbar = tk.Frame(self, bd=1, relief=tk.RAISED, bg=self.colors['main_color'])
-        # self.img = Image.open("calc_button.png")
-        # self.eimg = ImageTk.PhotoImage(self.img)
-        # self.exitButton = tk.Button(self.toolbar, image=self.eimg, relief=tk.FLAT,
-        #     command=self.quit)
-        # self.exitButton.image = self.eimg
-        # self.exitButton.pack(side=tk.LEFT, padx=2, pady=2)
-        # self.toolbar.pack(side=tk.TOP, fill=tk.X)
-
         # Side Menu
         self.sm = SideMenu(self)
-        self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
+        # self.sm.pack(side=tk.LEFT, fill=tk.Y)
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
 
-        # Menubar
-        menubar = tk.Menu(self)
-        self.config(menu=menubar)
+        # # Menubar
+        # self.menubar = tk.Menu(self)
+        # self.config(menu=self.menubar)
 
-        # # Add cross section to menubar
-        # cross_section = tk.Menu(self, menubar, tearoff=0)
-        # cross_section.add_command(label="Téglalap", command = lambda: self.choose_object("Rectangle"))
-        # cross_section.add_command(label="Kör", command = lambda: self.choose_object("Circle"))
-        # cross_section.add_command(label="Ellipszis", command = lambda: self.choose_object("Ellipse"))
-        # cross_section.add_command(label="Egyenlő szárú háromszög", command = lambda: self.choose_object("Isosceles_triangle"))
-        # menubar.add_cascade(label="Keresztmetszet", menu = cross_section)
+        # # Add settings to menubar
+        # settings_menu = tk.Menu(self, self.menubar, tearoff=0)
+        # self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
 
-        # Add settings to menubar
-        settings_menu = tk.Menu(self, menubar, tearoff=0)
-        menubar.add_cascade(label="Beállítások", menu = settings_menu)
+        # # Add units menu to settings menu
+        # units_menu = tk.Menu(self, settings_menu, tearoff=0)
+        # units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
+        # units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
+        # units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
+        # units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
+        # units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
+        # settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
 
-        # Add units menu to settings menu
-        units_menu = tk.Menu(self, settings_menu, tearoff=0)
-        units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
-        units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
-        units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
-        units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
-        units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
-        settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
+        # # Add themes menu to setting menu
+        # themes_menu = tk.Menu(self, settings_menu, tearoff=0)
+        # themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
+        # themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
+        # settings_menu.add_cascade(label="Téma", menu=themes_menu)
 
-        # Add themes menu to setting menu
-        themes_menu = tk.Menu(self, settings_menu, tearoff=0)
-        themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
-        themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
-        settings_menu.add_cascade(label="Téma", menu=themes_menu)
+        # #Changing to shape builder
+        # self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
+        # # Add exit button to menubar
+        # self.menubar.add_command(label="Kilépés", command=self.destroy)
+        
+    ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    # def start_move(self, event):
+    #     self.x = event.x
+    #     self.y = event.y
 
-        # Add exit button to menubar
-        menubar.add_command(label="Kilépés", command=self.destroy)
-    ## USEFUL FUNCTIONS -----------------------------------------------------------
+    # def stop_move(self,event):
+    #     self.x = None
+    #     self.y = None
+
+    # def do_move(self, event):
+    #     deltax = event.x - self.x
+    #     deltay = event.y - self.y
+    #     x = self.winfo_x() + deltax
+    #     y = self.winfo_y() + deltay
+    #     self.geometry(f"+{x}+{y}")
+    
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
             if self.theme=="dark":
                 self.colors=DARK_THEME
                 self.sm.change_color(DARK_THEME)
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+                if self.plotted==True:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             elif self.theme == "light":
                 self.colors=LIGHT_THEME
                 self.sm.change_color(LIGHT_THEME)
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+                if self.plotted==True:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             else:
                 print("ERROR: Unknown Theme")
                 return -1
             self.configure(bg=self.colors['main_color'])
+            # with open('app_settings.json', 'w') as json_file:
+            #     json.dump({'theme':self.theme, 'default_unit':self.unit, 'angle_unit':self.angle_unit, 'logo_enabled':self.logo_enabled}, json_file)
+            # self.destroy()
+            # super().__init__()
             #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
@@ -135,6 +201,38 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
+
+    def build_shape(self):
+        if not self.shape_builder_mode:
+            print("opening sb")
+            self.shape_builder_mode = True
+            self.sm.pack_forget()
+            self.sb_sm = shape_builder.sb_side_menu(self)
+            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
+
+            self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic.png")
+            self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic_hover.png")
+            self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
+            # self.menubar.entryconfig(2,label="Alap alakzatok")
+            # self.menubar.entryconfig(1, state="disabled")
+            if self.plotted==True:
+                self.canvas._tkcanvas.destroy()
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
+        else:
+            print("closing sb")
+            self.sb.pack_forget()
+            self.sb_sm.pack_forget()
+            self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
+            self.plotted = False
+            self.shape_builder_mode = False
+
+            self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
+            self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
+            self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
+            # self.menubar.entryconfig(2,label="Saját alakzat")
+            # self.menubar.entryconfig(1, state="normal")
+
 
     def choose_object(self, shape = None):
         self.dimensions = {
@@ -170,26 +268,19 @@ class main_window(tk.Tk):
                 i+=1
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
-                self.sm.controls[i]["entry"].config({"background": "#475C6F"})
+                self.sm.controls[i]["entry"].config({"background": self.colors['secondary_color']})
             except:
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
                 vissza.append(None)
-
         if self.thickness_on.get():
             t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) # ITT VALAMI NEM JÓ MÉG
             a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
             b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-            a_fel = a/2
-            b_fel = b/2
-            print(t)
-            print(a_fel)
-            print(b_fel)
-            if t < a/2 and t < b/2:
-                print("lehetseges")     
+            if t < a/2 and t < b/2:    
                 try:
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                    self.sm.controls[-1]["entry"].config({"bacWkground": "#475C6F"})
+                    self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
                 except:
                     print("Hiba")
                     self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
@@ -258,26 +349,33 @@ class main_window(tk.Tk):
             self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
+        # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
+
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
-
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        'main_color': '#252526',
+        # 'main_color': '#2C394B',
+        # 'secondary_color': '#082032',
+        'main_color': '#1a1a1a',
         'secondary_color': '#333333',
-        'text_color': '#FF4C29',
+        'text_color': '#cccccc',
         'entry_color': '#334756',
-        'draw_main': '#FF4C29',
-        'draw_secondary': 'grey'
+        'draw_main': '#87aade',
+        'draw_secondary': '#1a1a1a',
+        'draw_tertiary': 'grey',
+        'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
-        'main_color': '#FFFFFF',
-        'secondary_color': '#999999',
-        'text_color': '#000000',
+        'main_color': '#d9dcdf',
+        'secondary_color': '#f4f2f4',
+        'text_color': '#333333',
         'entry_color': '#FFFFFF',
-        'draw_main': 'black',
-        'draw_secondary': '#000000'
+        'draw_main': '#a4ade9',
+        'draw_secondary': '#000000',
+        'draw_tertiary': '#4d4d4d',
+        'path': 'figures/light_theme/'
         }
 
 # CALL THE WINDOW ---------------------------------------------------------------------------------------------------------------------------------------
@@ -288,10 +386,11 @@ if __name__ == "__main__":
             settings = json.load(f)
     except:
         print("404 app_settings.json not found")
-        settings={'theme':'dark', 'default_unit':'mm', 'angle_unit':'rad'}
-    master = starting_window()
-    master.mainloop()
+        settings={'theme':'dark', 'default_unit':'mm', 'angle_unit':'rad', 'logo_enabled':'True'}
+    if settings['logo_enabled'] == 'True':
+        master = starting_window()
+        master.mainloop()
     root = main_window()
     root.mainloop()
     with open('app_settings.json', 'w') as json_file:
-        json.dump({'theme':root.theme, 'default_unit':root.unit, 'angle_unit':root.angle_unit}, json_file)
+        json.dump({'theme':root.theme, 'default_unit':root.unit, 'angle_unit':root.angle_unit, 'logo_enabled':root.logo_enabled}, json_file)
