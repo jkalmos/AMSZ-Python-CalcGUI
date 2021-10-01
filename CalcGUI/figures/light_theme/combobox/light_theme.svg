@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   sodipodi:docname="dark_theme.svg"
+   sodipodi:docname="light_theme_v2.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    id="svg874"
    version="1.1"
@@ -57,9 +57,9 @@
      showguides="false"
      inkscape:window-maximized="1"
      inkscape:window-y="-9"
-     inkscape:window-x="-9"
-     inkscape:window-height="1001"
-     inkscape:window-width="1920"
+     inkscape:window-x="2391"
+     inkscape:window-height="1721"
+     inkscape:window-width="3200"
      inkscape:snap-page="true"
      inkscape:snap-text-baseline="true"
      inkscape:snap-center="true"
@@ -75,11 +75,11 @@
      inkscape:snap-bbox="true"
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="g1411"
+     inkscape:current-layer="g27863"
      inkscape:document-units="mm"
-     inkscape:cy="151.6744"
-     inkscape:cx="321.73358"
-     inkscape:zoom="1.4142136"
+     inkscape:cy="165.39477"
+     inkscape:cx="372.18302"
+     inkscape:zoom="2.7902939"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -109,7 +109,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -125,7 +124,7 @@
        height="191.87251"
        width="296.73273"
        id="rect1709-96"
-       style="display:inline;opacity:0.994;fill:#1a1a1a;stroke-width:1.22026;stroke-linecap:round" />
+       style="display:inline;opacity:0.994;fill:#dee1e4;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
     <rect
        ry="0"
        y="22.953228"
@@ -133,37 +132,17 @@
        height="181.58293"
        width="85.745232"
        id="rect1709-6-72-8"
-       style="display:inline;opacity:0.997;fill:#333333;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
-    <path
-       inkscape:export-ydpi="35"
-       inkscape:export-xdpi="35"
-       d="m 167.47229,70.606412 -4.3313,7.311521 -4.16631,-7.406778 z"
-       inkscape:transform-center-x="1.214833e-06"
-       transform="matrix(-0.15863969,0.26604981,0.26779299,0.15760704,77.89495,-9.1128828)"
-       inkscape:transform-center-y="-0.37929765"
-       inkscape:randomized="0"
-       inkscape:rounded="0"
-       inkscape:flatsided="true"
-       sodipodi:arg2="0.53480809"
-       sodipodi:arg1="-0.51238946"
-       sodipodi:r2="2.4532039"
-       sodipodi:r1="4.9064078"
-       sodipodi:cy="73.011833"
-       sodipodi:cx="163.19598"
-       sodipodi:sides="3"
-       id="path902-6-4"
-       style="display:inline;opacity:0.997;fill:#87cdde;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
-       sodipodi:type="star" />
+       style="display:inline;opacity:0.997;fill:#f4f2f4;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
     <rect
        ry="0"
-       style="display:inline;opacity:0.997;fill:#333333;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#f4f2f4;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
        id="rect1709-6-5"
        width="197.71791"
        height="182.43166"
        x="94.826973"
        y="22.989254" />
     <rect
-       style="display:inline;opacity:0.997;fill:#333333;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#f4f2f4;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
        id="rect1518-1"
        width="296.73276"
        height="7.4835467"
@@ -199,13 +178,13 @@
        height="7.4835482"
        width="41.255142"
        id="rect1076"
-       style="opacity:0.994;fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.22026;stroke-linecap:round;stroke-opacity:1" />
+       style="opacity:0.994;fill:#f4f2f4;fill-opacity:1;stroke:none;stroke-width:1.22026;stroke-linecap:round;stroke-opacity:1" />
     <text
        inkscape:export-ydpi="88.246918"
        inkscape:export-xdpi="88.246918"
        inkscape:export-filename="C:\Users\almos\Documents\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\settings.png"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="12.013247"
        y="16.423927"
        id="text1549-3"><tspan
@@ -213,9 +192,9 @@
          id="tspan1547-57"
          x="12.013247"
          y="16.423927"
-         style="fill:#cccccc;stroke-width:0.264583">Beállítások</tspan></text>
+         style="fill:#000000;fill-opacity:1;stroke-width:0.264583">Beállítások</tspan></text>
     <rect
-       style="display:inline;opacity:0.994;fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.22026;stroke-linecap:round;stroke-opacity:1"
+       style="display:inline;opacity:0.994;fill:#f4f2f4;fill-opacity:1;stroke:none;stroke-width:1.22026;stroke-linecap:round;stroke-opacity:1"
        id="rect1076-6"
        width="41.255142"
        height="7.4835482"
@@ -231,9 +210,9 @@
        id="text1549-9-1"
        y="16.602066"
        x="46.992233"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"><tspan
-         style="fill:#cccccc;stroke-width:0.264583"
+         style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
          y="16.602066"
          x="46.992233"
          id="tspan1547-6-6"
@@ -255,40 +234,6 @@
        id="path1571-3-1"
        d="M 196.66657,71.288124 V 158.34229"
        style="display:inline;opacity:0.997;fill:#1a1a1a;stroke:#1a1a1a;stroke-width:1.22026;stroke-linecap:round" />
-    <g
-       inkscape:export-ydpi="88.246918"
-       inkscape:export-xdpi="88.246918"
-       inkscape:export-filename="C:\Users\almos\Documents\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\settings.png"
-       style="display:inline;stroke-width:12.7716"
-       transform="matrix(0.01491591,0,0,0.01491591,6.5289965,14.427538)"
-       id="g10-3">
-      <g
-         style="opacity:0.998;fill:#4d4d4d;fill-rule:nonzero;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
-         transform="matrix(3.89,0,0,3.89,-175.05,-175.05)"
-         id="g8-3">
-        <g
-           transform="translate(262.36024,-22.688577)"
-           style="fill:#e6e6e6"
-           id="g945-0">
-          <g
-             transform="translate(45.59982,-9.3642488)"
-             id="g949-4">
-            <path
-               inkscape:connector-curvature="0"
-               d="m -239.82283,126.85022 h -14.2 c -2.867,0 -5.2,-2.333 -5.2,-5.2 v -2.114 c 0,-0.329 -0.191,-0.634 -0.454,-0.725 -1.482,-0.511 -2.955,-1.122 -4.375,-1.816 -0.246,-0.118 -0.576,-0.046 -0.802,0.18 l -1.516,1.516 c -0.981,0.982 -2.288,1.523 -3.677,1.523 -1.389,0 -2.695,-0.541 -3.677,-1.524 l -10.039,-10.041 c -2.027,-2.027 -2.027,-5.326 0,-7.354 l 1.516,-1.516001 c 0.223,-0.223 0.299,-0.56 0.181,-0.8 -0.695,-1.423 -1.307,-2.895 -1.818,-4.377 -0.092,-0.262 -0.396,-0.452 -0.725,-0.452 h -2.114 c -2.867,0 -5.2,-2.333 -5.2,-5.2 v -14.2 c 0,-2.867 2.333,-5.2 5.2,-5.2 h 2.115 c 0.329,0 0.633,-0.19 0.724,-0.454 0.513,-1.483 1.124,-2.956 1.817,-4.374 0.12,-0.246 0.046,-0.576 -0.181,-0.802 l -1.515,-1.515 c -2.027,-2.028 -2.027,-5.327 0,-7.354 l 10.041,-10.042 c 0.982,-0.982 2.288,-1.522 3.677,-1.522 1.389,0 2.695,0.541 3.677,1.522 l 1.516,1.517 c 0.224,0.223 0.559,0.3 0.801,0.18 1.418,-0.693 2.891,-1.305 4.375,-1.818 0.263,-0.091 0.453,-0.395 0.453,-0.724 v -2.114 c 0,-2.867 2.333,-5.2 5.2,-5.2 h 14.2 c 2.867,0 5.2,2.333 5.2,5.2 v 2.115 c 0,0.329 0.19,0.633 0.453,0.724 1.482,0.512 2.954,1.124 4.375,1.818 0.247,0.118 0.575,0.045 0.802,-0.181 l 1.516,-1.516 c 2.027,-2.027 5.326,-2.027 7.354,0 l 10.04,10.04 c 2.027,2.028 2.027,5.327 0,7.354 l -1.516,1.516 c -0.227,0.227 -0.301,0.556 -0.181,0.802 0.695,1.42 1.307,2.893 1.818,4.376 0.09,0.262 0.395,0.452 0.724,0.452 h 2.115 c 2.867,0 5.2,2.333 5.2,5.2 v 14.2 c 0,2.867 -2.333,5.2 -5.2,5.2 h -2.114 c -0.329,0 -0.634,0.19 -0.725,0.454 -0.51,1.478 -1.121,2.95 -1.815,4.373 -0.119,0.244 -0.044,0.58 0.179,0.803 l 1.516,1.516001 c 2.027,2.027 2.027,5.326 0,7.354 l -10.042,10.04 c -0.982,0.982 -2.288,1.523 -3.677,1.523 -1.39,0 -2.696,-0.542 -3.678,-1.525 l -1.514,-1.513 c -0.228,-0.226 -0.557,-0.302 -0.803,-0.182 -1.42,0.695 -2.893,1.307 -4.376,1.818 -0.262,0.09 -0.452,0.395 -0.452,0.724 v 2.115 c 0.001,2.867 -2.332,5.2 -5.199,5.2 z m -12.4,-7 h 10.6 v -0.314 c 0,-3.322 2.076,-6.272 5.167,-7.34 1.216,-0.42 2.422,-0.921 3.588,-1.491 2.936,-1.434 6.481,-0.822 8.824,1.521 l 0.243,0.242 7.495,-7.495 -0.242,-0.243 c -2.345,-2.344 -2.955,-5.891001 -1.519,-8.825001 0.569,-1.166 1.07,-2.373 1.488,-3.585 1.068,-3.093 4.019,-5.169 7.341,-5.169 h 0.315 v -10.601 h -0.314 c -3.322,0 -6.272,-2.076 -7.34,-5.167 -0.42,-1.216 -0.921,-2.422 -1.491,-3.588 -1.434,-2.936 -0.823,-6.482 1.521,-8.825 l 0.242,-0.243 -7.495,-7.495 -0.243,0.243 c -2.344,2.344 -5.89,2.953 -8.824,1.52 -1.166,-0.57 -2.373,-1.071 -3.587,-1.491 -3.091,-1.067 -5.168,-4.017 -5.168,-7.34 v -0.314 h -10.601 v 0.314 c 0,3.323 -2.077,6.272 -5.168,7.34 -1.217,0.42 -2.424,0.922 -3.587,1.491 -2.936,1.434 -6.481,0.823 -8.825,-1.52 l -0.243,-0.243 -7.495,7.495 0.243,0.243 c 2.343,2.344 2.954,5.89 1.52,8.825 -0.568,1.163 -1.07,2.37 -1.49,3.587 -1.068,3.092 -4.018,5.168 -7.34,5.168 h -0.315 v 10.6 h 0.314 c 3.323,0 6.272,2.077 7.34,5.168 0.419,1.214 0.921,2.421 1.491,3.588 1.435,2.933 0.824,6.479001 -1.52,8.823001 l -0.243,0.243 7.496,7.495 0.242,-0.242 c 2.344,-2.346 5.891,-2.954 8.826,-1.52 1.164,0.568 2.37,1.07 3.585,1.489 3.092,1.068 5.168,4.019 5.168,7.341 v 0.315 z m 5.328,-12.598 c -6.738,0 -13.204,-2.652 -17.991,-7.439001 -5.265,-5.265 -7.947,-12.561 -7.359,-20.016 0.97,-12.296 10.974,-22.3 23.27,-23.27 7.457,-0.588 14.751,2.095 20.016,7.359 5.265,5.266 7.947,12.561 7.36,20.017 -0.971,12.297 -10.975,22.300001 -23.271,23.270001 v 0 c -0.677,0.053 -1.352,0.079 -2.025,0.079 z m -0.059,-43.804001 c -0.489,0 -0.979,0.02 -1.471,0.058 -8.899,0.702 -16.14,7.943 -16.842,16.843 -0.427,5.41 1.516,10.7 5.331,14.515 3.815,3.815 9.1,5.761001 14.516,5.331001 v 0 c 8.899,-0.701001 16.141,-7.941001 16.843,-16.842001 0.427,-5.41 -1.517,-10.701 -5.331,-14.516 -3.469,-3.468 -8.158,-5.389 -13.046,-5.389 z"
-               style="opacity:1;fill:#e6e6e6;fill-rule:nonzero;stroke:none;stroke-width:12.7716;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
-               stroke-linecap="round"
-               id="path6-43" />
-            <path
-               inkscape:connector-curvature="0"
-               id="path941-81"
-               d="m -39.482839,71.054665 c -0.0467,-0.414094 -0.19882,-0.772692 -0.443,-1.04428 -0.212201,-0.236017 -0.377379,-0.338937 -0.847555,-0.528098 -0.227664,-0.09159 -0.541782,-0.220074 -0.69804,-0.285513 -0.476167,-0.199412 -0.967955,-0.188342 -1.424306,0.03206 -0.119456,0.05769 -0.28219,0.162638 -0.361633,0.233209 l -0.144441,0.128312 -0.808458,-0.810696 -0.808459,-0.810695 0.123909,-0.137827 c 0.157199,-0.174856 0.329905,-0.518506 0.378709,-0.753551 0.02144,-0.103256 0.03134,-0.304849 0.0229,-0.466243 -0.01235,-0.236121 -0.03488,-0.33247 -0.132895,-0.568211 -0.06491,-0.156132 -0.188484,-0.459612 -0.274596,-0.674399 -0.190496,-0.475144 -0.31009,-0.667579 -0.545017,-0.876966 -0.281465,-0.250866 -0.600917,-0.385904 -1.03702,-0.438367 l -0.181512,-0.02184 V 62.901053 61.77054 l 0.181512,-0.02047 c 0.416216,-0.04694 0.77267,-0.1988 1.048307,-0.446621 0.22531,-0.202573 0.345541,-0.397957 0.53373,-0.867347 0.08611,-0.214787 0.209681,-0.518267 0.274596,-0.674399 0.201379,-0.484348 0.188895,-0.983146 -0.03585,-1.432387 -0.05944,-0.118814 -0.163963,-0.279519 -0.232273,-0.357123 l -0.124199,-0.141098 0.810695,-0.808459 0.810696,-0.808458 0.137826,0.123909 c 0.174856,0.157199 0.518506,0.329905 0.753552,0.378708 0.103255,0.02144 0.304848,0.03134 0.466243,0.0229 0.23612,-0.01235 0.332469,-0.03488 0.56821,-0.132895 0.156133,-0.06491 0.460643,-0.188887 0.676689,-0.275491 0.216046,-0.0866 0.468005,-0.207374 0.559908,-0.268376 0.420736,-0.279268 0.687818,-0.745656 0.75177,-1.312766 l 0.02047,-0.181512 h 1.13415 1.134151 v 0.08025 c 0,0.169692 0.103732,0.575315 0.194604,0.76096 0.111178,0.227127 0.351649,0.507892 0.554591,0.647519 0.07884,0.05425 0.329621,0.173568 0.557285,0.265162 0.227665,0.09159 0.54168,0.219577 0.697812,0.284409 0.484912,0.20135 0.983273,0.188677 1.433271,-0.03645 0.119299,-0.05968 0.27893,-0.164273 0.354734,-0.232423 l 0.137827,-0.123909 0.810696,0.808458 0.810695,0.808459 -0.128312,0.144441 c -0.155818,0.175405 -0.325165,0.516493 -0.374556,0.754408 -0.02005,0.09657 -0.03043,0.304248 -0.02307,0.461504 0.01129,0.241364 0.03192,0.330195 0.132358,0.570026 0.06544,0.156258 0.19392,0.470377 0.285513,0.698041 0.191272,0.475423 0.293676,0.638145 0.539458,0.857206 0.274347,0.244522 0.583873,0.375206 1.032921,0.436108 l 0.149944,0.02033 v 1.129 1.129 l -0.237175,0.03528 c -0.421869,0.06275 -0.694757,0.18896 -0.986928,0.456469 -0.178896,0.163796 -0.365338,0.447262 -0.435568,0.662237 -0.02942,0.09005 -0.131787,0.341301 -0.227482,0.558326 -0.217681,0.493671 -0.258577,0.64587 -0.259046,0.964061 -6.32e-4,0.427979 0.148229,0.834524 0.413583,1.129514 l 0.118664,0.131917 -0.808458,0.810695 -0.808458,0.810696 -0.141099,-0.1242 c -0.179746,-0.158219 -0.521577,-0.329639 -0.753241,-0.377732 -0.09905,-0.02056 -0.308758,-0.03137 -0.466014,-0.02401 -0.241363,0.01129 -0.330195,0.03192 -0.570026,0.132358 -0.156258,0.06544 -0.470376,0.19392 -0.698041,0.285513 -0.467167,0.18795 -0.635559,0.292309 -0.841792,0.521689 -0.264059,0.293697 -0.40785,0.619548 -0.449717,1.019122 l -0.02233,0.213079 h -1.130473 -1.130473 z m 2.052015,-2.639928 c 0.860742,-0.155519 1.630755,-0.473887 2.320194,-0.959301 0.387176,-0.272599 1.060202,-0.945544 1.333318,-1.333156 1.194224,-1.694869 1.3564,-3.861677 0.428826,-5.729459 -1.19743,-2.411169 -3.992924,-3.613926 -6.591936,-2.83617 -0.460834,0.137905 -1.101172,0.446446 -1.538225,0.74118 -0.466838,0.314819 -1.141612,0.989594 -1.456432,1.456432 -0.294733,0.437052 -0.603275,1.077391 -0.74118,1.538225 -0.781008,2.60988 0.438564,5.421864 2.867737,6.612184 0.641136,0.314163 1.185956,0.465757 2.036089,0.566532 0.214915,0.02548 1.09252,-0.01146 1.341609,-0.05647 z"
-               style="opacity:0.997;fill:#e6e6e6;fill-opacity:1;stroke:#e6e6e6;stroke-width:0.377953;stroke-linecap:round;stroke-miterlimit:10;stroke-dasharray:none"
-               transform="matrix(4.559982,0,0,4.559982,-72.130712,-204.98172)" />
-          </g>
-        </g>
-      </g>
-    </g>
     <text
        id="text1223"
        y="120.12083"
@@ -300,77 +245,6 @@
          y="120.12083"
          x="64.104904"
          sodipodi:role="line" /></text>
-    <text
-       id="text1315"
-       y="119.54965"
-       x="13.096207"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         id="tspan1317"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="119.54965"
-         x="13.096207"
-         sodipodi:role="line">Eredmények:</tspan><tspan
-         id="tspan1339"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="126.6052"
-         x="13.096207"
-         sodipodi:role="line">asdasd</tspan><tspan
-         id="tspan1321"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="133.66075"
-         x="13.096207"
-         sodipodi:role="line">asd</tspan><tspan
-         id="tspan1323"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="140.71631"
-         x="13.096207"
-         sodipodi:role="line">a</tspan><tspan
-         id="tspan1325"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="147.77185"
-         x="13.096207"
-         sodipodi:role="line">sd</tspan><tspan
-         id="tspan1327"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="154.82741"
-         x="13.096207"
-         sodipodi:role="line" /><tspan
-         id="tspan1329"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="161.88295"
-         x="13.096207"
-         sodipodi:role="line" /><tspan
-         id="tspan1331"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="168.93851"
-         x="13.096207"
-         sodipodi:role="line">aaaaaaaaaaasdas</tspan><tspan
-         id="tspan1333"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="175.99405"
-         x="13.096207"
-         sodipodi:role="line">asd</tspan><tspan
-         id="tspan1335"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="183.04961"
-         x="13.096207"
-         sodipodi:role="line">ad</tspan><tspan
-         id="tspan1337"
-         style="fill:#cccccc;stroke-width:0.264583"
-         y="190.10515"
-         x="13.096207"
-         sodipodi:role="line">dsadasd</tspan></text>
-    <rect
-       style="display:inline;opacity:0.997;fill:#cf6679;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
-       id="rect928-4-2-4"
-       width="25.532442"
-       height="6.1980996"
-       x="13.081752"
-       y="90.999077"
-       ry="1.7167649"
-       inkscape:export-xdpi="35"
-       inkscape:export-ydpi="35" />
     <rect
        style="display:inline;opacity:0.994;fill:#1a1a1a;stroke-width:1.22026;stroke-linecap:round"
        id="rect1709-96-8"
@@ -1810,26 +1684,61 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="layer8"
+     inkscape:label="calculate_button"
+     sodipodi:insensitive="true"
+     style="display:none">
+    <rect
+       style="display:inline;opacity:0.997;fill:#cf6679;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect928-4-2-4"
+       width="25.532442"
+       height="6.1980996"
+       x="13.081752"
+       y="90.999077"
+       ry="1.7167649"
+       inkscape:export-xdpi="80.659172"
+       inkscape:export-ydpi="80.659172"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\calculate_button.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:sans-serif;display:inline;fill:#ffffff;stroke-width:0.264583"
+       x="18.14819"
+       y="95.798279"
+       id="text3711"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\calculate_button.png"
+       inkscape:export-xdpi="80.659172"
+       inkscape:export-ydpi="80.659172"><tspan
+         sodipodi:role="line"
+         id="tspan3709"
+         style="font-size:4.23333px;fill:#ffffff;stroke-width:0.264583"
+         x="18.14819"
+         y="95.798279">Számol</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="combo_rectangle"
      style="display:none"
      sodipodi:insensitive="true">
     <path
        id="rect960-6"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#5c93d1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
        d="m 14.134598,46.571159 h 63.110538 c 0.888404,0 1.606801,0.71522 1.603617,1.603618 -0.02446,6.825297 -0.03675,6.839546 -0.03675,6.839546 L 12.530981,55.00096 v -6.826183 c 0,-0.888404 0.715213,-1.603618 1.603617,-1.603618 z"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sssccss" />
+       sodipodi:nodetypes="sssccss"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle.png"
+       inkscape:export-xdpi="75.068855"
+       inkscape:export-ydpi="75.068855" />
     <text
-       inkscape:export-ydpi="35"
-       inkscape:export-xdpi="35"
-       inkscape:export-filename="C:\Users\almos\Documents\GitHub\AMSZ-Python-CalcGUI\CalcGUI\combo_rectangle.png"
+       inkscape:export-ydpi="75.068855"
+       inkscape:export-xdpi="75.068855"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle.png"
        id="text1000-7-9"
        y="52.407833"
        x="16.273014"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="52.407833"
          x="16.273014"
          id="tspan998-7-0"
@@ -1839,26 +1748,27 @@
      inkscape:groupmode="layer"
      id="g1411"
      inkscape:label="combo_rectangle_hover"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <path
        id="path1405"
-       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
        d="m 14.134598,46.571159 h 63.110538 c 0.888404,0 1.606801,0.71522 1.603617,1.603618 -0.02446,6.825297 -0.03675,6.839546 -0.03675,6.839546 L 12.530981,55.00096 v -6.826183 c 0,-0.888404 0.715213,-1.603618 1.603617,-1.603618 z"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="sssccss"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle_hover.png"
        inkscape:export-xdpi="75.208755"
        inkscape:export-ydpi="75.208755" />
     <text
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle_hover.png"
        id="text1409"
        y="52.407833"
        x="16.273014"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="52.407833"
          x="16.273014"
          id="tspan1407"
@@ -1871,26 +1781,26 @@
      style="display:none"
      sodipodi:insensitive="true">
     <rect
-       inkscape:export-ydpi="35"
-       inkscape:export-xdpi="35"
-       inkscape:export-filename="C:\Users\almos\Documents\GitHub\AMSZ-Python-CalcGUI\CalcGUI\combo_circle_hover.png"
+       inkscape:export-ydpi="75.208755"
+       inkscape:export-xdpi="75.208755"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle.png"
        ry="0"
        y="55.242172"
        x="12.530981"
        height="8.4431639"
        width="66.317772"
        id="rect962-2"
-       style="display:inline;opacity:0.997;fill:#87cdde;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
+       style="display:inline;opacity:0.997;fill:#5c93d1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
     <text
-       inkscape:export-ydpi="35"
-       inkscape:export-xdpi="35"
-       inkscape:export-filename="C:\Users\almos\Documents\GitHub\AMSZ-Python-CalcGUI\CalcGUI\combo_circle_hover.png"
+       inkscape:export-ydpi="75.208755"
+       inkscape:export-xdpi="75.208755"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle.png"
        id="text1000-2-1"
        y="60.980358"
        x="15.904145"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="60.980358"
          x="15.904145"
          id="tspan998-0-4"
@@ -1905,24 +1815,24 @@
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle_hover.png"
        ry="0"
        y="55.242172"
        x="12.530981"
        height="8.4431639"
-       width="66.317772"
+       width="66.318001"
        id="rect1109"
-       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round" />
     <text
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle_hover.png"
        id="text1113"
        y="60.980358"
        x="15.904145"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="60.980358"
          x="15.904145"
          id="tspan1111"
@@ -1941,20 +1851,20 @@
        height="8.4431639"
        width="66.317772"
        id="rect964-8"
-       style="display:inline;opacity:0.997;fill:#87cdde;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse.png"
+       style="display:inline;opacity:0.997;fill:#5c93d1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794" />
     <text
        id="text1000-3-8"
        y="69.608162"
        x="15.837999"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="69.608162"
          x="15.837999"
          id="tspan998-6-32"
@@ -1973,20 +1883,20 @@
        height="8.4431639"
        width="66.317772"
        id="rect2624"
-       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_hover.png"
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse_hover.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794" />
     <text
        id="text2628"
        y="69.608162"
        x="15.837999"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse_hover.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="69.608162"
          x="15.837999"
          id="tspan2626"
@@ -2002,21 +1912,21 @@
        sodipodi:nodetypes="cccsscc"
        inkscape:connector-curvature="0"
        d="m 12.553333,72.571152 h 66.289772 c 0,0 0.0056,4.864305 0.0056,6.884012 0,0.86377 -0.695382,1.559152 -1.559152,1.559152 h -63.19942 c -0.86377,0 -1.559152,-0.695382 -1.559152,-1.559152 0.02235,-6.884012 0.02235,-6.884012 0.02235,-6.884012 z"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#5c93d1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
        id="rect928-4-8-8"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794" />
     <text
        id="text1000-5-45"
        y="78.209404"
        x="15.904145"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="78.209404"
          x="15.904145"
          id="tspan998-2-8"
@@ -2032,21 +1942,21 @@
        sodipodi:nodetypes="cccsscc"
        inkscape:connector-curvature="0"
        d="m 12.553333,72.571152 h 66.289772 c 0,0 0.0056,4.864305 0.0056,6.884012 0,0.86377 -0.695382,1.559152 -1.559152,1.559152 h -63.19942 c -0.86377,0 -1.559152,-0.695382 -1.559152,-1.559152 0.02235,-6.884012 0.02235,-6.884012 0.02235,-6.884012 z"
-       style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
        id="path3765"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles_hover.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794" />
     <text
        id="text3769"
        y="78.209404"
        x="15.904145"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_hover.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles_hover.png"
        inkscape:export-xdpi="75.208794"
        inkscape:export-ydpi="75.208794"><tspan
-         style="stroke-width:0.264583"
+         style="fill:#ffffff;stroke-width:0.264583"
          y="78.209404"
          x="15.904145"
          id="tspan3767"
@@ -2056,22 +1966,22 @@
      inkscape:groupmode="layer"
      id="layer1"
      inkscape:label="combo_default"
-     style="display:none"
+     style="display:inline"
      sodipodi:insensitive="true">
     <rect
-       inkscape:export-ydpi="900"
-       inkscape:export-xdpi="900"
+       inkscape:export-ydpi="75.208771"
+       inkscape:export-xdpi="75.208771"
        ry="2.3386083"
        y="32.900581"
        x="12.530981"
        height="8.4431639"
        width="66.317772"
        id="rect928-4-2"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_default.png" />
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_default.png" />
     <path
-       inkscape:export-ydpi="900"
-       inkscape:export-xdpi="900"
+       inkscape:export-ydpi="75.208771"
+       inkscape:export-xdpi="75.208771"
        d="m 167.47229,70.606412 -4.3313,7.311521 -4.16631,-7.406778 z"
        inkscape:transform-center-x="1.214833e-06"
        transform="matrix(-0.15863969,-0.26604981,0.26779299,-0.15760704,77.89495,91.878293)"
@@ -2087,23 +1997,23 @@
        sodipodi:cx="163.19598"
        sodipodi:sides="3"
        id="path1701-5"
-       style="display:inline;opacity:0.997;fill:#1b1b1b;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
        sodipodi:type="star"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_default.png" />
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_default.png" />
     <text
-       inkscape:export-ydpi="900"
-       inkscape:export-xdpi="900"
+       inkscape:export-ydpi="75.208771"
+       inkscape:export-xdpi="75.208771"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:0.7;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="16.159876"
        y="38.736275"
        id="text1000-4"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_default.png"><tspan
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_default.png"><tspan
          sodipodi:role="line"
          id="tspan998-1"
          x="16.159876"
          y="38.736275"
-         style="fill:#000000;fill-opacity:0.7;stroke-width:0.264583">Alakzat...</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583">Alakzat...</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -2120,8 +2030,8 @@
        height="8.4431639"
        width="66.317772"
        id="rect928-4-2-1"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_closed.png" />
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle_closed.png" />
     <path
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2139,28 +2049,28 @@
        sodipodi:cx="163.19598"
        sodipodi:sides="3"
        id="path1701-5-2"
-       style="display:inline;opacity:0.997;fill:#1b1b1b;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
+       style="display:inline;opacity:0.997;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
        sodipodi:type="star"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_closed.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle_closed.png"
        d="m 167.47229,70.606412 -4.3313,7.311521 -4.16631,-7.406778 z" />
     <text
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="120.32803"
        y="17.703737"
        id="text1000-4-2"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_rectangle_closed.png"><tspan
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_rectangle_closed.png"><tspan
          sodipodi:role="line"
          x="120.32803"
          y="17.703737"
-         style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
          id="tspan3902">Téglalap</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
-     id="g4493"
+     id="g27843"
      inkscape:label="combo_circle_closed"
      style="display:none"
      sodipodi:insensitive="true">
@@ -2172,9 +2082,9 @@
        x="116.69913"
        height="8.4431639"
        width="66.317772"
-       id="rect4485"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_closed.png" />
+       id="rect27835"
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle_closed.png" />
     <path
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2191,29 +2101,29 @@
        sodipodi:cy="73.011833"
        sodipodi:cx="163.19598"
        sodipodi:sides="3"
-       id="path4487"
-       style="display:inline;opacity:0.997;fill:#1b1b1b;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
+       id="path27837"
+       style="display:inline;opacity:0.997;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
        sodipodi:type="star"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_closed.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle_closed.png"
        d="m 167.47229,70.606412 -4.3313,7.311521 -4.16631,-7.406778 z" />
     <text
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="120.32803"
        y="17.703737"
-       id="text4491"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_circle_closed.png"><tspan
+       id="text27841"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_circle_closed.png"><tspan
          sodipodi:role="line"
          x="120.32803"
          y="17.703737"
-         style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
-         id="tspan4489">Kör</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         id="tspan27839">Kör</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
-     id="g4503"
+     id="g27853"
      inkscape:label="combo_ellipse_closed"
      style="display:none"
      sodipodi:insensitive="true">
@@ -2225,9 +2135,9 @@
        x="116.69913"
        height="8.4431639"
        width="66.317772"
-       id="rect4495"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_closed.png" />
+       id="rect27845"
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse_closed.png" />
     <path
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2244,32 +2154,31 @@
        sodipodi:cy="73.011833"
        sodipodi:cx="163.19598"
        sodipodi:sides="3"
-       id="path4497"
-       style="display:inline;opacity:0.997;fill:#1b1b1b;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
+       id="path27847"
+       style="display:inline;opacity:0.997;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
        sodipodi:type="star"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_closed.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse_closed.png"
        d="m 167.47229,70.606412 -4.3313,7.311521 -4.16631,-7.406778 z" />
     <text
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="120.32803"
        y="17.703737"
-       id="text4501"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_ellipse_closed.png"><tspan
+       id="text27851"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_ellipse_closed.png"><tspan
          sodipodi:role="line"
          x="120.32803"
          y="17.703737"
-         style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
-         id="tspan4499">Ellipszis</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         id="tspan27849">Ellipszis</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
-     id="g4513"
+     id="g27863"
      inkscape:label="combo_isosceles_closed"
-     style="display:none"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2277,10 +2186,10 @@
        y="11.868043"
        x="116.69913"
        height="8.4431639"
-       width="66.318001"
-       id="rect4505"
-       style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_closed.png" />
+       width="66.317772"
+       id="rect27855"
+       style="display:inline;opacity:0.997;fill:#235ab1;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles_closed.png" />
     <path
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2297,24 +2206,24 @@
        sodipodi:cy="73.011833"
        sodipodi:cx="163.19598"
        sodipodi:sides="3"
-       id="path4507"
-       style="display:inline;opacity:0.997;fill:#1b1b1b;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
+       id="path27857"
+       style="display:inline;opacity:0.997;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.93327;stroke-linecap:round"
        sodipodi:type="star"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_closed.png"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles_closed.png"
        d="m 167.47229,70.606412 -4.3313,7.311521 -4.16631,-7.406778 z" />
     <text
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.81179px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="120.32803"
        y="17.703737"
-       id="text4511"
-       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\combobox\combo_isosceles_closed.png"><tspan
+       id="text27861"
+       inkscape:export-filename="C:\Users\Piri Barnabás\Desktop\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\light_theme\combobox\combo_isosceles_closed.png"><tspan
          sodipodi:role="line"
          x="120.32803"
          y="17.703737"
-         style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
-         id="tspan4509">Egyenlőszárú háromszög</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         id="tspan27859">Egyenlőszárú háromszög</tspan></text>
   </g>
 </svg>

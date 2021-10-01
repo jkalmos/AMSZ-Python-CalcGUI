@@ -379,13 +379,13 @@ class SideMenu(tk.Frame):
         self.the1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
 
         # calculate button
-        self.buttonimage = tk.PhotoImage(file="calc_button.png")
+        self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
         self.calc = tk.Button(self.canvas, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate(), activebackground=self["background"])
         # self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
         self.calc["bg"] = self["background"]
         self.calc["border"] = "0"
-        self.calc["width"] = "73"
-        self.calc["height"] = "21"
+        self.calc["width"] = "81"
+        self.calc["height"] = "20"
 
         # result labels
         self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
@@ -452,7 +452,7 @@ class SideMenu(tk.Frame):
 
         ### VARIABLES-------------------------------------------------------------------------------
         # y-paddign between input widgets
-        self.pady_val = 1
+        self.pady_val = 3
 
     def change_color(self, color):
         self["background"] = color["secondary_color"]
@@ -525,7 +525,7 @@ class SideMenu(tk.Frame):
         self.controls[5]["entry"].grid(row=9,column=2, pady=self.pady_val)
         self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
+        self.calc.grid(row=10,column=0, columnspan=5, pady=15)
     def change_to_circle(self):
         self.lbl.grid(row=0, column=0, columnspan=5)
         # diameter d
@@ -558,7 +558,7 @@ class SideMenu(tk.Frame):
         self.controls[5]["entry"].grid(row=8,column=2, pady=self.pady_val)
         self.controls[5]["unit"].grid(row=8,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
+        self.calc.grid(row=10,column=0, columnspan=5, pady=15)
     def change_to_ellipse(self):
         self.lbl.grid(row=0, column=0, columnspan=5)
         # size a
@@ -596,7 +596,7 @@ class SideMenu(tk.Frame):
         self.controls[5]["entry"].grid(row=9,column=2, pady=self.pady_val)
         self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
+        self.calc.grid(row=10,column=0, columnspan=5, pady=15)
     def change_to_isosceles_triangle(self):
         self.lbl.grid(row=0, column=0, columnspan=5)
         # size a
@@ -634,4 +634,4 @@ class SideMenu(tk.Frame):
         self.controls[5]["entry"].grid(row=9,column=2, pady=self.pady_val)
         self.controls[5]["unit"].grid(row=9,column=3, sticky='w', pady=self.pady_val)
         # calculate button
-        self.calc.grid(row=10,column=1, columnspan=3, pady=self.pady_val)
+        self.calc.grid(row=10,column=0, columnspan=6, pady=15)
