@@ -71,7 +71,7 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         ax.fill(circ_x,circ_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
             ax.plot(circ_x_th, circ_y_th, colors["draw_main"], lw=2)
-            ax.fill(circ_x_th,circ_y_th,color=colors["main_color"])
+            ax.fill(circ_x_th,circ_y_th,color=colors["secondary_color"])
         coordinate_displacement = 0
     elif shape == "Isosceles_triangle":
         x, y = set_dimensions(a, b)
@@ -135,11 +135,11 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
         line4_x = [x/2, x/2]
         line4_y = [-y/2-x*y/4+e, -2*e]
 
-        ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
-        ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
-        ax.arrow(line1_x[0]+x/32, line1_y[0], 0, -y, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
-        ax.arrow(line3_x[0], line3_y[0]+x/32, x, 0, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
-        ax.arrow(line4_x[0], line3_y[0]+x/32, -x, 0, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
+        ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line1_x[0]+x/32, line1_y[0], 0, -y, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line3_x[0], line3_y[0]+x/32, x, 0, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line4_x[0], line3_y[0]+x/32, -x, 0, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
         ax.plot(line1_x, line1_y, color,zorder=0)
         ax.plot(line2_x, line2_y, color,zorder=0)
         ax.plot(line3_x, line3_y, color,zorder=0)
@@ -165,9 +165,9 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
         line1_x = [-1, 1]
         line1_y = [1.732, -1.732]
 
-        ax.plot(line1_x, line1_y, 'grey',zorder=3)
-        ax.arrow(line1_x[0], line1_y[0], 0.5, -0.866, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
-        ax.arrow(line1_x[1], line1_y[1], -0.5, 0.866, head_width=hw, head_length=hl, fc='grey', ec='grey',length_includes_head = True)
+        ax.plot(line1_x, line1_y, color,zorder=3)
+        ax.arrow(line1_x[0], line1_y[0], 0.5, -0.866, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line1_x[1], line1_y[1], -0.5, 0.866, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
 
         ax.text(
             1.1, -1.4,
@@ -240,7 +240,7 @@ def transformed_coordinate_system(x, y, ax, phi, colors):
 
 def transformation_dimensions(x, y, ax, colors):
     color = colors['draw_tertiary']
-    transparency = 0.7
+    transparency = 1 #0.7
     hw = 0.015*x*y
     hl = 2*hw
     y_disp_x = [x/5, x]

@@ -307,42 +307,42 @@ class SideMenu(tk.Frame):
         # self.choose_shape.bind('<<ComboboxSelected>>', shape_changed)
 
         # place holder label
-        self.lbl = tk.Label(self.canvas, width = 40, bg = self["background"] , fg='white')
+        self.lbl = tk.Label(self.canvas, width = 40, bg = self["background"] , fg=root.colors['text_color'])
         self.lbl.grid(row=0, column=1)
 
-        self.lbl2 = tk.Label(self.canvas, height = 300, bg = self["background"] , fg='white')
+        self.lbl2 = tk.Label(self.canvas, height = 300, bg = self["background"] , fg=root.colors['text_color'])
         # self.lbl2.grid(row=200, column=1)
 
 
         # dimension input labels
-        self.l1 = tk.Label(self.canvas, text="Width", bg=self["background"], fg='white', font=input_font)
-        self.m1 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
-        self.l2 = tk.Label(self.canvas, text="Heigth", bg=self["background"], fg='white', font=input_font)
-        self.m2 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.l1 = tk.Label(self.canvas, text="Width", bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.m1 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.l2 = tk.Label(self.canvas, text="Heigth", bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.m2 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # dimension input entries
-        self.e1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white')
-        self.e2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white')
+        self.e1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'])
+        self.e2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'])
 
         # transformed coordinate system input labels
-        self.tl1 = tk.Label(self.canvas, text="x", bg=self["background"], fg='white', font=input_font)
-        self.tm1 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
-        self.tl2 = tk.Label(self.canvas, text="y", bg=self["background"], fg='white', font=input_font)
-        self.tm2 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
-        self.tl3 = tk.Label(self.canvas, text="phi", bg=self["background"], fg='white', font=input_font)
-        self.tm3 = tk.Label(self.canvas, text="rad", bg=self["background"], fg='white', font=input_font)
+        self.tl1 = tk.Label(self.canvas, text="x", bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.tm1 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.tl2 = tk.Label(self.canvas, text="y", bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.tm2 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.tl3 = tk.Label(self.canvas, text="phi", bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.tm3 = tk.Label(self.canvas, text=self.root.angle_unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # transformed coordinate system input entries
-        self.te1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
-        self.te2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
-        self.te3 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
+        self.te1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
+        self.te2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
+        self.te3 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
 
         # thickness input labels
-        self.thl1 = tk.Label(self.canvas, text="t", bg=self["background"], fg='white', font=input_font)
-        self.thm1 = tk.Label(self.canvas, text="mm", bg=self["background"], fg='white', font=input_font)
+        self.thl1 = tk.Label(self.canvas, text="t", bg=self["background"], fg=root.colors['text_color'], font=input_font)
+        self.thm1 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # thickness input entry
-        self.the1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg='white', state='disabled', disabledbackground="grey")
+        self.the1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
 
         # calculate button
         self.buttonimage = tk.PhotoImage(file="calc_button.png")
@@ -354,12 +354,12 @@ class SideMenu(tk.Frame):
         self.calc["height"] = "21"
 
         # result labels
-        self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result2 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result3 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result4 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result5 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
-        self.result6 = tk.Label(self.canvas, text="", bg=self["background"], fg='white', font=result_font)
+        self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result2 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result3 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result4 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result5 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result6 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result1.grid(row=12, column = 1, columnspan=3, padx=5, pady=5)
         self.result2.grid(row=13, column = 1, columnspan=3, padx=5, pady=5)
         self.result3.grid(row=14, column = 1, columnspan=3, padx=5, pady=5)
@@ -371,7 +371,7 @@ class SideMenu(tk.Frame):
         self.thickness = tk.Checkbutton(
             self.canvas, text = "Falvastagság hozzáadása",
             variable = self.root.thickness_on, onvalue=True, offvalue=False, font=input_font, 
-            bg = self["background"], fg='white', selectcolor='grey',
+            bg = self["background"], fg=root.colors['text_color'], selectcolor='grey',
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
             entry_enable(self.the1, self.root.thickness_on)])
 
@@ -379,7 +379,7 @@ class SideMenu(tk.Frame):
         self.transformed_coordinate_system = tk.Checkbutton(
             self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
-            bg = self["background"], fg='white', selectcolor='grey',
+            bg = self["background"], fg=root.colors['text_color'], selectcolor='grey',
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
             entry_enable(self.te1, self.root.transformed_coordinate_on),
             entry_enable(self.te2, self.root.transformed_coordinate_on),

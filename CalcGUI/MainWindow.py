@@ -8,6 +8,7 @@ from SideMenu import SideMenu
 from tkvideo import tkvideo
 from PlotFunctions import plot
 import shape_builder
+from SettingsWindow import settings_window
 
 ## ANIMATION WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class starting_window(tk.Tk):
@@ -113,181 +114,6 @@ class main_window(tk.Tk):
         image=self.change_button_hover_img))
         self.menu_canvas.tag_bind(self.change_button, '<Leave>', lambda e:self.menu_canvas.itemconfig(self.change_button,
         image=self.change_button_img))
-        
-        ## Settings window -----------------------------------------------------------------------------------------------------------------------------------------------------------
-        def settings_window(self):
-            if self.window_open.get() == False:
-                self.window_open.set(True)
-
-                # Variables:
-                unit_clicked = BooleanVar(False)
-                theme_clicked = BooleanVar(False)
-                other_clicked = BooleanVar(False)
-
-                self.temp_unit = self.unit
-                self.temp_angle_unit = self.angle_unit
-                self.temp_theme = self.theme
-
-                win_width = 322
-                win_height = 220
-                # Position the window in the center of the page.
-                positionRight = int(self.winfo_screenwidth()/2 - win_width/2)
-                positionDown = int(self.winfo_screenheight()/2 - win_height/2)
-
-                self.settings_window = tk.Toplevel(self, takefocus = True, bg=self.colors['main_color'])
-                self.settings_window.bind('<Destroy>', func=lambda e: self.window_open.set(False))
-                self.settings_window.geometry("+{}+{}".format(positionRight, positionDown))
-                self.settings_window.lift()
-                self.settings_window.wm_attributes('-topmost',True)
-                self.settings_window.title("Beállítások")
-                self.settings_window.geometry(f"{win_width}x{win_height}")
-                self.settings_window.resizable(0, 0)
-
-                # setting window menubar
-                self.settings_menu = tk.Canvas(self.settings_window, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
-                self.settings_menu.pack(fill = tk.X)
-
-                self.settings_menu_options = tk.Canvas(self.settings_window, bg=self.colors['main_color'], highlightthickness=0)
-                self.settings_menu_options.pack(fill = tk.BOTH)
-
-                # menubar objects
-                self.unit_button_img = tk.PhotoImage(file=f"{self.colors['path']}settings/unit.png")
-                self.unit_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}settings/unit_hover.png")
-                self.unit_button = self.settings_menu.create_image(0,0,anchor=tk.NW,image=self.unit_button_img)
-                self.settings_menu.tag_bind(self.unit_button, '<Button-1>', lambda e:unit_button_click())
-                self.settings_menu.tag_bind(self.unit_button, '<Enter>', lambda e:self.settings_menu.itemconfig(self.unit_button,
-                image=self.unit_button_hover_img))
-                self.settings_menu.tag_bind(self.unit_button, '<Leave>', lambda e:self.settings_menu.itemconfig(self.unit_button,
-                image=self.unit_button_img))
-
-                self.mm_img = tk.PhotoImage(file=f"{self.colors['path']}settings/mm.png")
-                self.cm_img = tk.PhotoImage(file=f"{self.colors['path']}settings/cm.png")
-                self.m_img = tk.PhotoImage(file=f"{self.colors['path']}settings/m.png")
-                self.deg_img = tk.PhotoImage(file=f"{self.colors['path']}settings/deg.png")
-                self.rad_img = tk.PhotoImage(file=f"{self.colors['path']}settings/rad.png")
-                self.mm_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/mm_clicked.png")
-                self.cm_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/cm_clicked.png")
-                self.m_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/m_clicked.png")
-                self.deg_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/deg_clicked.png")
-                self.rad_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/rad_clicked.png")
-
-                self.theme_button_img = tk.PhotoImage(file=f"{self.colors['path']}settings/theme.png")
-                self.theme_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}settings/theme_hover.png")
-                self.theme_button = self.settings_menu.create_image(116,0,anchor=tk.NW,image=self.theme_button_img)
-                self.settings_menu.tag_bind(self.theme_button, '<Button-1>', lambda e:theme_button_click())
-                self.settings_menu.tag_bind(self.theme_button, '<Enter>', lambda e:self.settings_menu.itemconfig(self.theme_button,
-                image=self.theme_button_hover_img))
-                self.settings_menu.tag_bind(self.theme_button, '<Leave>', lambda e:self.settings_menu.itemconfig(self.theme_button,
-                image=self.theme_button_img))
-
-                self.light_img = tk.PhotoImage(file=f"{self.colors['path']}settings/light.png")
-                self.dark_img = tk.PhotoImage(file=f"{self.colors['path']}settings/dark.png")
-                self.light_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/light_clicked.png")
-                self.dark_clicked_img = tk.PhotoImage(file=f"{self.colors['path']}settings/dark_clicked.png")
-
-                self.other_button_img = tk.PhotoImage(file=f"{self.colors['path']}settings/other.png")
-                self.other_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}settings/other_hover.png")
-                self.other_button = self.settings_menu.create_image(172,0,anchor=tk.NW,image=self.other_button_img)
-                self.settings_menu.tag_bind(self.other_button, '<Button-1>', lambda e:other_button_click())
-                self.settings_menu.tag_bind(self.other_button, '<Enter>', lambda e:self.settings_menu.itemconfig(self.other_button,
-                image=self.other_button_hover_img))
-                self.settings_menu.tag_bind(self.other_button, '<Leave>', lambda e:self.settings_menu.itemconfig(self.other_button,
-                image=self.other_button_img))
-
-                self.logo_enabled_check = tk.Checkbutton(
-                self.settings_menu_options, text = "AMSZ logo lejátszása induláskor",
-                variable = self.play_logo, onvalue=True, offvalue=False, 
-                bg = self["background"], fg='white', selectcolor='grey',
-                command = lambda :enable_logo())
-
-                self.ok_img = tk.PhotoImage(file=f"{self.colors['path']}settings/ok.png")
-                
-                # Function for interractions in settings window -------------------------------------------
-                # Enable/disable logo --------------------------------
-                def enable_logo():
-                    if self.play_logo.get() == True:
-                        self.logo_enabled = 'True'
-                    else:
-                        self.logo_enabled = 'False'
-                # Unit change ----------------------------------------
-                def mm():
-                    self.temp_unit = 'mm'
-                def cm():
-                    self.temp_unit = 'cm'
-                def m():
-                    self.temp_unit = 'm'
-                def deg():
-                    self.temp_angle_unit = 'degree'
-                def rad():
-                    self.temp_angle_unit = 'rad'   
-                # Theme change ----------------------------------------
-                def light():
-                    self.temp_theme = "light"
-                def dark():
-                    self.temp_theme = "dark"
-                # ok button -------------------------------------------
-                def ok():
-                    self.unit_change('length', self.temp_unit)
-                    self.unit_change('degree', self.temp_angle_unit)
-                    self.settings_window.destroy()
-                    self.theme_change(self.temp_theme)
-
-                def unit_button_click():
-                    if unit_clicked.get() == False:
-                        unit_clicked.set(True)
-                        if theme_clicked.get() == True or other_clicked.get() == True:
-                            try:
-                                self.logo_enabled_check.place_forget()
-                                self.settings_menu_options.delete('all')
-                            except:
-                                self.settings_menu_options.delete('all')
-                            theme_clicked.set(False)
-                            other_clicked.set(False)
-                        self.mm = self.settings_menu_options.create_image(20,20,anchor=tk.NW,image=self.mm_img)
-                        self.cm = self.settings_menu_options.create_image(20,50,anchor=tk.NW,image=self.cm_img)
-                        self.m = self.settings_menu_options.create_image(20,80,anchor=tk.NW,image=self.m_img)
-                        self.deg = self.settings_menu_options.create_image(171,20,anchor=tk.NW,image=self.deg_img)
-                        self.rad = self.settings_menu_options.create_image(171,50,anchor=tk.NW,image=self.rad_img)
-                        self.ok = self.settings_menu_options.create_image(200,150,anchor=tk.NW,image=self.ok_img)
-                        
-                        self.settings_menu_options.tag_bind(self.mm, '<Button-1>', lambda e:mm())
-                        self.settings_menu_options.tag_bind(self.cm, '<Button-1>', lambda e:cm())
-                        self.settings_menu_options.tag_bind(self.m, '<Button-1>', lambda e:m())
-                        self.settings_menu_options.tag_bind(self.deg, '<Button-1>', lambda e:deg())
-                        self.settings_menu_options.tag_bind(self.rad, '<Button-1>', lambda e:rad())
-                        self.settings_menu_options.tag_bind(self.ok, '<Button-1>', lambda e:ok())
-
-                def theme_button_click():
-                    if theme_clicked.get() == False:
-                        theme_clicked.set(True)
-                        if unit_clicked.get() == True or other_clicked.get() == True:
-                            try:
-                                self.logo_enabled_check.place_forget()
-                                self.settings_menu_options.delete('all')
-                            except:
-                                self.settings_menu_options.delete('all')
-                            unit_clicked.set(False)
-                            other_clicked.set(False)
-                        self.light = self.settings_menu_options.create_image(30,20,anchor=tk.NW,image=self.light_img)
-                        self.dark = self.settings_menu_options.create_image(180,20,anchor=tk.NW,image=self.dark_img)
-                        self.ok = self.settings_menu_options.create_image(200,150,anchor=tk.NW,image=self.ok_img)
-
-                        self.settings_menu_options.tag_bind(self.light, '<Button-1>', lambda e:light())
-                        self.settings_menu_options.tag_bind(self.dark, '<Button-1>', lambda e:dark())
-                        self.settings_menu_options.tag_bind(self.ok, '<Button-1>', lambda e:ok())
-
-                def other_button_click():
-                    if other_clicked.get() == False:
-                        other_clicked.set(True)
-                        if unit_clicked.get() == True or theme_clicked.get() == True:
-                            self.settings_menu_options.delete('all')
-                            unit_clicked.set(False)
-                            theme_clicked.set(False)
-                        self.logo_enabled_check.place(bordermode=tk.OUTSIDE, x=20,y=20, anchor=tk.NW)
-                        self.ok = self.settings_menu_options.create_image(200,150,anchor=tk.NW,image=self.ok_img)
-
-                        self.settings_menu_options.tag_bind(self.ok, '<Button-1>', lambda e:ok())
-
 
         # Canvas for drawing
         self.canvas = None
@@ -349,15 +175,21 @@ class main_window(tk.Tk):
             if self.theme=="dark":
                 self.colors=DARK_THEME
                 self.sm.change_color(DARK_THEME)
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+                if self.plotted==True:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             elif self.theme == "light":
                 self.colors=LIGHT_THEME
                 self.sm.change_color(LIGHT_THEME)
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+                if self.plotted==True:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             else:
                 print("ERROR: Unknown Theme")
                 return -1
             self.configure(bg=self.colors['main_color'])
+            # with open('app_settings.json', 'w') as json_file:
+            #     json.dump({'theme':self.theme, 'default_unit':self.unit, 'angle_unit':self.angle_unit, 'logo_enabled':self.logo_enabled}, json_file)
+            # self.destroy()
+            # super().__init__()
             #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
@@ -536,13 +368,13 @@ DARK_THEME = {
         'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
-        'main_color': '#FFFFFF',
-        'secondary_color': '#999999',
-        'text_color': '#000000',
+        'main_color': '#d9dcdf',
+        'secondary_color': '#f4f2f4',
+        'text_color': '#333333',
         'entry_color': '#FFFFFF',
-        'draw_main': '#1034A6',
-        'draw_secondary': 'black',
-        'draw_tertiary': 'grey',
+        'draw_main': '#a4ade9',
+        'draw_secondary': '#000000',
+        'draw_tertiary': '#4d4d4d',
         'path': 'figures/light_theme/'
         }
 
