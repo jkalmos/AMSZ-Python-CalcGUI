@@ -89,6 +89,8 @@ class shapeBuilder(tk.Canvas):
         self.bind("<Button-1>", self.deselect)
         self.bind("<Motion>", lambda e: self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}"))
         self.root.bind("<Delete>", self.delete_rectangle)
+        self.root.bind("<Control-i>", self.rectangle_info)
+        self.root.bind("<Control-r>", self.resize_rectangle)
 
         ##############* Packing objects ###############
         self.l_width.grid(row=1,column=0)
@@ -129,12 +131,15 @@ class shapeBuilder(tk.Canvas):
         self.delete(self.selected.canvas_repr)
         self.rectangles.remove(self.selected)
         self.selected = None
-    def resize_rectangle(self):
-        self.current.refresh(self.current.x1, self.current.y1, self.current.x1 + self.width, self.current.y1 + self.heigth)
-        self.current = None
-    def rectangle_info(self):
-        self.label.config(text=f"Szélesség = {self.current.width/self.scale}\nMagasság = {self.current.heigth/self.scale}\nKözéppont = ({(self.current.center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.current.center[1])/self.scale})" )
-        print(self.current.width, self.current.heigth, self.current.center)
+    def resize_rectangle(self,e=None):
+        if not self.selected:
+            return 0
+        self.selected.refresh(self.selected.x1, self.selected.y1, self.selected.x1 + self.width, self.selected.y1 + self.heigth)
+        self.selected = None
+    def rectangle_info(self,e=None):
+        if not self.selected:
+            return 0
+        self.label.config(text=f"Szélesség = {self.selected.width/self.scale}\nMagasság = {self.selected.heigth/self.scale}\nKözéppont = ({(self.selected.center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.selected.center[1])/self.scale})" )
     def select(self,e):
         self.deselect()
         tmp = self.find_closest(e.x,e.y)[0]
