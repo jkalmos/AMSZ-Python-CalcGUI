@@ -33,8 +33,8 @@ class main_window(tk.Tk):
         super().__init__()
         # self.overrideredirect(1)
 
-        win_width = 1600
-        win_height = 900
+        win_width = 1200
+        win_height = 600
         
 
         # Position the window in the center of the page.
@@ -180,7 +180,6 @@ class main_window(tk.Tk):
                 print("ERROR: Unknown Theme")
                 return -1
             self.configure(bg=self.colors['main_color'])
-            #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
     def unit_change(self, unit_type, unit):
@@ -198,13 +197,13 @@ class main_window(tk.Tk):
             self.shape_builder_mode = True
             self.sm.pack_forget()
             self.sb_sm = shape_builder.sb_side_menu(self)
-            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
             self.menubar.entryconfig(2,label="Alap alakzatok")
             self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
-            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (10,20), pady = 20)
         else:
             print("closing sb")
             self.sb.pack_forget()

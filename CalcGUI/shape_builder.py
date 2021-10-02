@@ -100,21 +100,11 @@ class shapeBuilder(tk.Canvas):
         self.e2.grid(row=2,column=1,columnspan=3)
         self.l_unit2.grid(row=2,column=4)
         self.is_sticky.grid(row=3,columnspan=5)
-        self.button.grid(row=4,column=1)
-        self.button2.grid(row=4, column=3)
+        self.button.grid(row=4,column=3)
+        self.button2.grid(row=4, column=1)
         self.label.grid(row=5,columnspan=5, pady= 50)
-        self.cls.grid(row=6)
-        """
-        ###############* Scrollbar ################
-        self.scroll_x = tk.Scrollbar(self.root, orient="horizontal", command=self.xview)
-        #self.scroll_x.pack(anchor=tk.S, fill=tk.X)
+        self.cls.grid(row=6, column=1,columnspan=3)
 
-        self.scroll_y = tk.Scrollbar(self.root, orient="vertical", command=self.yview)
-        #self.scroll_y.pack(anchor=tk.E,fill=tk.Y)
-
-        self.configure(yscrollcommand=self.scroll_y.set, xscrollcommand=self.scroll_x.set)
-        self.configure(scrollregion=self.bbox("all"))
-        """
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
             for i in self.rectangles:
@@ -131,11 +121,15 @@ class shapeBuilder(tk.Canvas):
         self.delete(self.selected.canvas_repr)
         self.rectangles.remove(self.selected)
         self.selected = None
+        for k in self.rectangles:
+            k.is_overlapping()
     def resize_rectangle(self,e=None):
         if not self.selected:
             return 0
         self.selected.refresh(self.selected.x1, self.selected.y1, self.selected.x1 + self.width, self.selected.y1 + self.heigth)
         self.selected = None
+        for k in self.rectangles:
+            k.is_overlapping()
     def rectangle_info(self,e=None):
         if not self.selected:
             return 0
@@ -163,6 +157,8 @@ class shapeBuilder(tk.Canvas):
             self.selected = None
         except:
             pass
+        for k in self.rectangles:
+            k.is_overlapping()
     def move(self,e):
         if keyboard.is_pressed("Ctrl"):
             if self.last_click_pos is None:
@@ -250,7 +246,7 @@ class shapeBuilder(tk.Canvas):
                 if abs(self.current.center[1]-self.Ycenter)<EPSILON:
                     self.current.refresh(self.current.x1,self.Ycenter-self.current.heigth/2,self.current.x2,self.Ycenter+self.current.heigth/2)
         if self.isMoving and self.current is not None:
-            self.itemconfig(self.current.canvas_repr, fill='blue')
+            #self.itemconfig(self.current.canvas_repr, fill='blue')
             self.rectangles.append(self.current)
             for k in self.rectangles:
                 k.is_overlapping()
@@ -265,6 +261,9 @@ class shapeBuilder(tk.Canvas):
         self.tag_raise(self.pos_lbl)
         self.last_click_pos = None
     def calculate(self):
+        if len(self.rectangles) == 0:
+            self.label.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0")
+            return -1
         Ix = 0
         Iy = 0
         Ixy = 0
@@ -301,26 +300,30 @@ class shapeBuilder(tk.Canvas):
         self.label.config(text=f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}")
         print(self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4))
     def overwrite(self):
+        ok = True
         try:
             w=float(self.e1.get().replace(',','.'))*self.scale
             if w <=0:
                 raise ValueError
-            self.width = w
+            #self.width = w
             self.e1.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
             self.e1.config({"background": "#eb4034"})
-            return -1
+            ok = False
         try:
             h = float(self.e2.get().replace(',','.'))*self.scale
             if h <=0:
                 raise ValueError
-            self.heigth = h
+            #self.heigth = h
             self.e2.config({"background": self.root.colors['secondary_color']})
         except:
             print("Hiba, az egyik mező nem olvashó be")
             self.e2.config({"background": "#eb4034"})
-            return -1
+            ok=False
+        if not ok: return -1
+        self.width = w
+        self.heigth = h
         self.coords(self.alap_negyzet.canvas_repr, 10,10,10+self.width,10+self.heigth)
         self.coords(self.width_label,25+self.width,10+ self.heigth/2)
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
