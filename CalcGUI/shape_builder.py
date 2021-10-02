@@ -1,7 +1,7 @@
 import re
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
-from tkinter.constants import ANCHOR, FALSE, NO, TRUE
+from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
 WIDTH = 30
@@ -12,17 +12,14 @@ SHOW_HAUPACHSEN = False
 FIXED_AXIS = False
 
 
-#TODO: Sticking with different corners
 #TODO: fixed axis vs Schwerpunkt
-#TODO: +,- buttons -> top level
-#TODO: scrolling
 #TODO: settings
 #TODO: colors
-
+#TODO: overl. bug!
 
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
-        super().__init__(root, bd=0, bg=root.colors["main_color"],highlightthickness=0)
+        super().__init__(root, bd=0, bg=root.colors["secondary_color"],highlightthickness=0)
         self.root=root
         self.sb_sm = sb_sm #own side menu
         self.scale = 10 #scale between drawing and given value
@@ -36,6 +33,7 @@ class shapeBuilder(tk.Canvas):
         self.width = WIDTH
         self.heigth = WIDTH
         self.last_click_pos = None
+        self.selected = None
 
         #############* Creating objects for side menu ##############
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
@@ -86,6 +84,11 @@ class shapeBuilder(tk.Canvas):
         self.popup_menu.add_command(label="Info",command=self.rectangle_info)
         self.bind("<Button-3>", self.popup) # right-click event
         self.bind("<Configure>", self.resize_canvas)
+        #self.tag_bind("rect",'<Double-Button-1>',self.select)
+        self.tag_bind("rect",'<Button-1>',self.select)
+        self.bind("<Button-1>", self.deselect)
+        self.bind("<Motion>", lambda e: self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}"))
+        self.root.bind("<Delete>", self.delete_rectangle)
 
         ##############* Packing objects ###############
         self.l_width.grid(row=1,column=0)
@@ -115,22 +118,46 @@ class shapeBuilder(tk.Canvas):
             for i in self.rectangles:
                 pos = self.coords(i.canvas_repr)
                 if e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
-                    self.current = i
+                    self.select(e)
                     try:
                         self.popup_menu.tk_popup(e.x_root, e.y_root, 0)
                     finally:
                         self.popup_menu.grab_release()
                     break
-    def delete_rectangle(self):
-        self.delete(self.current.canvas_repr)
-        self.rectangles.remove(self.current)
-        self.current = None
+    def delete_rectangle(self, e=None):
+        print("deleteing rectangle")
+        self.delete(self.selected.canvas_repr)
+        self.rectangles.remove(self.selected)
+        self.selected = None
     def resize_rectangle(self):
         self.current.refresh(self.current.x1, self.current.y1, self.current.x1 + self.width, self.current.y1 + self.heigth)
         self.current = None
     def rectangle_info(self):
         self.label.config(text=f"Szélesség = {self.current.width/self.scale}\nMagasság = {self.current.heigth/self.scale}\nKözéppont = ({(self.current.center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.current.center[1])/self.scale})" )
         print(self.current.width, self.current.heigth, self.current.center)
+    def select(self,e):
+        self.deselect()
+        tmp = self.find_closest(e.x,e.y)[0]
+        for i in self.rectangles:
+            if i.canvas_repr == tmp:
+                self.selected = i
+                break
+        else:
+            print("Selection_Error: Rectangle not found...")
+            return -1  
+        
+        self.itemconfig(self.selected.canvas_repr, fill='pink')
+        print("Selecting rectangle")
+    def deselect(self,e=None):
+        if e is not None:
+            for i in self.rectangles:
+                if e.x < i.x2 and e.x> i.x1 and i.y1 < e.y and i.y2 > e.y:
+                    return 0
+        try:
+            self.itemconfig(self.selected.canvas_repr, fill='blue')
+            self.selected = None
+        except:
+            pass
     def move(self,e):
         if keyboard.is_pressed("Ctrl"):
             if self.last_click_pos is None:
@@ -140,6 +167,7 @@ class shapeBuilder(tk.Canvas):
                 self.last_click_pos = (e.x, e.y)
             return 0
         self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
+        self.deselect()
         #choosing object
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
@@ -157,7 +185,6 @@ class shapeBuilder(tk.Canvas):
             return -1
         pos = self.coords(self.current.canvas_repr)
         if self.isMoving or e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
-            #self.coords(self.current.canvas_repr,e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
         self.label.config(text=f"")
@@ -199,7 +226,6 @@ class shapeBuilder(tk.Canvas):
                 elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # !
                     self.current.refresh(i_pos[2]-self.current.width,i_pos[3],i_pos[2],i_pos[3]+self.current.heigth)
                     break
-                
             else: #sicking to the coordinate system
                 if abs(pos[0]-self.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
                     self.current.refresh(self.Xcenter,pos[1],self.Xcenter+self.current.width,pos[3])
@@ -229,6 +255,7 @@ class shapeBuilder(tk.Canvas):
         self.isMoving = False
         self.current=None
         self.label.config(text="")
+        self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
         self.tag_raise("plus_minus")
         self.tag_raise(self.pos_lbl)
         self.last_click_pos = None
@@ -310,15 +337,12 @@ class shapeBuilder(tk.Canvas):
         if SHOW_HAUPACHSEN:
             self.h1 = self.create_line(self.Xcenter-250*cos(alfa),self.Ycenter-250*sin(alfa),self.Xcenter+250*cos(alfa),self.Ycenter+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
             self.h2 = self.create_line(self.Xcenter-250*cos(alfa+pi/2),self.Ycenter-250*sin(alfa+pi/2),self.Xcenter+250*cos(alfa+pi/2),self.Ycenter+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
-            #self.lower(self.h1)
-            #self.lower(self.h2)
         return I1, I2, alfa
     def rescale(self,scale):
         self.scale *= scale
         self.alap_negyzet.refresh(10,10,10+self.width*scale,10+self.heigth*scale)
         self.width *= scale
         self.heigth *= scale
-        #self.itemconfig('rect', fill='white')
         self.coords(self.width_label,25+self.width,10+ self.heigth/2)
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         for i in self.rectangles:
@@ -367,8 +391,6 @@ class Rectangle():
     def is_overlapping(self):
         a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
         a.remove(self.canvas_repr)
-        #self.canvas.itemconfig(self.canvas_repr, fill='red')
-        #self.overlapping_with.append(a[:])
         in_overlapping = False
         for i in self.canvas.rectangles:
             if i.canvas_repr in a:
@@ -377,11 +399,7 @@ class Rectangle():
                     in_overlapping = True
         if not in_overlapping:
             self.canvas.itemconfig(self.canvas_repr, fill='blue')
-                #self.overlapping_with.append(i)
-                #i.overlapping_with.append(self)
-                #self.canvas.itemconfig(i.canvas_repr, fill='red')
     def is_overlapping_old(self):
-        #! with different-size rectangles doesm't works properly
         for i in self.canvas.rectangles:
             if self.x1 <i.x2 and self.x1> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top left corner is in the rectangle
                 self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
