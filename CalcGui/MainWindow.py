@@ -120,67 +120,14 @@ class main_window(tk.Tk):
         # Canvas for drawing
         self.canvas = None
 
-        # # Toolbar
-        # self.toolbar = tk.Frame(self, bd=1, relief=tk.RAISED, bg=self.colors['main_color'])
-        # self.img = Image.open("calc_button.png")
-        # self.eimg = ImageTk.PhotoImage(self.img)
-        # self.exitButton = tk.Button(self.toolbar, image=self.eimg, relief=tk.FLAT,
-        #     command=self.quit)
-        # self.exitButton.image = self.eimg
-        # self.exitButton.pack(side=tk.LEFT, padx=2, pady=2)
-        # self.toolbar.pack(side=tk.TOP, fill=tk.X)
-
         # Side Menu
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
         # self.sm.pack(side=tk.LEFT, fill=tk.Y)
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
-
-        # # Menubar
-        # self.menubar = tk.Menu(self)
-        # self.config(menu=self.menubar)
-
-        # # Add settings to menubar
-        # settings_menu = tk.Menu(self, self.menubar, tearoff=0)
-        # self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
-
-        # # Add units menu to settings menu
-        # units_menu = tk.Menu(self, settings_menu, tearoff=0)
-        # units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
-        # units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
-        # units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
-        # units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
-        # units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
-        # settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
-
-        # # Add themes menu to setting menu
-        # themes_menu = tk.Menu(self, settings_menu, tearoff=0)
-        # themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
-        # themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
-        # settings_menu.add_cascade(label="Téma", menu=themes_menu)
-
-        # #Changing to shape builder
-        # self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
-        # # Add exit button to menubar
-        # self.menubar.add_command(label="Kilépés", command=self.destroy)
         
-    ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
-    # def start_move(self, event):
-    #     self.x = event.x
-    #     self.y = event.y
-
-    # def stop_move(self,event):
-    #     self.x = None
-    #     self.y = None
-
-    # def do_move(self, event):
-    #     deltax = event.x - self.x
-    #     deltay = event.y - self.y
-    #     x = self.winfo_x() + deltax
-    #     y = self.winfo_y() + deltay
-    #     self.geometry(f"+{x}+{y}")
-    
+    ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
@@ -198,8 +145,6 @@ class main_window(tk.Tk):
                 print("ERROR: Unknown Theme")
                 return -1
             self.configure(bg=self.colors['main_color'])
-            # with open('app_settings.json', 'w') as json_file:
-            #     json.dump({'theme':self.theme, 'default_unit':self.unit, 'angle_unit':self.angle_unit, 'logo_enabled':self.logo_enabled}, json_file)
             settings['theme']=self.theme
             self.destroy()
             self.__init__()
@@ -226,8 +171,6 @@ class main_window(tk.Tk):
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic_hover.png")
             self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
-            # self.menubar.entryconfig(2,label="Alap alakzatok")
-            # self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
             self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (10,20), pady = 20)
@@ -242,8 +185,6 @@ class main_window(tk.Tk):
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
             self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
-            # self.menubar.entryconfig(2,label="Saját alakzat")
-            # self.menubar.entryconfig(1, state="normal")
 
     def choose_object(self, shape = None):
         self.dimensions = {
@@ -414,8 +355,6 @@ class main_window(tk.Tk):
 
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        # 'main_color': '#2C394B',
-        # 'secondary_color': '#082032',
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',

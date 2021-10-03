@@ -8,9 +8,6 @@ import numpy as np
 def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on, thickness_on, colors):
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
-    # else:
-    #     parent.logo_image.pack_forget()
-    #     parent.sm.pack(side=tk.LEFT, fill=tk.Y)
     a = 2
     b = 1
     d = 1

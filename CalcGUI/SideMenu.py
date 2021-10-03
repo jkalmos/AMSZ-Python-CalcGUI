@@ -10,7 +10,6 @@ class SideMenu(tk.Frame):
 
 # DEFINE SIDEMENU OBJECTS --------------------------------------------------------------------------------------------------------------
         self.canvas = tk.Canvas(self, bg=root.colors['secondary_color'], highlightthickness=0)
-        # self.canvas.grid(row=0, column=0, sticky="NSEW")
         self.canvas.pack(fill=tk.BOTH, expand = True)
 
         # def round_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):

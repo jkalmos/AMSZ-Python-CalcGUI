@@ -189,8 +189,6 @@ class shapeBuilder(tk.Canvas):
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
         self.label.config(text=f"")
-        #self.itemconfig(self.pos_lbl, text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
-        #self.label.config(text=f"x: {(e.x-XCENTER)/self.scale} y: {(YCENTER-e.y)/self.scale}")
     def release(self,e):
         self.delete("hauptachse")
         self.delete("s_axis")
@@ -407,36 +405,6 @@ class Rectangle():
                     in_overlapping = True
         if not in_overlapping:
             self.canvas.itemconfig(self.canvas_repr, fill='blue')
-    def is_overlapping_old(self):
-        for i in self.canvas.rectangles:
-            if self.x1 <i.x2 and self.x1> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top left corner is in the rectangle
-                self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-                self.overlapping_with.append(i)
-                i.overlapping_with.append(self)
-                self.canvas.itemconfig(i.canvas_repr, fill='red')
-            elif self.x1 <i.x2 and self.x1> i.x1 and self.y2 > i.y1 and self.y2 < i.y2: #bottom left corner is in the rectangle
-                self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-                self.overlapping_with.append(i)
-                i.overlapping_with.append(self)
-                self.canvas.itemconfig(i.canvas_repr, fill='red')
-            elif self.x2 <i.x2 and self.x2> i.x1 and self.y2 > i.y1 and self.y2 < i.y2: #bottom right corner is in the rectangle
-                self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-                self.overlapping_with.append(i)
-                i.overlapping_with.append(self)
-                self.canvas.itemconfig(i.canvas_repr, fill='red')
-            elif self.x2 <i.x2 and self.x2> i.x1 and self.y1 > i.y1 and self.y1 < i.y2: #top right corner is in the rectangle
-                self.canvas.itemconfig(self.canvas.current.canvas_repr, fill='red')
-                self.overlapping_with.append(i)
-                i.overlapping_with.append(self)
-                self.canvas.itemconfig(i.canvas_repr, fill='red')
-            elif i in self.overlapping_with:
-                self.overlapping_with.remove(i)
-                i.overlapping_with.remove(self)
-                if len(i.overlapping_with)==0:
-                    i.canvas.itemconfig(i.canvas_repr, fill='blue')
-        if len(self.overlapping_with) == 0:
-            self.canvas.itemconfig(self.canvas_repr, fill='blue')
-
             
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
