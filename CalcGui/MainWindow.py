@@ -188,8 +188,9 @@ class main_window(tk.Tk):
             self.configure(bg=self.colors['main_color'])
             # with open('app_settings.json', 'w') as json_file:
             #     json.dump({'theme':self.theme, 'default_unit':self.unit, 'angle_unit':self.angle_unit, 'logo_enabled':self.logo_enabled}, json_file)
-            # self.destroy()
-            # super().__init__()
+            settings['theme']=self.theme
+            self.destroy()
+            self.__init__()
             #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
