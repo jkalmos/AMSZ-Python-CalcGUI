@@ -160,8 +160,13 @@ def IsoscelesTriangle(w, h, t = 0):
     else:
         w2 = w
         h2 = h
-        w1 = w - t
-        h1 = h - t
+        # w1 = w - t # HIBA # itt a falvastagság értelmezése nem helyes, ezt javítva
+        # h1 = h - t
+        phi = np.arctan(h / (w / 2))
+        u = t / np.sin(phi)
+        v = t / np.tan(phi)
+        w1 = w - 2 * (u + v)
+        h1 = h * (w1 / w)
         A = (w2 * h2 - w1 * h1) / 2
         Ix = (w2 * h2 ** 3 - w1 * h1 ** 3) / 36
         Iy = (w2 ** 3 * h2 - w1 ** 3 * h1) / 48
@@ -181,10 +186,11 @@ def IsoscelesTriangle(w, h, t = 0):
     return properties
 
 def Iarbitraryaxis(A, Ix, Iy, Ixy, x, y, phi, *args, **kwargs):
-    Ix2 = Ix + y ** 2 * A
-    Iy2 = Iy + x ** 2 * A
+    Ix2 = Ix + x ** 2 * A 
+    Iy2 = Iy + y ** 2 * A 
     Ix2y2 = Ixy + x * y * A
     Ixi = Ix2 * np.cos(phi) ** 2 + Iy2 * np.sin(phi) ** 2 - Ix2y2 * np.sin(2 * phi)
-    Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 - Ix2y2 * np.sin(2 * phi)
+    Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 + Ix2y2 * np.sin(2 * phi) # itt pedig az utolsó tagnak negatív volt az előjele, Kossa A. jegyzetében én pozitívan találtam
+    # így szerepelt eredetileg: Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 - Ix2y2 * np.sin(2 * phi)
     Ixieta = (Ix2 - Iy2) / 2 * np.sin(2 * phi) + Ix2y2 * np.cos(2 * phi)
     return Ixi, Ieta, Ixieta
