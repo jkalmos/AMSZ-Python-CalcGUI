@@ -30,6 +30,8 @@ class starting_window(tk.Tk):
 
 ## MAIN WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class main_window(tk.Tk):
+    # def onExit(self):
+    #     self.quit()
     def __init__(self):
         super().__init__()
 
@@ -118,6 +120,16 @@ class main_window(tk.Tk):
         # Canvas for drawing
         self.canvas = None
 
+        # # Toolbar
+        # self.toolbar = tk.Frame(self, bd=1, relief=tk.RAISED, bg=self.colors['main_color'])
+        # self.img = Image.open("calc_button.png")
+        # self.eimg = ImageTk.PhotoImage(self.img)
+        # self.exitButton = tk.Button(self.toolbar, image=self.eimg, relief=tk.FLAT,
+        #     command=self.quit)
+        # self.exitButton.image = self.eimg
+        # self.exitButton.pack(side=tk.LEFT, padx=2, pady=2)
+        # self.toolbar.pack(side=tk.TOP, fill=tk.X)
+
         # Side Menu
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
@@ -202,14 +214,13 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
-
     def build_shape(self):
         if not self.shape_builder_mode:
             print("opening sb")
             self.shape_builder_mode = True
             self.sm.pack_forget()
             self.sb_sm = shape_builder.sb_side_menu(self)
-            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic.png")
@@ -219,7 +230,7 @@ class main_window(tk.Tk):
             # self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
-            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (10,20), pady = 20)
         else:
             print("closing sb")
             self.sb.pack_forget()
@@ -233,7 +244,6 @@ class main_window(tk.Tk):
             self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
             # self.menubar.entryconfig(2,label="Saját alakzat")
             # self.menubar.entryconfig(1, state="normal")
-
 
     def choose_object(self, shape = None):
         self.dimensions = {
@@ -401,6 +411,7 @@ class main_window(tk.Tk):
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
+
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
         # 'main_color': '#2C394B',
