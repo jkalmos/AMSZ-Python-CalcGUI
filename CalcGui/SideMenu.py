@@ -13,34 +13,6 @@ class SideMenu(tk.Frame):
         # self.canvas.grid(row=0, column=0, sticky="NSEW")
         self.canvas.pack(fill=tk.BOTH, expand = True)
 
-        # def round_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):
-        #     points = [x1+radius, y1,
-        #                 x1+radius, y1,
-        #                 x2-radius, y1,
-        #                 x2-radius, y1,
-        #                 x2, y1,
-        #                 x2, y1+radius,
-        #                 x2, y1+radius,
-        #                 x2, y2-radius,
-        #                 x2, y2-radius,
-        #                 x2, y2,
-        #                 x2-radius, y2,
-        #                 x2-radius, y2,
-        #                 x1+radius, y2,
-        #                 x1+radius, y2,
-        #                 x1, y2,
-        #                 x1, y2-radius,
-        #                 x1, y2-radius,
-        #                 x1, y1+radius,
-        #                 x1, y1+radius,
-        #                 x1, y1]
-        #     canvas.create_polygon(points, **kwargs, smooth=True)
-
-        # combobox
-        # style= ttk.Style()
-        # # style.theme_use('clam')
-        # style.configure("TCombobox", fieldbackground= self["background"], background=self["background"])
-
         def callback(shape):
             self.root.choose_object(shape)
         def shape_changed(self):
