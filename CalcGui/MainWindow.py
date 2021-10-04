@@ -159,6 +159,9 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
+        for i in self.sb.controls:
+            if i["unit_type"] == unit_type:
+                i["unit"].config(text = unit)
     def build_shape(self):
         if not self.shape_builder_mode:
             print("opening sb")
@@ -358,7 +361,8 @@ DARK_THEME = {
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',
-        'entry_color': '#334756',
+        'entry_color': '#4d4d4d',
+        'disabled_color':'#333333',
         'draw_main': '#87aade',
         'draw_secondary': '#1a1a1a',
         'draw_tertiary': 'grey',
@@ -368,7 +372,8 @@ LIGHT_THEME = {
         'main_color': '#d9dcdf',
         'secondary_color': '#f4f2f4',
         'text_color': '#333333',
-        'entry_color': '#FFFFFF',
+        'entry_color': '#d9dcdf',
+        'disabled_color':'#f4f2f4',
         'draw_main': '#a4ade9',
         'draw_secondary': '#000000',
         'draw_tertiary': '#4d4d4d',

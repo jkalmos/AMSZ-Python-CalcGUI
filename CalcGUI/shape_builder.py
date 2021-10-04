@@ -36,18 +36,22 @@ class shapeBuilder(tk.Canvas):
         self.selected = None
 
         #############* Creating objects for side menu ##############
-        self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg='white')
-        self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg='white')
-        self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg='white')
-        self.l_unit1 = tk.Label(self.sb_sm,text="mm", bg=self.sb_sm["background"], fg='white')
-        self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg='white')
+        self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_unit1 = tk.Label(self.sb_sm,text=root.unit, bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
-        self.e1 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
-        self.e2 = tk.Entry(self.sb_sm,bg=self.sb_sm["background"], fg='white')
+        self.e1 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
+        self.e2 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
-        #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg='white')
+        #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.pos_lbl = self.create_text(15 ,15,text="",fill= "white") # position label
+
+        self.controls = []
+        self.controls.append({"unit":self.l_unit1, "unit_type": "length"})
+        self.controls.append({"unit":self.l_unit2, "unit_type": "length"})
 
         #############* Creating + and - buttons ##############
         self.img= (Image.open("plus.png"))
@@ -75,7 +79,7 @@ class shapeBuilder(tk.Canvas):
 
         #########* Evensts and other stuff ############
         self.sticky = tk.BooleanVar(value=True)
-        self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg='white', selectcolor='grey')
+        self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg=root.colors["text_color"], selectcolor=root.colors['secondary_color'])
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
         self.bind('<ButtonRelease-1>',self.release) #when you relase the left mose button
         self.popup_menu = tk.Menu(self, tearoff=0) #right click menu
