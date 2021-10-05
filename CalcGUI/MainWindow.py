@@ -30,6 +30,8 @@ class starting_window(tk.Tk):
 
 ## MAIN WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class main_window(tk.Tk):
+    # def onExit(self):
+    #     self.quit()
     def __init__(self):
         super().__init__()
 
@@ -153,22 +155,7 @@ class main_window(tk.Tk):
         # # Add exit button to menubar
         # self.menubar.add_command(label="Kilépés", command=self.destroy)
         
-    ## USEFUL FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------------
-    # def start_move(self, event):
-    #     self.x = event.x
-    #     self.y = event.y
-
-    # def stop_move(self,event):
-    #     self.x = None
-    #     self.y = None
-
-    # def do_move(self, event):
-    #     deltax = event.x - self.x
-    #     deltay = event.y - self.y
-    #     x = self.winfo_x() + deltax
-    #     y = self.winfo_y() + deltay
-    #     self.geometry(f"+{x}+{y}")
-    
+    ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
@@ -186,10 +173,9 @@ class main_window(tk.Tk):
                 print("ERROR: Unknown Theme")
                 return -1
             self.configure(bg=self.colors['main_color'])
-            # with open('app_settings.json', 'w') as json_file:
-            #     json.dump({'theme':self.theme, 'default_unit':self.unit, 'angle_unit':self.angle_unit, 'logo_enabled':self.logo_enabled}, json_file)
-            # self.destroy()
-            # super().__init__()
+            settings['theme']=self.theme
+            self.destroy()
+            self.__init__()
             #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
@@ -201,14 +187,16 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
-
+        for i in self.sb.controls:
+            if i["unit_type"] == unit_type:
+                i["unit"].config(text = unit)
     def build_shape(self):
         if not self.shape_builder_mode:
             print("opening sb")
             self.shape_builder_mode = True
             self.sm.pack_forget()
             self.sb_sm = shape_builder.sb_side_menu(self)
-            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y)
+            self.sb_sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             self.sb = shape_builder.shapeBuilder(self, self.sb_sm)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic.png")
@@ -218,7 +206,7 @@ class main_window(tk.Tk):
             # self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
-            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (20,10), pady = 20)
+            self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (10,20), pady = 20)
         else:
             print("closing sb")
             self.sb.pack_forget()
@@ -272,31 +260,77 @@ class main_window(tk.Tk):
             except:
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": "#eb4034"})
+                for i in self.sm.indicators:
+                        i.config(text="")
+                self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                 vissza.append(None)
-        if self.thickness_on.get():
-            t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) # ITT VALAMI NEM JÓ MÉG
-            a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
-            b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-            if t < a/2 and t < b/2:    
-                try:
+        if self.thickness_on.get(): #TODO HÁROMSZÖGNÉL A FALVASTAGSÁGNAK AZ OLDAFELEZŐ MER: FELÉNÉL KELL KISEBBNEK LENNIE
+            if self.sm.shape == "Circle":
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                d = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                if t <= d/2:
+                    print("kor lehetseges")
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                     self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
-                except:
+                else:
                     print("Hiba")
                     self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    for i in self.sm.indicators:
+                        i.config(text="")
+                    self.sm.result1.config(text="Hiba a falvastagságban!")
                     vissza.append(None)
                     t = None
             else:
-                if t >= a/2 and t <= b/2:
-                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                    vissza.append(None)
-                elif t >= b/2 and t <= a/2:
-                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                    vissza.append(None)
-                elif t >= b/2 and t >= a/2:
-                    self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                    self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                    vissza.append(None)
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) 
+                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                if t < a/2 and t < b/2:
+                    print("lehetseges")     
+                    try:
+                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                        self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                    except:
+                        print("Hiba")
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        t = None
+                else:
+                    if t >= a/2 and a == b:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                    if t >= a/2 and t <= b/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= b/2 and t <= a/2:
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= b/2 and t >= a/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
                 
         else:
             t = 0
@@ -361,7 +395,8 @@ DARK_THEME = {
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',
-        'entry_color': '#334756',
+        'entry_color': '#4d4d4d',
+        'disabled_color':'#333333',
         'draw_main': '#87aade',
         'draw_secondary': '#1a1a1a',
         'draw_tertiary': 'grey',
@@ -371,7 +406,8 @@ LIGHT_THEME = {
         'main_color': '#d9dcdf',
         'secondary_color': '#f4f2f4',
         'text_color': '#333333',
-        'entry_color': '#FFFFFF',
+        'entry_color': '#d9dcdf',
+        'disabled_color':'#f4f2f4',
         'draw_main': '#a4ade9',
         'draw_secondary': '#000000',
         'draw_tertiary': '#4d4d4d',
