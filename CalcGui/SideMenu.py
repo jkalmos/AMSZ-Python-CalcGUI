@@ -36,10 +36,6 @@ class SideMenu(tk.Frame):
         #                 x1, y1]
         #     canvas.create_polygon(points, **kwargs, smooth=True)
 
-        # combobox
-        # style= ttk.Style()
-        # # style.theme_use('clam')
-        # style.configure("TCombobox", fieldbackground= self["background"], background=self["background"])
 
         def callback(shape):
             self.root.choose_object(shape)
