@@ -88,7 +88,7 @@ def settings_window(self):
         self.logo_enabled_check = tk.Checkbutton(
         self.settings_menu_options, text = "AMSZ logo lejátszása induláskor",
         variable = self.play_logo, onvalue=True, offvalue=False, 
-        bg = self["background"], fg='white', selectcolor='grey',
+        bg = self["background"], fg=self.colors['text_color'], selectcolor=self["background"],
         command = lambda :enable_logo())
 
         self.ok_img = tk.PhotoImage(file=f"{self.colors['path']}settings/ok.png")

@@ -187,9 +187,12 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
-        for i in self.sb.controls:
-            if i["unit_type"] == unit_type:
-                i["unit"].config(text = unit)
+        try:
+            for i in self.sb.controls:
+                if i["unit_type"] == unit_type:
+                    i["unit"].config(text = unit)
+        except:
+            None
     def build_shape(self):
         if not self.shape_builder_mode:
             print("opening sb")
@@ -256,10 +259,10 @@ class main_window(tk.Tk):
                 i+=1
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
-                self.sm.controls[i]["entry"].config({"background": self.colors['secondary_color']})
+                self.sm.controls[i]["entry"].config({"background": self.colors['entry_color']})
             except:
                 print("Hiba")
-                self.sm.controls[i]["entry"].config({"background": "#eb4034"})
+                self.sm.controls[i]["entry"].config({"background": self.colors['entry_color']})
                 for i in self.sm.indicators:
                         i.config(text="")
                 self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -271,10 +274,10 @@ class main_window(tk.Tk):
                 if t <= d/2:
                     print("kor lehetseges")
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                    self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                 else:
                     print("Hiba")
-                    self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                     for i in self.sm.indicators:
                         i.config(text="")
                     self.sm.result1.config(text="Hiba a falvastagságban!")
@@ -288,10 +291,10 @@ class main_window(tk.Tk):
                     print("lehetseges")     
                     try:
                         t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                        self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                     except:
                         print("Hiba")
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -395,7 +398,7 @@ DARK_THEME = {
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',
-        'entry_color': '#4d4d4d',
+        'entry_color': '#262626',
         'disabled_color':'#333333',
         'draw_main': '#87aade',
         'draw_secondary': '#1a1a1a',

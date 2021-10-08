@@ -35,16 +35,6 @@ class SideMenu(tk.Frame):
         #                 x1, y1+radius,
         #                 x1, y1]
         #     canvas.create_polygon(points, **kwargs, smooth=True)
-
-        # self.root.update_idletasks()
-        # self.canvas.update()
-        # self.update()
-        # self.update_idletasks()
-        # self.canvas.update_idletasks()
-        
-        # self.width = self.canvas.winfo_reqwidth()-92
-        # self.height = self.canvas.winfo_reqheight()
-        # print(self.width, self.height, self.canvas.winfo_width(), self.canvas.winfo_geometry(), self.winfo_geometry(), self.winfo_reqwidth())
         
         # # self.entry_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill=root.colors['main_color'])
         # self.result_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill='blue')
@@ -73,18 +63,7 @@ class SideMenu(tk.Frame):
         input_font = "Roboto", 11
         
         ## Custom combobox ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        # self.combo_buttons = []
-        # self.combo_buttons.append(self.combo_rectangle)
-        # self.combo_buttons.append(self.combo_circle)
-        # self.combo_buttons.append(self.combo_ellipse)
-        # self.combo_buttons.append(self.combo_isosceles)
-        
         combo_open = tk.BooleanVar(False)
-        # default_open = tk.BooleanVar(False)
-        # rectangle_open = tk.BooleanVar(False)
-        # circle_open = tk.BooleanVar(False)
-        # ellipse_open = tk.BooleanVar(False)
-        # isosceles_open = tk.BooleanVar(False)
         def combo_show():
             combo_open.set(True)
             self.combo_default.grid(row=1, column=0, columnspan=5)
@@ -98,48 +77,11 @@ class SideMenu(tk.Frame):
             self.combo_isosceles.lift()
         def combo_clear():
             combo_open.set(False)
-            # self.combo_default.grid_forget()
             self.combo_rectangle.place_forget()
             self.combo_circle.place_forget()
             self.combo_ellipse.place_forget()
             self.combo_isosceles.place_forget()
-            # if combo_open.get() == True:
-            #     if default_open.get() == True:
-            #         self.combo_default.grid_forget()
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.place_forget()
-            #         default_open.set(False)
-            #         combo_open.set(False)
-            #     elif rectangle_open.get() == True:
-            #         self.combo_rectangle.grid_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.place_forget()
-            #         rectangle_open.set(False)
-            #         combo_open.set(False)
-            #     elif circle_open.get() == True:
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.grid_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.place_forget()
-            #         circle_open.set(False)
-            #         combo_open.set(False)
-            #     elif ellipse_open.get() == True:
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.grid_forget()
-            #         self.combo_isosceles.place_forget()
-            #         ellipse_open.set(False)
-            #         combo_open.set(False)
-            #     elif isosceles_open.get() == True:
-            #         self.combo_rectangle.place_forget()
-            #         self.combo_circle.place_forget()
-            #         self.combo_ellipse.place_forget()
-            #         self.combo_isosceles.grid_forget()
-            #         isosceles_open.set(False)
-            #         combo_open.set(False)
+
 
         def rectangle_click():
             if combo_open.get() == False:
@@ -201,24 +143,6 @@ class SideMenu(tk.Frame):
             if combo_open.get() == False:
                 self.combo_default.grid_forget()
                 combo_show()
-                # self.combo_under.place(bordermode=tk.OUTSIDE, x=31,y=20)
-                # self.combo_under.lift()
-                # self.combo_default.lift()
-                # self.combo_rectangle = self.canvas.create_image(70,50,anchor=tk.NW,image=self.combo_rectangle_img)
-                # self.combo_circle = self.canvas.create_image(70,80,anchor=tk.NW,image=self.combo_circle_img)
-                # self.combo_ellipse = self.canvas.create_image(70,110,anchor=tk.NW,image=self.combo_ellipse_img)
-                # self.combo_isosceles = self.canvas.create_image(70,140,anchor=tk.NW,image=self.combo_isosceles_img)
-
-                # self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=51, anchor=tk.N)
-                # self.combo_rectangle.lift()
-                # self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=72, anchor=tk.N)
-                # self.combo_circle.lift()
-                # self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=111, anchor=tk.N)
-                # self.combo_ellipse.lift()
-                # self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=141, anchor=tk.N)
-                # self.combo_isosceles.lift()
-                # default_open.set(True)
-                # combo_open.set(True)
             else:
                 combo_clear()
                 self.combo_default.grid(row=1, column=0, columnspan=5)
@@ -280,8 +204,8 @@ class SideMenu(tk.Frame):
         self.m2 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # dimension input entries
-        self.e1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'])
-        self.e2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'])
+        self.e1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'])
+        self.e2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'])
 
         # transformed coordinate system input labels
         self.tl1 = tk.Label(self.canvas, text="x", bg=self["background"], fg=root.colors['text_color'], font=input_font)
@@ -292,16 +216,16 @@ class SideMenu(tk.Frame):
         self.tm3 = tk.Label(self.canvas, text=self.root.angle_unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # transformed coordinate system input entries
-        self.te1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
-        self.te2 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
-        self.te3 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
+        self.te1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
+        self.te2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
+        self.te3 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
 
         # thickness input labels
         self.thl1 = tk.Label(self.canvas, text="t", bg=self["background"], fg=root.colors['text_color'], font=input_font)
         self.thm1 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # thickness input entry
-        self.the1 = tk.Entry(self.canvas, width = 10, bg=self["background"], fg=root.colors['text_color'], state='disabled', disabledbackground="grey")
+        self.the1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
 
         # calculate button
         self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
@@ -330,7 +254,7 @@ class SideMenu(tk.Frame):
         self.thickness = tk.Checkbutton(
             self.canvas, text = "Falvastagság hozzáadása",
             variable = self.root.thickness_on, onvalue=True, offvalue=False, font=input_font, 
-            bg = self["background"], fg=root.colors['text_color'], selectcolor='grey',
+            bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
             entry_enable(self.the1, self.root.thickness_on)])
 
@@ -338,7 +262,7 @@ class SideMenu(tk.Frame):
         self.transformed_coordinate_system = tk.Checkbutton(
             self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
-            bg = self["background"], fg=root.colors['text_color'], selectcolor='grey',
+            bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
             entry_enable(self.te1, self.root.transformed_coordinate_on),
             entry_enable(self.te2, self.root.transformed_coordinate_on),

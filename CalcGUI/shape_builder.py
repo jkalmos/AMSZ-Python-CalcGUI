@@ -54,10 +54,10 @@ class shapeBuilder(tk.Canvas):
         self.controls.append({"unit":self.l_unit2, "unit_type": "length"})
 
         #############* Creating + and - buttons ##############
-        self.img= (Image.open("plus.png"))
+        self.img= (Image.open(f"{self.root.colors['path']}shape_builder/plus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.plus_img= ImageTk.PhotoImage(resized_image)
-        self.img= (Image.open("minus.png"))
+        self.img= (Image.open(f"{self.root.colors['path']}shape_builder/minus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.minus_img= ImageTk.PhotoImage(resized_image)
         self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
