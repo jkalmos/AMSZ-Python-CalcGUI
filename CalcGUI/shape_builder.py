@@ -10,7 +10,8 @@ STICKY = True
 
 SHOW_HAUPACHSEN = False
 FIXED_AXIS = False
-
+#self.root.show_orig_axis = True
+#self.root.orig_axis_dissapier = False
 
 #TODO: fixed axis vs Schwerpunkt
 #TODO: settings
@@ -76,7 +77,7 @@ class shapeBuilder(tk.Canvas):
         self.x_label = self.create_text(2*self.Xcenter-5,self.Ycenter+ 20,text="X",fill= "gray",tags=("orig_axes")) # X lavel
         self.y_axis = self.create_line(self.Xcenter,10,self.Xcenter,self.Ycenter*2, arrow=tk.FIRST,fill= "gray",tags=("orig_axes")) #Drawing Y-axis
         self.y_label = self.create_text(self.Xcenter +20 ,15,text="Y",fill= "gray",tags=("orig_axes")) # Y label
-
+        if not self.root.show_orig_axis: self.itemconfigure("orig_axes",state="hidden")
         #########* Evensts and other stuff ############
         self.sticky = tk.BooleanVar(value=True)
         self.is_sticky = tk.Checkbutton(self.sb_sm, text="Automatikus igazítás", variable=self.sticky, onvalue=True, offvalue=False,bg = self.sb_sm["background"], fg=root.colors["text_color"], selectcolor=root.colors['secondary_color'])
@@ -196,7 +197,7 @@ class shapeBuilder(tk.Canvas):
     def release(self,e):
         self.delete("hauptachse")
         self.delete("s_axis")
-        self.itemconfigure("orig_axes",state="normal")
+        if self.root.show_orig_axis:self.itemconfigure("orig_axes",state="normal")
         self.itemconfig(self.pos_lbl, text="")
         #choosing object
         if self.sticky.get() and self.current:
@@ -230,23 +231,24 @@ class shapeBuilder(tk.Canvas):
                     self.current.refresh(i_pos[2]-self.current.width,i_pos[3],i_pos[2],i_pos[3]+self.current.heigth)
                     break
             else: #sicking to the coordinate system
-                if abs(pos[0]-self.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
-                    self.current.refresh(self.Xcenter,pos[1],self.Xcenter+self.current.width,pos[3])
-                    pos = self.coords(self.current.canvas_repr)
-                elif abs(pos[2]-self.Xcenter) < EPSILON: #right side sticks to the coordinatsystem
-                    self.current.refresh(self.Xcenter-self.current.width,pos[1],self.Xcenter,pos[3])
-                    pos = self.coords(self.current.canvas_repr)
-                if abs(pos[1]-self.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
-                    self.current.refresh(pos[0],self.Ycenter,pos[2],self.Ycenter+self.current.heigth)
-                    pos = self.coords(self.current.canvas_repr)
-                elif abs(pos[3]-self.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
-                    self.current.refresh(pos[0],self.Ycenter-self.current.heigth,pos[2],self.Ycenter)
-                    pos = self.coords(self.current.canvas_repr)
-                #* Sticking with the center of the rectangle to the coordinate system
-                if abs(self.current.center[0]-self.Xcenter)<EPSILON:
-                    self.current.refresh(self.Xcenter-self.current.width/2,self.current.y1,self.Xcenter+self.current.width/2,self.current.y2)
-                if abs(self.current.center[1]-self.Ycenter)<EPSILON:
-                    self.current.refresh(self.current.x1,self.Ycenter-self.current.heigth/2,self.current.x2,self.Ycenter+self.current.heigth/2)
+                if self.root.show_orig_axis:
+                    if abs(pos[0]-self.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
+                        self.current.refresh(self.Xcenter,pos[1],self.Xcenter+self.current.width,pos[3])
+                        pos = self.coords(self.current.canvas_repr)
+                    elif abs(pos[2]-self.Xcenter) < EPSILON: #right side sticks to the coordinatsystem
+                        self.current.refresh(self.Xcenter-self.current.width,pos[1],self.Xcenter,pos[3])
+                        pos = self.coords(self.current.canvas_repr)
+                    if abs(pos[1]-self.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
+                        self.current.refresh(pos[0],self.Ycenter,pos[2],self.Ycenter+self.current.heigth)
+                        pos = self.coords(self.current.canvas_repr)
+                    elif abs(pos[3]-self.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
+                        self.current.refresh(pos[0],self.Ycenter-self.current.heigth,pos[2],self.Ycenter)
+                        pos = self.coords(self.current.canvas_repr)
+                    #* Sticking with the center of the rectangle to the coordinate system
+                    if abs(self.current.center[0]-self.Xcenter)<EPSILON:
+                        self.current.refresh(self.Xcenter-self.current.width/2,self.current.y1,self.Xcenter+self.current.width/2,self.current.y2)
+                    if abs(self.current.center[1]-self.Ycenter)<EPSILON:
+                        self.current.refresh(self.current.x1,self.Ycenter-self.current.heigth/2,self.current.x2,self.Ycenter+self.current.heigth/2)
         if self.isMoving and self.current is not None:
             #self.itemconfig(self.current.canvas_repr, fill='blue')
             self.rectangles.append(self.current)
@@ -270,6 +272,7 @@ class shapeBuilder(tk.Canvas):
         Iy = 0
         Ixy = 0
         A = 0
+        out_str = ""
         if not FIXED_AXIS:
             Sx=0
             Sy=0
@@ -285,8 +288,9 @@ class shapeBuilder(tk.Canvas):
             self.sx_label = self.create_text(2*Sx-5,Sy+ 20,text="X",tags=("s_axis")) # X lavel
             self.sy_axis = self.create_line(Sx,10,Sx,Sy*2, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
             self.sy_label = self.create_text(Sx +20 ,15,text="Y",tags=("s_axis")) # Y label
-            self.itemconfigure("orig_axes",state="hidden")
+            if self.root.orig_axis_dissapier: self.itemconfigure("orig_axes",state="hidden")
             print(Sx/self.scale,Sy/self.scale)
+            out_str += f"Sx: {Sx/self.scale}\nSy: {Sy/self.scale}\n"
         else:
             Sx = self.Xcenter
             Sy = self.Ycenter
@@ -299,8 +303,11 @@ class shapeBuilder(tk.Canvas):
             Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12+ A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)**2
               
             Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2) 
-        self.label.config(text=f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}")
-        print(self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4))
+        out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
+        i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4)
+        out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
+        self.label.config(text=out_str)
+        
     def overwrite(self):
         ok = True
         try:
@@ -362,7 +369,7 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.plus, e.width-80, e.height-50)
         self.coords(self.pos_lbl, e.width-50, 30)
         self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
-        #self.configure(scrollregion=self.bbox("all"))
+        self.delete("s_axis")
     def translation(self, dx, dy):
         self.Xcenter += dx
         self.Ycenter += dy

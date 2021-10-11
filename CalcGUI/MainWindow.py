@@ -69,6 +69,14 @@ class main_window(tk.Tk):
         self.theme = settings["theme"]#"dark"
         self.logo_enabled = settings["logo_enabled"]
 
+        #shape builder configuration
+        self.show_orig_axis = True
+        self.show_orig_axis_bool = tk.BooleanVar()
+        self.show_orig_axis_bool.set(self.show_orig_axis)
+        self.orig_axis_dissapier = False
+        self.orig_axis_dissapier_bool = tk.BooleanVar()
+        self.orig_axis_dissapier_bool.set(self.orig_axis_dissapier)
+
         # Play AMSZ logo on startup
         self.play_logo = tk.BooleanVar(False)
         if self.logo_enabled == 'True':

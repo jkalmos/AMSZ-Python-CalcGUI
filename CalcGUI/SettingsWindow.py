@@ -90,7 +90,20 @@ def settings_window(self):
         variable = self.play_logo, onvalue=True, offvalue=False, 
         bg = self["background"], fg='white', selectcolor='grey',
         command = lambda :enable_logo())
-
+        
+        #sb stuff
+        self.orig_axis_dissapier_check = tk.Checkbutton(
+        self.settings_menu_options, text = "Segéd tengelyek eltüntetése számolásnál",
+        variable = self.orig_axis_dissapier_bool, onvalue=True, offvalue=False, 
+        bg = self["background"], fg='white', selectcolor='grey',
+        command = lambda :turn_on_fixed_axis_dissapier())
+        
+        self.show_orig_axis_check = tk.Checkbutton(
+        self.settings_menu_options, text = "Segéd tengelyek megjelenítése",
+        variable = self.show_orig_axis_bool, onvalue=True, offvalue=False, 
+        bg = self["background"], fg='white', selectcolor='grey',
+        command = lambda :turn_on_show_fixed_axis())
+        
         self.ok_img = tk.PhotoImage(file=f"{self.colors['path']}settings/ok.png")
         self.ok_hover_img = tk.PhotoImage(file=f"{self.colors['path']}settings/ok_hover.png")
         
@@ -132,6 +145,17 @@ def settings_window(self):
                 self.logo_enabled = 'True'
             else:
                 self.logo_enabled = 'False'
+        
+        # Side menu settings ----------------------------
+        def turn_on_fixed_axis_dissapier():
+            self.orig_axis_dissapier = self.orig_axis_dissapier_bool.get()
+        def turn_on_show_fixed_axis():
+            self.show_orig_axis = self.show_orig_axis_bool.get()
+            try:
+                if not self.show_orig_axis: self.sb.itemconfigure("orig_axes",state="hidden")
+            except:
+                pass
+        
         # Unit hover ---------------------------------------------------------------------------------
         def mm_hover():
             if self.temp_unit == 'mm':
@@ -261,6 +285,8 @@ def settings_window(self):
                     self.settings_menu.itemconfig(self.theme_button, image=self.theme_button_img)
                     try:
                         self.logo_enabled_check.place_forget()
+                        self.orig_axis_dissapier_check.place_forget()
+                        self.show_orig_axis_check.place_forget()
                         self.settings_menu_options.delete('all')
                     except:
                         self.settings_menu_options.delete('all')
@@ -318,6 +344,8 @@ def settings_window(self):
                     self.settings_menu.itemconfig(self.unit_button, image=self.unit_button_img)
                     try:
                         self.logo_enabled_check.place_forget()
+                        self.orig_axis_dissapier_check.place_forget()
+                        self.show_orig_axis_check.place_forget()
                         self.settings_menu_options.delete('all')
                     except:
                         self.settings_menu_options.delete('all')
@@ -355,6 +383,8 @@ def settings_window(self):
                     unit_clicked.set(False)
                     theme_clicked.set(False)
                 self.logo_enabled_check.place(bordermode=tk.OUTSIDE, x=20,y=20, anchor=tk.NW)
+                self.orig_axis_dissapier_check.place(bordermode=tk.OUTSIDE, x=20,y=40, anchor=tk.NW)
+                self.show_orig_axis_check.place(bordermode=tk.OUTSIDE, x=20,y=60, anchor=tk.NW)
                 self.ok = self.settings_menu_options.create_image(200,150,anchor=tk.NW,image=self.ok_img)
                 # bind ok on hover
                 self.settings_menu_options.tag_bind(self.ok, '<Enter>', lambda e:self.settings_menu_options.itemconfig(self.ok, image=self.ok_hover_img))
