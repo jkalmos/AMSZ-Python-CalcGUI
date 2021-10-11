@@ -8,7 +8,7 @@ WIDTH = 30
 EPSILON = 10
 STICKY = True
 
-SHOW_HAUPACHSEN = False
+#self.root.sb_ha_vis = False
 FIXED_AXIS = False
 #self.root.show_orig_axis = True
 #self.root.orig_axis_dissapier = False
@@ -304,7 +304,7 @@ class shapeBuilder(tk.Canvas):
               
             Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2) 
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
-        i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4)
+        i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
         self.label.config(text=out_str)
         
@@ -344,16 +344,16 @@ class shapeBuilder(tk.Canvas):
         self.delete("hauptachse")
         self.delete("s_axis")
         self.label.config(text="")   
-    def hauptachsen(self, Ix, Iy, Ixy):
+    def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         if Ix != Iy and Ixy !=0:
             alfa = atan((Ix-I1)/Ixy)
         else:
             alfa = 0
-        if SHOW_HAUPACHSEN:
-            self.h1 = self.create_line(self.Xcenter-250*cos(alfa),self.Ycenter-250*sin(alfa),self.Xcenter+250*cos(alfa),self.Ycenter+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
-            self.h2 = self.create_line(self.Xcenter-250*cos(alfa+pi/2),self.Ycenter-250*sin(alfa+pi/2),self.Xcenter+250*cos(alfa+pi/2),self.Ycenter+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+        if self.root.sb_ha_vis:
+            self.h1 = self.create_line(Sx-250*cos(alfa),Sy-250*sin(alfa),Sx+250*cos(alfa),Sy+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h2 = self.create_line(Sx-250*cos(alfa+pi/2),Sy-250*sin(alfa+pi/2),Sx+250*cos(alfa+pi/2),Sy+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
         return I1, I2, alfa
     def rescale(self,scale):
         self.scale *= scale

@@ -91,7 +91,7 @@ def settings_window(self):
         bg = self["background"], fg='white', selectcolor='grey',
         command = lambda :enable_logo())
         
-        #sb stuff
+        #sb stuff --------------------------------------
         self.orig_axis_dissapier_check = tk.Checkbutton(
         self.settings_menu_options, text = "Segéd tengelyek eltüntetése számolásnál",
         variable = self.orig_axis_dissapier_bool, onvalue=True, offvalue=False, 
@@ -103,7 +103,13 @@ def settings_window(self):
         variable = self.show_orig_axis_bool, onvalue=True, offvalue=False, 
         bg = self["background"], fg='white', selectcolor='grey',
         command = lambda :turn_on_show_fixed_axis())
-        
+
+        self.sb_ha_vis_check = tk.Checkbutton(
+        self.settings_menu_options, text = "Főtengelyek megjelenítése az ábrán",
+        variable = self.sb_ha_vis_bool, onvalue=True, offvalue=False, 
+        bg = self["background"], fg='white', selectcolor='grey',
+        command = lambda :turn_on_sb_ha_vis())
+        #--------------------------
         self.ok_img = tk.PhotoImage(file=f"{self.colors['path']}settings/ok.png")
         self.ok_hover_img = tk.PhotoImage(file=f"{self.colors['path']}settings/ok_hover.png")
         
@@ -155,6 +161,9 @@ def settings_window(self):
                 if not self.show_orig_axis: self.sb.itemconfigure("orig_axes",state="hidden")
             except:
                 pass
+        def turn_on_sb_ha_vis():
+            self.sb_ha_vis = self.sb_ha_vis_bool.get()
+            print(self.sb_ha_vis)
         
         # Unit hover ---------------------------------------------------------------------------------
         def mm_hover():
@@ -287,6 +296,7 @@ def settings_window(self):
                         self.logo_enabled_check.place_forget()
                         self.orig_axis_dissapier_check.place_forget()
                         self.show_orig_axis_check.place_forget()
+                        self.sb_ha_vis_check.place_forget()
                         self.settings_menu_options.delete('all')
                     except:
                         self.settings_menu_options.delete('all')
@@ -346,6 +356,7 @@ def settings_window(self):
                         self.logo_enabled_check.place_forget()
                         self.orig_axis_dissapier_check.place_forget()
                         self.show_orig_axis_check.place_forget()
+                        self.sb_ha_vis_check.place_forget()
                         self.settings_menu_options.delete('all')
                     except:
                         self.settings_menu_options.delete('all')
@@ -385,6 +396,7 @@ def settings_window(self):
                 self.logo_enabled_check.place(bordermode=tk.OUTSIDE, x=20,y=20, anchor=tk.NW)
                 self.orig_axis_dissapier_check.place(bordermode=tk.OUTSIDE, x=20,y=40, anchor=tk.NW)
                 self.show_orig_axis_check.place(bordermode=tk.OUTSIDE, x=20,y=60, anchor=tk.NW)
+                self.sb_ha_vis_check.place(bordermode=tk.OUTSIDE, x=20,y=80, anchor=tk.NW)
                 self.ok = self.settings_menu_options.create_image(200,150,anchor=tk.NW,image=self.ok_img)
                 # bind ok on hover
                 self.settings_menu_options.tag_bind(self.ok, '<Enter>', lambda e:self.settings_menu_options.itemconfig(self.ok, image=self.ok_hover_img))
