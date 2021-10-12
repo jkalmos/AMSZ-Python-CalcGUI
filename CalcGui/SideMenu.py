@@ -13,6 +13,43 @@ class SideMenu(tk.Frame):
         # self.canvas.grid(row=0, column=0, sticky="NSEW")
         self.canvas.pack(fill=tk.BOTH, expand = True)
 
+        # def round_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):
+        #     points = [x1+radius, y1,
+        #                 x1+radius, y1,
+        #                 x2-radius, y1,
+        #                 x2-radius, y1,
+        #                 x2, y1,
+        #                 x2, y1+radius,
+        #                 x2, y1+radius,
+        #                 x2, y2-radius,
+        #                 x2, y2-radius,
+        #                 x2, y2,
+        #                 x2-radius, y2,
+        #                 x2-radius, y2,
+        #                 x1+radius, y2,
+        #                 x1+radius, y2,
+        #                 x1, y2,
+        #                 x1, y2-radius,
+        #                 x1, y2-radius,
+        #                 x1, y1+radius,
+        #                 x1, y1+radius,
+        #                 x1, y1]
+        #     canvas.create_polygon(points, **kwargs, smooth=True)
+
+        # self.root.update_idletasks()
+        # self.canvas.update()
+        # self.update()
+        # self.update_idletasks()
+        # self.canvas.update_idletasks()
+        
+        # self.width = self.canvas.winfo_reqwidth()-92
+        # self.height = self.canvas.winfo_reqheight()
+        # print(self.width, self.height, self.canvas.winfo_width(), self.canvas.winfo_geometry(), self.winfo_geometry(), self.winfo_reqwidth())
+        
+        # # self.entry_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill=root.colors['main_color'])
+        # self.result_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill='blue')
+
+
         def callback(shape):
             self.root.choose_object(shape)
         def shape_changed(self):
@@ -208,6 +245,7 @@ class SideMenu(tk.Frame):
         # calculate button
         self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
         self.calc = tk.Button(self.canvas, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate(), activebackground=self["background"])
+        # self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
         self.calc["bg"] = self["background"]
         self.calc["border"] = "0"
         self.calc["width"] = "81"
@@ -220,18 +258,12 @@ class SideMenu(tk.Frame):
         self.result4 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result5 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result6 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
-        self.result7 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
-        self.result8 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
-        self.result9 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result1.grid(row=12, column = 1, columnspan=3, padx=5, pady=5)
         self.result2.grid(row=13, column = 1, columnspan=3, padx=5, pady=5)
         self.result3.grid(row=14, column = 1, columnspan=3, padx=5, pady=5)
         self.result4.grid(row=15, column = 1, columnspan=3, padx=5, pady=5)
         self.result5.grid(row=16, column = 1, columnspan=3, padx=5, pady=5)
         self.result6.grid(row=17, column = 1, columnspan=3, padx=5, pady=5)
-        self.result7.grid(row=18, column = 1, columnspan=3, padx=5, pady=5)
-        self.result8.grid(row=19, column = 1, columnspan=3, padx=5, pady=5)
-        self.result9.grid(row=20, column = 1, columnspan=3, padx=5, pady=5)
 
         # Checkbox: set thickness
         self.thickness = tk.Checkbutton(
@@ -268,9 +300,6 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result4)
         self.indicators.append(self.result5)
         self.indicators.append(self.result6)
-        self.indicators.append(self.result7)
-        self.indicators.append(self.result8)
-        self.indicators.append(self.result9)
         self.indicators.append(self.lbl)
         self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)
