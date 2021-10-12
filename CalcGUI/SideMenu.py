@@ -258,12 +258,18 @@ class SideMenu(tk.Frame):
         self.result4 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result5 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result6 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result7 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result8 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result9 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result1.grid(row=12, column = 1, columnspan=3, padx=5, pady=5)
         self.result2.grid(row=13, column = 1, columnspan=3, padx=5, pady=5)
         self.result3.grid(row=14, column = 1, columnspan=3, padx=5, pady=5)
         self.result4.grid(row=15, column = 1, columnspan=3, padx=5, pady=5)
         self.result5.grid(row=16, column = 1, columnspan=3, padx=5, pady=5)
         self.result6.grid(row=17, column = 1, columnspan=3, padx=5, pady=5)
+        self.result7.grid(row=18, column = 1, columnspan=3, padx=5, pady=5)
+        self.result8.grid(row=19, column = 1, columnspan=3, padx=5, pady=5)
+        self.result9.grid(row=20, column = 1, columnspan=3, padx=5, pady=5)
 
         # Checkbox: set thickness
         self.thickness = tk.Checkbutton(
@@ -300,6 +306,9 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result4)
         self.indicators.append(self.result5)
         self.indicators.append(self.result6)
+        self.indicators.append(self.result7)
+        self.indicators.append(self.result8)
+        self.indicators.append(self.result9)
         self.indicators.append(self.lbl)
         self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)
