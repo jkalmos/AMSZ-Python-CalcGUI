@@ -208,7 +208,6 @@ class SideMenu(tk.Frame):
         # calculate button
         self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
         self.calc = tk.Button(self.canvas, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate(), activebackground=self["background"])
-        # self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
         self.calc["bg"] = self["background"]
         self.calc["border"] = "0"
         self.calc["width"] = "81"
