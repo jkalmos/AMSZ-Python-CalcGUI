@@ -435,6 +435,13 @@ class main_window(tk.Tk):
             self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
             self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
             self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result7.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) > round(self.values["Iy"], 4):
+                self.sm.result8.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result9.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result8.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result9.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Circle":
             vissza, t = self.get_entry(1)
             if None in vissza:
@@ -445,6 +452,8 @@ class main_window(tk.Tk):
             self.sm.result3.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
             self.sm.result4.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
             self.sm.result5.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result6.config(text="Főmásodrendű nyomatékok:")
+            self.sm.result7.config(text="I₁ = I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Ellipse":
             vissza, t = self.get_entry(2)
             if None in vissza:
@@ -456,6 +465,13 @@ class main_window(tk.Tk):
             self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
             self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
             self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result7.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) > round(self.values["Iy"], 4):
+                self.sm.result8.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result9.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result8.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result9.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
         elif self.sm.shape == "Isosceles_triangle":
             vissza, t = self.get_entry(2)
             if None in vissza:
@@ -467,6 +483,13 @@ class main_window(tk.Tk):
             self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
             self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
             self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result7.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) > round(self.values["Iy"], 4):
+                self.sm.result8.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result9.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result8.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result9.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
         # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
