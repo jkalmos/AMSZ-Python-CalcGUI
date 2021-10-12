@@ -9,6 +9,7 @@ from tkvideo import tkvideo
 from PlotFunctions import plot
 import shape_builder
 from SettingsWindow import settings_window
+import numpy as np
 
 ## ANIMATION WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class starting_window(tk.Tk):
@@ -287,7 +288,7 @@ class main_window(tk.Tk):
                         i.config(text="")
                 self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                 vissza.append(None)
-        if self.thickness_on.get(): #TODO HÁROMSZÖGNÉL A FALVASTAGSÁGNAK AZ OLDAFELEZŐ MER: FELÉNÉL KELL KISEBBNEK LENNIE
+        if self.thickness_on.get(): 
             if self.sm.shape == "Circle":
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                 d = float(self.sm.controls[0]["entry"].get().replace(',','.'))
@@ -303,6 +304,60 @@ class main_window(tk.Tk):
                     self.sm.result1.config(text="Hiba a falvastagságban!")
                     vissza.append(None)
                     t = None
+            elif self.sm.shape == "Isosceles_triangle":
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) 
+                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                phi = np.arctan(a / (b / 2))
+                s1 = a * np.sin(phi)
+                s2 = b
+                if t < s1/2 and t < s2/2:
+                    print("haromszog lehetseges")     
+                    try:
+                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                        self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                    except:
+                        print("Hiba")
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        t = None
+                else:
+                    if t >= s1/2 and s1 == s2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                    if t >= s1/2 and t <= s2/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= s2/2 and t <= s1/2:
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= s2/2 and t >= s1/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
             else:
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) 
                 a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
@@ -346,7 +401,7 @@ class main_window(tk.Tk):
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
-                    elif t >= b/2 and t >= a/2:
+                    elif t >= a/2 and t >= b/2:
                         self.sm.controls[0]["entry"].config({"background": "#eb4034"})
                         self.sm.controls[1]["entry"].config({"background": "#eb4034"})
                         for i in self.sm.indicators:
@@ -354,7 +409,15 @@ class main_window(tk.Tk):
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
-                
+                    else:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)           
         else:
             t = 0
         #self.sm.e2.config({"background": "#475C6F"})    
