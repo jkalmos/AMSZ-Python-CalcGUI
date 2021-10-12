@@ -36,6 +36,19 @@ class SideMenu(tk.Frame):
         #                 x1, y1]
         #     canvas.create_polygon(points, **kwargs, smooth=True)
 
+        # self.root.update_idletasks()
+        # self.canvas.update()
+        # self.update()
+        # self.update_idletasks()
+        # self.canvas.update_idletasks()
+        
+        # self.width = self.canvas.winfo_reqwidth()-92
+        # self.height = self.canvas.winfo_reqheight()
+        # print(self.width, self.height, self.canvas.winfo_width(), self.canvas.winfo_geometry(), self.winfo_geometry(), self.winfo_reqwidth())
+        
+        # # self.entry_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill=root.colors['main_color'])
+        # self.result_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill='blue')
+
 
         def callback(shape):
             self.root.choose_object(shape)
