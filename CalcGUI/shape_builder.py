@@ -1,4 +1,3 @@
-import re
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
@@ -13,11 +12,6 @@ FIXED_AXIS = False
 #self.root.show_orig_axis = True
 #self.root.orig_axis_dissapier = False
 
-#TODO: fixed axis vs Schwerpunkt
-#TODO: settings
-#TODO: colors
-#TODO: overl. bug!
-
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
         super().__init__(root, bd=0, bg=root.colors["secondary_color"],highlightthickness=0)
@@ -27,6 +21,8 @@ class shapeBuilder(tk.Canvas):
         self.rectangles = []
         self.Xcenter = 400
         self.Ycenter = 300
+        self.canvas_width = 800
+        self.canvas_height = 600
 
         #########* Basic constants #########
         self.current = None
@@ -284,10 +280,11 @@ class shapeBuilder(tk.Canvas):
             Sy /= A
             Sx += self.Xcenter
             Sy = self.Ycenter- Sy
-            self.sx_axis = self.create_line(10,Sy,Sx*2,Sy, arrow=tk.LAST, tags=("s_axis")) #Drawing X-axis
-            self.sx_label = self.create_text(2*Sx-5,Sy+ 20,text="X",tags=("s_axis")) # X lavel
-            self.sy_axis = self.create_line(Sx,10,Sx,Sy*2, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
-            self.sy_label = self.create_text(Sx +20 ,15,text="Y",tags=("s_axis")) # Y label
+            a_length = min(min(Sx,Sy),self.canvas_height-Sy,self.canvas_width-Sx)
+            self.sx_axis = self.create_line(Sx+10-a_length,Sy,Sx+a_length-10,Sy, arrow=tk.LAST, tags=("s_axis")) #Drawing X-axis
+            self.sx_label = self.create_text(Sx+a_length-20,Sy+ 20,text="Xs",tags=("s_axis")) # X lavel
+            self.sy_axis = self.create_line(Sx,Sy-a_length+10,Sx,Sy+a_length-10, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
+            self.sy_label = self.create_text(Sx +20 ,Sy-a_length+20 ,text="Ys",tags=("s_axis")) # Y label
             if self.root.orig_axis_dissapier: self.itemconfigure("orig_axes",state="hidden")
             print(Sx/self.scale,Sy/self.scale)
             out_str += f"Sx: {Sx/self.scale}\nSy: {Sy/self.scale}\n"
@@ -304,7 +301,7 @@ class shapeBuilder(tk.Canvas):
               
             Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2) 
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
-        i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy)
+        i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
         self.label.config(text=out_str)
         
@@ -344,7 +341,7 @@ class shapeBuilder(tk.Canvas):
         self.delete("hauptachse")
         self.delete("s_axis")
         self.label.config(text="")   
-    def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy):
+    def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         if Ix != Iy and Ixy !=0:
@@ -352,8 +349,8 @@ class shapeBuilder(tk.Canvas):
         else:
             alfa = 0
         if self.root.sb_ha_vis:
-            self.h1 = self.create_line(Sx-250*cos(alfa),Sy-250*sin(alfa),Sx+250*cos(alfa),Sy+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
-            self.h2 = self.create_line(Sx-250*cos(alfa+pi/2),Sy-250*sin(alfa+pi/2),Sx+250*cos(alfa+pi/2),Sy+250*sin(alfa+pi/2), arrow=tk.FIRST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h1 = self.create_line(Sx-a_length*cos(alfa),Sy-a_length*sin(alfa),Sx+a_length*cos(alfa),Sy+a_length*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h2 = self.create_line(Sx-a_length*cos(alfa+pi/2),Sy-a_length*sin(alfa+pi/2),Sx+a_length*cos(alfa+pi/2),Sy+a_length*sin(alfa+pi/2), arrow=tk.FIRST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
         return I1, I2, alfa
     def rescale(self,scale):
         self.scale *= scale
@@ -368,14 +365,23 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
         self.coords(self.pos_lbl, e.width-50, 30)
+        self.canvas_width = e.width
+        self.canvas_height = e.height
         self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
         self.delete("s_axis")
+        self.delete("hauptachse")
     def translation(self, dx, dy):
         self.Xcenter += dx
         self.Ycenter += dy
         # Basic coord system
+        """
         self.coords(self.x_axis,10,self.Ycenter,self.Xcenter*2,self.Ycenter)
         self.coords(self.y_axis,self.Xcenter,10,self.Xcenter,self.Ycenter*2)
+        self.coords(self.x_label,2*self.Xcenter-5,self.Ycenter+ 20)
+        self.coords(self.y_label,self.Xcenter +20 ,15)
+        """
+        self.coords(self.x_axis,10,self.Ycenter,self.canvas_width-10,self.Ycenter)
+        self.coords(self.y_axis,self.Xcenter,10,self.Xcenter,self.canvas_height-10)
         self.coords(self.x_label,2*self.Xcenter-5,self.Ycenter+ 20)
         self.coords(self.y_label,self.Xcenter +20 ,15)
         #Rectangles
