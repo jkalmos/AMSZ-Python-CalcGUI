@@ -353,7 +353,7 @@ class shapeBuilder(tk.Canvas):
             alfa = 0
         if self.root.sb_ha_vis:
             self.h1 = self.create_line(Sx-250*cos(alfa),Sy-250*sin(alfa),Sx+250*cos(alfa),Sy+250*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
-            self.h2 = self.create_line(Sx-250*cos(alfa+pi/2),Sy-250*sin(alfa+pi/2),Sx+250*cos(alfa+pi/2),Sy+250*sin(alfa+pi/2), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
+            self.h2 = self.create_line(Sx-250*cos(alfa+pi/2),Sy-250*sin(alfa+pi/2),Sx+250*cos(alfa+pi/2),Sy+250*sin(alfa+pi/2), arrow=tk.FIRST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
         return I1, I2, alfa
     def rescale(self,scale):
         self.scale *= scale
