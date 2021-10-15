@@ -39,28 +39,10 @@ class SideMenu(tk.Frame):
         # # self.entry_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill=root.colors['main_color'])
         # self.result_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill='blue')
 
-
-        def callback(shape):
-            self.root.choose_object(shape)
-        def shape_changed(self):
-            current_shape = self.widget.get()
-            print(current_shape)
-            if current_shape == 'Téglalap':
-                shape = "Rectangle"
-            elif current_shape == 'Kör':
-                shape = "Circle"
-            elif current_shape == 'Ellipszis':
-                shape = "Ellipse"
-            elif current_shape == 'Egyenlőszárú háromszög':
-                shape = "Isosceles_triangle"
-            else:
-                shape = None
-            callback(shape)
-
         # result label font
-        result_font = "Roboto", 12
+        result_font = "Times", 12
         # input labels font
-        input_font = "Roboto", 11
+        input_font = "Times", 11
         
         ## Custom combobox ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         combo_open = tk.BooleanVar(False)
@@ -81,7 +63,7 @@ class SideMenu(tk.Frame):
             self.combo_circle.place_forget()
             self.combo_ellipse.place_forget()
             self.combo_isosceles.place_forget()
-
+            self.canvas.update()
 
         def rectangle_click():
             if combo_open.get() == False:
@@ -260,7 +242,7 @@ class SideMenu(tk.Frame):
 
         # Checkbox: transformed coordinate system
         self.transformed_coordinate_system = tk.Checkbutton(
-            self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
+            self.canvas, text = "Transzformált"+'\n'+"koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
             bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),

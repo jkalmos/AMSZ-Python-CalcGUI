@@ -20,12 +20,12 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1,padx = (10,20), pady = 20)
     parent.plotted = True
 
-    ax = fig.add_subplot(111)
-    ax.set_aspect("equal")
+    parent.ax = fig.add_subplot(111)
+    parent.ax.set_aspect("equal")
     fig.patch.set_facecolor(colors["secondary_color"])
-    ax.xaxis.set_visible(False)
-    ax.yaxis.set_visible(False)
-    ax.set_frame_on(False)
+    parent.ax.xaxis.set_visible(False)
+    parent.ax.yaxis.set_visible(False)
+    parent.ax.set_frame_on(False)
 
     if shape == "Rectangle":
         x, y = set_dimensions(a, b)
@@ -35,11 +35,11 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         rect_x_th = [-x/2+0.1, -x/2+0.1, x/2-0.1, x/2-0.1, -x/2+0.1]
         rect_y_th = [y/2-0.1, -y/2+0.1, -y/2+0.1, y/2-0.1, y/2-0.1]
         
-        ax.plot(rect_x, rect_y, colors["draw_main"], lw=2)
-        ax.fill(rect_x,rect_y,color=colors["draw_main"],alpha=0.9) 
+        parent.ax.plot(rect_x, rect_y, colors["draw_main"], lw=2)
+        parent.ax.fill(rect_x,rect_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
-            ax.plot(rect_x_th, rect_y_th, colors["draw_main"], lw=2)
-            ax.fill(rect_x_th,rect_y_th,color=colors["secondary_color"])
+            parent.ax.plot(rect_x_th, rect_y_th, colors["draw_main"], lw=2)
+            parent.ax.fill(rect_x_th,rect_y_th,color=colors["secondary_color"])
         coordinate_displacement = 0
     elif shape == "Ellipse":
         x, y = set_dimensions(a, b)
@@ -50,11 +50,11 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         ell_x_th = (x/2-0.1)*np.cos(t)
         ell_y_th = (y/2-0.1)*np.sin(t)
 
-        ax.plot(ell_x, ell_y, colors["draw_main"], lw=2)
-        ax.fill(ell_x,ell_y,color=colors["draw_main"],alpha=0.9) 
+        parent.ax.plot(ell_x, ell_y, colors["draw_main"], lw=2)
+        parent.ax.fill(ell_x,ell_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
-            ax.plot(ell_x_th, ell_y_th, colors["draw_main"], lw=2)
-            ax.fill(ell_x_th,ell_y_th,color=colors["secondary_color"])
+            parent.ax.plot(ell_x_th, ell_y_th, colors["draw_main"], lw=2)
+            parent.ax.fill(ell_x_th,ell_y_th,color=colors["secondary_color"])
         coordinate_displacement = 0
     elif shape == "Circle":
         t = np.linspace(0, 2*np.pi, 100)
@@ -67,11 +67,11 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
 
         circ = True
 
-        ax.plot(circ_x, circ_y, colors["draw_main"], lw=2)
-        ax.fill(circ_x,circ_y,color=colors["draw_main"],alpha=0.9) 
+        parent.ax.plot(circ_x, circ_y, colors["draw_main"], lw=2)
+        parent.ax.fill(circ_x,circ_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
-            ax.plot(circ_x_th, circ_y_th, colors["draw_main"], lw=2)
-            ax.fill(circ_x_th,circ_y_th,color=colors["secondary_color"])
+            parent.ax.plot(circ_x_th, circ_y_th, colors["draw_main"], lw=2)
+            parent.ax.fill(circ_x_th,circ_y_th,color=colors["secondary_color"])
         coordinate_displacement = 0
     elif shape == "Isosceles_triangle":
         x, y = set_dimensions(a, b)
@@ -81,23 +81,22 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         tri_x_th = [-x/2+0.175, x/2-0.175, 0, -x/2+0.175]
         tri_y_th = [-y/3+0.075, -y/3+0.075, y/3*2-0.1, -y/3+0.075]
 
-        ax.plot(tri_x, tri_y, colors["draw_main"], lw=2)
-        ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9) 
+        parent.ax.plot(tri_x, tri_y, colors["draw_main"], lw=2)
+        parent.ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9) 
         if thickness_on == True:
-            ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
-            ax.fill(tri_x_th,tri_y_th,color=colors["secondary_color"])
+            parent.ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
+            parent.ax.fill(tri_x_th,tri_y_th,color=colors["secondary_color"])
         coordinate_displacement = y/6
     elif shape == None:
-        coordinate_on == False
-        dimension_lines_on == False
+        None
 
     if coordinate_on == True:
-        coordinate_system(x, y, ax, coordinate_displacement, colors)
+        coordinate_system(x, y, parent.ax, coordinate_displacement, colors)
     if dimension_lines_on == True:
-        dimension_lines(x, y, ax, r"$a$", r"$b$", coordinate_displacement, colors, circ)
+        dimension_lines(x, y, parent.ax, r"$a$", r"$b$", coordinate_displacement, colors, circ)
     if transformed_coordinate_on == True:
-        transformed_coordinate_system(x, y, ax, 15, colors)
-        transformation_dimensions(x, y, ax, colors)
+        transformed_coordinate_system(x, y, parent.ax, 15, colors)
+        transformation_dimensions(x, y, parent.ax, colors)
     parent.canvas.draw()
 
 # USEFUL FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -268,3 +267,90 @@ def transformation_dimensions(x, y, ax, colors):
     ax.add_patch(a3)
     ax.text(x/2+x/4+x/8, y/4+y/12, r"$\varphi$", horizontalalignment='center', color = color,
                     verticalalignment='center', alpha=transparency)
+def sign_evaluation(alpha, angle_unit, beta = False):
+    if angle_unit == "deg":
+        alpha = alpha/180*np.pi
+        if beta == True:
+            alpha = alpha+np.pi/2
+            print('deg')
+    else:
+        if beta == True:
+            alpha = alpha+np.pi/2
+            print('rad')
+    if alpha >= 0 and alpha < np.pi/2:
+        signx = 1
+        signy = 1
+    elif alpha >= np.pi/2 and alpha < np.pi:
+        signx = -1
+        signy = 1
+    elif alpha >= np.pi and alpha < np.pi*3/2:
+        signx = -1
+        signy = -1
+    elif alpha >= np.pi*3/2 and alpha < np.pi*2:
+        signx = 1
+        signy = -1
+    else:
+        signx = 1
+        signy = 1
+    return signx, signy, alpha
+def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coordinate_on):
+    try:
+        parent.principal_axis1.remove()
+        parent.principal_axis2.remove()
+    except:
+        None
+    if transformed_coordinate_on == False:
+        color = colors['draw_principal']
+        x = 2
+        y = 1
+        hw = 0.015*x*y
+        hl = 2*hw
+        
+        # evaluate orientation signs of the principal axis
+        signx1, signy1, alpha = sign_evaluation(alpha, angle_unit)
+        signx2, signy2, beta = sign_evaluation(alpha, angle_unit, True)
+
+
+        x = 1.2
+        y = 0.7
+        arrow_length = (x**2+y**2)**0.5
+        # first principal axis
+        x_val1 = arrow_length*np.cos(alpha)
+        y_val1 = arrow_length*np.sin(alpha)
+        if x_val1 >= x:
+            x_val1 = x
+            y_val1 = x_val1*np.tan(alpha)
+        elif y_val1 >= y:
+            y_val1 = y
+            x_val1 = y_val1/np.tan(alpha)
+
+        ar1_x1 = -signx1*x_val1
+        ar1_y1 = -signy1*y_val1
+        ar1_x2 = signx1*x_val1
+        ar1_y2 = signy1*y_val1
+        ar1_dx = ar1_x2-ar1_x1
+        ar1_dy = ar1_y2-ar1_y1
+        # second principal axis
+        x_val2 = arrow_length*np.cos(beta)
+        y_val2 = arrow_length*np.sin(beta)
+        if x_val2 >= x:
+            x_val2 = x
+            y_val2 = x_val2*np.tan(beta)
+            print('x_val')
+        elif y_val2 >= y:
+            y_val2 = y
+            x_val2 = y_val2/np.tan(beta)
+            print('y_val')
+
+        ar2_x1 = -signx2*x_val2
+        ar2_y1 = -signy2*y_val2
+        ar2_x2 = signx2*x_val2
+        ar2_y2 = signy2*y_val2
+        ar2_dx = ar2_x2-ar2_x1
+        ar2_dy = ar2_y2-ar2_y1
+
+        parent.principal_axis1 = ax.arrow(ar1_x1, ar1_y1, ar1_dx, ar1_dy,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
+        parent.principal_axis2 = ax.arrow(ar2_x1, ar2_y1, ar2_dx, ar2_dy,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
+        parent.canvas.draw()

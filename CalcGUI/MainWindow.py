@@ -6,7 +6,7 @@ import CalcFunctions as Calc
 import json
 from SideMenu import SideMenu
 from tkvideo import tkvideo
-from PlotFunctions import plot
+from PlotFunctions import plot, plot_principal_axes
 import shape_builder
 from SettingsWindow import settings_window
 
@@ -127,33 +127,8 @@ class main_window(tk.Tk):
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
 
-        # # Menubar
-        # self.menubar = tk.Menu(self)
-        # self.config(menu=self.menubar)
-
-        # # Add settings to menubar
-        # settings_menu = tk.Menu(self, self.menubar, tearoff=0)
-        # self.menubar.add_cascade(label="Beállítások", menu = settings_menu)
-
-        # # Add units menu to settings menu
-        # units_menu = tk.Menu(self, settings_menu, tearoff=0)
-        # units_menu.add_command(label="Milliméter [mm]", command=lambda: self.unit_change("length", "mm"))
-        # units_menu.add_command(label="Centiméter [cm]", command=lambda: self.unit_change("length", "cm"))
-        # units_menu.add_command(label="Méter [m]", command=lambda: self.unit_change("length", "m"))
-        # units_menu.add_command(label="Fok [°]", command=lambda: self.unit_change("degree", "°"))
-        # units_menu.add_command(label="Radián [rad]", command=lambda: self.unit_change("degree", "rad"))
-        # settings_menu.add_cascade(label="Mértékegység", menu=units_menu)
-
-        # # Add themes menu to setting menu
-        # themes_menu = tk.Menu(self, settings_menu, tearoff=0)
-        # themes_menu.add_command(label="Világos", command=lambda: self.theme_change("light"))
-        # themes_menu.add_command(label="Sötét",command=lambda: self.theme_change("dark"))
-        # settings_menu.add_cascade(label="Téma", menu=themes_menu)
-
-        # #Changing to shape builder
-        # self.menubar.add_command(label="Saját alakzat", command=self.build_shape)
-        # # Add exit button to menubar
-        # self.menubar.add_command(label="Kilépés", command=self.destroy)
+        # canvas
+        plot(self, None, False, False, False, False, self.colors)
         
     ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     def theme_change(self, theme):
@@ -262,7 +237,7 @@ class main_window(tk.Tk):
                 self.sm.controls[i]["entry"].config({"background": self.colors['entry_color']})
             except:
                 print("Hiba")
-                self.sm.controls[i]["entry"].config({"background": self.colors['entry_color']})
+                self.sm.controls[i]["entry"].config({"background": self.colors['error_color']})
                 for i in self.sm.indicators:
                         i.config(text="")
                 self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -277,7 +252,7 @@ class main_window(tk.Tk):
                     self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                 else:
                     print("Hiba")
-                    self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                     for i in self.sm.indicators:
                         i.config(text="")
                     self.sm.result1.config(text="Hiba a falvastagságban!")
@@ -294,7 +269,7 @@ class main_window(tk.Tk):
                         self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                     except:
                         print("Hiba")
-                        self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -386,8 +361,12 @@ class main_window(tk.Tk):
             self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
-        # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
-
+        plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get())
+        # plot_principal_axes(self, self.colors,  self.ax, 0.4,self.angle_unit, self.transformed_coordinate_on.get())
+        # plot_principal_axes(self, self.colors,  self.ax, 1.9,self.angle_unit, self.transformed_coordinate_on.get())
+        # plot_principal_axes(self, self.colors,  self.ax, 2.3,self.angle_unit, self.transformed_coordinate_on.get())
+        # plot_principal_axes(self, self.colors,  self.ax, 3,self.angle_unit, self.transformed_coordinate_on.get())
+        # # plot principal axes
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
@@ -400,9 +379,11 @@ DARK_THEME = {
         'text_color': '#cccccc',
         'entry_color': '#262626',
         'disabled_color':'#333333',
+        'error_color':'red',
         'draw_main': '#87aade',
         'draw_secondary': '#1a1a1a',
         'draw_tertiary': 'grey',
+        'draw_principal': 'red',
         'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
@@ -411,9 +392,11 @@ LIGHT_THEME = {
         'text_color': '#333333',
         'entry_color': '#d9dcdf',
         'disabled_color':'#f4f2f4',
+        'error_color':'red',
         'draw_main': '#a4ade9',
         'draw_secondary': '#000000',
         'draw_tertiary': '#4d4d4d',
+        'draw_principal': 'red',
         'path': 'figures/light_theme/'
         }
 
