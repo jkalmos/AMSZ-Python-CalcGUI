@@ -79,6 +79,9 @@ class main_window(tk.Tk):
         self.sb_ha_vis = True #visualizing hauptachsen in sb mode 
         self.sb_ha_vis_bool = tk.BooleanVar()
         self.sb_ha_vis_bool.set(self.sb_ha_vis)
+        self.calc_for_orig_axis = False
+        self.calc_for_orig_axis_bool = tk.BooleanVar()
+        self.calc_for_orig_axis_bool.set(self.calc_for_orig_axis)
 
         # Play AMSZ logo on startup
         self.play_logo = tk.BooleanVar(False)

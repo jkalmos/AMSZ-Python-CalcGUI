@@ -8,7 +8,7 @@ EPSILON = 10
 STICKY = True
 
 #self.root.sb_ha_vis = False
-FIXED_AXIS = False
+#self.root.calc_for_orig_axis = False
 #self.root.show_orig_axis = True
 #self.root.orig_axis_dissapier = False
 
@@ -269,7 +269,7 @@ class shapeBuilder(tk.Canvas):
         Ixy = 0
         A = 0
         out_str = ""
-        if not FIXED_AXIS:
+        if not self.root.calc_for_orig_axis:
             Sx=0
             Sy=0
             for i in self.rectangles:
@@ -289,8 +289,10 @@ class shapeBuilder(tk.Canvas):
             print(Sx/self.scale,Sy/self.scale)
             out_str += f"Sx: {Sx/self.scale}\nSy: {Sy/self.scale}\n"
         else:
+            out_str += "Számítások fix tengelyre:\n"
             Sx = self.Xcenter
             Sy = self.Ycenter
+            a_length = min(min(Sx,Sy),self.canvas_height-Sy,self.canvas_width-Sx)
         A = 0
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
