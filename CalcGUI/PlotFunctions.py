@@ -18,7 +18,8 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
     parent.canvas.get_tk_widget().pack()
     parent.canvas._tkcanvas.pack(side="top", fill="both", expand=1,padx = (10,20), pady = 20)
-    parent.plotted = True
+    if shape != None:
+        parent.plotted = True
 
     parent.ax = fig.add_subplot(111)
     parent.ax.set_aspect("equal")
