@@ -211,12 +211,12 @@ class SideMenu(tk.Frame):
 
         # calculate button
         self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
-        self.calc = tk.Button(self.canvas, image=self.buttonimage, text="Calculate", command=lambda: self.root.calculate(), activebackground=self["background"])
-        # self.calc = tk.Button(self, text="Calculate", command=lambda: self.root.calculate())
+        # self.button_hover_img = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button_hover.png")
+        self.calc = tk.Label(self.canvas, image=self.buttonimage, activebackground=self["background"])
+        self.calc.bind('<Button-1>', func=lambda e: self.root.calculate())
+        # self.calc.bind("<ButtonRelease-1>", func=lambda e: self.calc.config(image=self.buttonimage))
         self.calc["bg"] = self["background"]
         self.calc["border"] = "0"
-        self.calc["width"] = "81"
-        self.calc["height"] = "20"
 
         # result labels
         self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)

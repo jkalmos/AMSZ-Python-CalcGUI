@@ -45,7 +45,7 @@ class shapeBuilder(tk.Canvas):
         self.e1 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
         self.e2 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
         self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
-        self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
+        # self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
         #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.pos_lbl = self.create_text(15 ,15,text="",fill= "white") # position label
 
@@ -64,7 +64,15 @@ class shapeBuilder(tk.Canvas):
         self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
         self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(2))
         self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.5))
-        
+
+        #############* Creating clear button ##############
+        self.clear_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear.png")
+        self.clear_hover_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear_hover.png")
+        self.clear = self.create_image(10, self.root.winfo_height()-110, anchor=tk.NW,image=self.clear_img, tags=("clear"))
+        self.tag_bind(self.clear, '<Button-1>', lambda e: self.clear_all())
+        self.tag_bind(self.clear, '<Enter>', lambda e: self.itemconfig(self.clear,image=self.clear_hover_img))
+        self.tag_bind(self.clear, '<Leave>', lambda e: self.itemconfig(self.clear,image=self.clear_img))
+
         ###########* Creating the basic, green rectangle #############
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
@@ -107,7 +115,7 @@ class shapeBuilder(tk.Canvas):
         self.button.grid(row=4,column=3)
         self.button2.grid(row=4, column=1)
         self.label.grid(row=5,columnspan=5, pady= 50)
-        self.cls.grid(row=6, column=1,columnspan=3)
+        # self.cls.grid(row=6, column=1,columnspan=3)
 
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
@@ -360,6 +368,7 @@ class shapeBuilder(tk.Canvas):
     def resize_canvas(self,e):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
+        self.coords(self.clear, 10, e.height-40)
         self.coords(self.pos_lbl, e.width-50, 30)
         self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
         #self.configure(scrollregion=self.bbox("all"))

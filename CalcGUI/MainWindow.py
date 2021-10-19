@@ -137,13 +137,9 @@ class main_window(tk.Tk):
             if self.theme=="dark":
                 self.colors=DARK_THEME
                 self.sm.change_color(DARK_THEME)
-                if self.plotted==True:
-                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             elif self.theme == "light":
                 self.colors=LIGHT_THEME
                 self.sm.change_color(LIGHT_THEME)
-                if self.plotted==True:
-                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             else:
                 print("ERROR: Unknown Theme")
                 return -1
@@ -151,6 +147,7 @@ class main_window(tk.Tk):
             settings['theme']=self.theme
             self.destroy()
             self.__init__()
+            # plot(self, None, False, False, False, False, self.colors)
             #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
@@ -180,8 +177,6 @@ class main_window(tk.Tk):
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/basic_hover.png")
             self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
-            # self.menubar.entryconfig(2,label="Alap alakzatok")
-            # self.menubar.entryconfig(1, state="disabled")
             if self.plotted==True:
                 self.canvas._tkcanvas.destroy()
             self.sb.pack(expand=tk.YES, fill=tk.BOTH, padx = (10,20), pady = 20)
@@ -196,8 +191,6 @@ class main_window(tk.Tk):
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
             self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
-            # self.menubar.entryconfig(2,label="Saját alakzat")
-            # self.menubar.entryconfig(1, state="normal")
 
 
     def choose_object(self, shape = None):
@@ -210,10 +203,10 @@ class main_window(tk.Tk):
             return 0
         if self.canvas is not None:
             self.sm.clear()
-        if shape == "Rectangle" and self.sm.shape != "Rectangle":
+        if shape == "Rectangle":
             self.sm.shape = "Rectangle"
             self.sm.change_to_recrangle()
-        elif shape == "Circle" and self.sm.shape != "Circle":
+        elif shape == "Circle":
             self.sm.shape = "Circle"
             self.sm.change_to_circle()
         elif shape == "Ellipse":
@@ -361,12 +354,7 @@ class main_window(tk.Tk):
             self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
-        plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get())
-        # plot_principal_axes(self, self.colors,  self.ax, 0.4,self.angle_unit, self.transformed_coordinate_on.get())
-        # plot_principal_axes(self, self.colors,  self.ax, 1.9,self.angle_unit, self.transformed_coordinate_on.get())
-        # plot_principal_axes(self, self.colors,  self.ax, 2.3,self.angle_unit, self.transformed_coordinate_on.get())
-        # plot_principal_axes(self, self.colors,  self.ax, 3,self.angle_unit, self.transformed_coordinate_on.get())
-        # # plot principal axes
+        plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")

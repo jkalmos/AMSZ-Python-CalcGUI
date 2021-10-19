@@ -280,23 +280,40 @@ def sign_evaluation(alpha, angle_unit, beta = False):
     if alpha >= 0 and alpha < np.pi/2:
         signx = 1
         signy = 1
+        if beta == True:
+            signx = -1
+            signy = 1
     elif alpha >= np.pi/2 and alpha < np.pi:
         signx = -1
         signy = 1
+        if beta == True:
+            signx = 1
+            signy = 1
     elif alpha >= np.pi and alpha < np.pi*3/2:
         signx = -1
         signy = -1
+        if beta == True:
+            signx = -1
+            signy = 1
     elif alpha >= np.pi*3/2 and alpha < np.pi*2:
         signx = 1
         signy = -1
+        if beta == True:
+            signx = -1
+            signy = -1
     else:
         signx = 1
         signy = 1
+        if beta == True:
+            signx = -1
+            signy = 1
     return signx, signy, alpha
-def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coordinate_on):
+def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coordinate_on,shape):
     try:
         parent.principal_axis1.remove()
         parent.principal_axis2.remove()
+        parent.principal_axis1_text.remove()
+        parent.principal_axis2_text.remove()
     except:
         None
     if transformed_coordinate_on == False:
@@ -307,22 +324,33 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
         hl = 2*hw
         
         # evaluate orientation signs of the principal axis
-        signx1, signy1, alpha = sign_evaluation(alpha, angle_unit)
-        signx2, signy2, beta = sign_evaluation(alpha, angle_unit, True)
+        signx1, signy1, beta1 = sign_evaluation(alpha, angle_unit)
+        signx2, signy2, beta2 = sign_evaluation(alpha, angle_unit, True)
 
-
-        x = 1.2
-        y = 0.7
+        if shape == "Rectangle":
+            x = 1.2
+            y = 0.7
+        elif shape == "Circle":
+            x = 1.5
+            y = 1.5
+        elif shape == "Ellipse":
+            x = 1.2
+            y = 0.7
+        elif shape == "Isosceles_triangle":
+            x = 1.2
+            y = 0.9
         arrow_length = (x**2+y**2)**0.5
         # first principal axis
-        x_val1 = arrow_length*np.cos(alpha)
-        y_val1 = arrow_length*np.sin(alpha)
-        if x_val1 >= x:
-            x_val1 = x
-            y_val1 = x_val1*np.tan(alpha)
-        elif y_val1 >= y:
-            y_val1 = y
-            x_val1 = y_val1/np.tan(alpha)
+        x_val1 = arrow_length*np.cos(beta1)
+        y_val1 = arrow_length*np.sin(beta1)
+        sign_x1 = np.sign(x_val1)
+        sign_y1 = np.sign(y_val1)
+        if abs(x_val1) >= x:
+            x_val1 = sign_x1*x
+            y_val1 = x_val1*np.tan(beta1)
+        elif abs(y_val1) >= y:
+            y_val1 = sign_y1*y
+            x_val1 = y_val1/np.tan(beta1)
 
         ar1_x1 = -signx1*x_val1
         ar1_y1 = -signy1*y_val1
@@ -331,16 +359,16 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
         ar1_dx = ar1_x2-ar1_x1
         ar1_dy = ar1_y2-ar1_y1
         # second principal axis
-        x_val2 = arrow_length*np.cos(beta)
-        y_val2 = arrow_length*np.sin(beta)
-        if x_val2 >= x:
-            x_val2 = x
-            y_val2 = x_val2*np.tan(beta)
-            print('x_val')
-        elif y_val2 >= y:
-            y_val2 = y
-            x_val2 = y_val2/np.tan(beta)
-            print('y_val')
+        x_val2 = arrow_length*np.cos(beta2)
+        y_val2 = arrow_length*np.sin(beta2)
+        sign_x2 = np.sign(x_val2)
+        sign_y2 = np.sign(y_val2)
+        if abs(x_val2) >= x:
+            x_val2 = sign_x2*x
+            y_val2 = x_val2*np.tan(beta2)
+        elif abs(y_val2) >= y:
+            y_val2 = sign_y2*y
+            x_val2 = y_val2/np.tan(beta2)
 
         ar2_x1 = -signx2*x_val2
         ar2_y1 = -signy2*y_val2
@@ -353,4 +381,8 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
                             head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
         parent.principal_axis2 = ax.arrow(ar2_x1, ar2_y1, ar2_dx, ar2_dy,
                             head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
+        parent.principal_axis1_text = ax.text(ar1_dx/2+0.05, ar1_dy/2+0.05, r"$I_1$", horizontalalignment='center', color = color,
+                    verticalalignment='center')
+        parent.principal_axis2_text = ax.text(ar2_dx/2+0.05, ar2_dy/2+0.05, r"$I_2$", horizontalalignment='center', color = color,
+                    verticalalignment='center')
         parent.canvas.draw()
