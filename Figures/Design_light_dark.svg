@@ -78,9 +78,9 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer7"
      inkscape:document-units="mm"
-     inkscape:cy="490.10329"
-     inkscape:cx="210.28587"
-     inkscape:zoom="0.50000001"
+     inkscape:cy="279.82108"
+     inkscape:cx="1323.0591"
+     inkscape:zoom="1.4142136"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -452,6 +452,180 @@
         </g>
       </g>
     </g>
+    <path
+       style="stroke-width:0.264583;fill:#ff0000"
+       inkscape:connector-curvature="0"
+       d="m 101.73969,190.28636 v -0.84633 q 0.0242,-0.45944 0.36271,-0.7738 0.33854,-0.31435 0.79798,-0.31435 h 1.16069 v -0.3869 q 0,-0.48362 0.33853,-0.82215 0.33854,-0.33854 0.82216,-0.33854 h 3.86896 q 0.48362,0 0.82216,0.33854 0.33853,0.33853 0.33853,0.82215 v 0.3869 h 1.1607 q 0.45943,0 0.79797,0.31435 0.33853,0.31436 0.36272,0.7738 v 0.84633 q 0,0.31436 -0.22972,0.54408 -0.22971,0.22973 -0.54408,0.22972 v 6.57724 q 0,0.65289 -0.44734,1.10025 -0.44734,0.44735 -1.10025,0.44734 h -6.19034 q -0.65289,0 -1.10025,-0.44734 -0.44735,-0.44734 -0.44734,-1.10025 v -6.57724 q -0.31435,0 -0.54408,-0.22972 -0.22973,-0.22971 -0.22971,-0.54408 z m 0.77379,0 h 9.28552 v -0.77379 q 0,-0.16927 -0.10882,-0.27809 -0.10882,-0.10882 -0.27809,-0.10882 h -8.51173 q -0.16926,0 -0.27808,0.10882 -0.10883,0.10882 -0.10883,0.27809 v 0.77379 z m 0.77379,7.35104 q 0,0.31436 0.22972,0.54408 0.22971,0.22973 0.54408,0.22972 h 6.19034 q 0.31436,0 0.54408,-0.22972 0.22973,-0.22971 0.22972,-0.54408 v -6.57724 h -7.73794 z m 0.7738,-0.38689 v -5.02966 q 0,-0.16927 0.10882,-0.27809 0.10882,-0.10882 0.27808,-0.10882 h 0.7738 q 0.16927,0 0.27809,0.10882 0.10882,0.10882 0.10882,0.27809 v 5.02966 q 0,0.16927 -0.10882,0.27809 -0.10882,0.10882 -0.27809,0.10882 h -0.7738 q -0.16926,0 -0.27808,-0.10882 -0.10882,-0.10882 -0.10882,-0.27809 z m 0.38689,0 h 0.7738 v -5.02966 h -0.7738 z m 0.3869,-8.89863 h 4.64276 v -0.3869 q 0,-0.16926 -0.10882,-0.27808 -0.10882,-0.10882 -0.27809,-0.10882 h -3.86897 q -0.16926,0 -0.27808,0.10882 -0.10882,0.10882 -0.10882,0.27808 v 0.3869 z m 1.54759,8.89863 v -5.02966 q 0,-0.16927 0.10882,-0.27809 0.10882,-0.10882 0.27809,-0.10882 h 0.77379 q 0.16927,0 0.27809,0.10882 0.10882,0.10882 0.10882,0.27809 v 5.02966 q 0,0.16927 -0.10882,0.27809 -0.10882,0.10882 -0.27809,0.10882 h -0.77379 q -0.16927,0 -0.27809,-0.10882 -0.10882,-0.10882 -0.10882,-0.27809 z m 0.38689,0 h 0.7738 v -5.02966 h -0.7738 z m 1.93449,0 v -5.02966 q 0,-0.16927 0.10882,-0.27809 0.10882,-0.10882 0.27809,-0.10882 h 0.77379 q 0.16927,0 0.27809,0.10882 0.10882,0.10882 0.10882,0.27809 v 5.02966 q 0,0.16927 -0.10882,0.27809 -0.10882,0.10882 -0.27809,0.10882 h -0.77379 q -0.16927,0 -0.27809,-0.10882 -0.10882,-0.10882 -0.10882,-0.27809 z m 0.38689,0 h 0.7738 v -5.02966 h -0.7738 z"
+       id="path2" />
+    <g
+       inkscape:export-ydpi="223.92853"
+       inkscape:export-xdpi="223.92853"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\minus.png"
+       id="g2127">
+      <circle
+         r="7.2964578"
+         cy="152.85144"
+         cx="359.11667"
+         id="path2062-3"
+         style="fill:#b0b0b0;fill-opacity:0.601626;stroke:#000000;stroke-width:0.72;stroke-linecap:round" />
+      <text
+         id="text2066-9"
+         y="214.18413"
+         x="259.17377"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4829px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         xml:space="preserve"
+         transform="scale(1.3698578,0.73000278)"><tspan
+           style="stroke-width:0.264583"
+           y="214.18413"
+           x="259.17377"
+           id="tspan2064-2"
+           sodipodi:role="line">-</tspan></text>
+    </g>
+    <g
+       inkscape:export-ydpi="223.92853"
+       inkscape:export-xdpi="223.92853"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\plus_hover.png"
+       id="g2132">
+      <circle
+         r="7.2964578"
+         cy="153.44228"
+         cx="385.17004"
+         id="path2062-30"
+         style="fill:#e9e9e9;fill-opacity:0.60392159;stroke:#000000;stroke-width:0.72;stroke-linecap:round" />
+      <text
+         id="text2066-2"
+         y="157.44933"
+         x="381.6283"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.2226px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         xml:space="preserve"><tspan
+           style="stroke-width:0.264583"
+           y="157.44933"
+           x="381.6283"
+           id="tspan2064-5"
+           sodipodi:role="line">+</tspan></text>
+    </g>
+    <g
+       inkscape:export-ydpi="223.92853"
+       inkscape:export-xdpi="223.92853"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\plus.png"
+       id="g2122">
+      <circle
+         style="fill:#b0b0b0;fill-opacity:0.601626;stroke:#000000;stroke-width:0.72;stroke-linecap:round"
+         id="path2062"
+         cx="339.94009"
+         cy="152.29018"
+         r="7.2964578" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.2226px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264584"
+         x="336.39835"
+         y="156.29723"
+         id="text2066"><tspan
+           sodipodi:role="line"
+           id="tspan2064"
+           x="336.39835"
+           y="156.29723"
+           style="stroke-width:0.264584">+</tspan></text>
+    </g>
+    <g
+       inkscape:export-ydpi="223.92853"
+       inkscape:export-xdpi="223.92853"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\minus_hover.png"
+       id="g2137">
+      <circle
+         style="fill:#e9e9e9;fill-opacity:0.60392159;stroke:#000000;stroke-width:0.72;stroke-linecap:round"
+         id="path2062-3-8"
+         cx="404.34662"
+         cy="154.00354"
+         r="7.2964578" />
+      <text
+         transform="scale(1.3698578,0.73000278)"
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4829px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="292.19174"
+         y="215.76234"
+         id="text2066-9-3"><tspan
+           sodipodi:role="line"
+           id="tspan2064-2-9"
+           x="292.19174"
+           y="215.76234"
+           style="stroke-width:0.264583">-</tspan></text>
+    </g>
+    <rect
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\calculate_button.png"
+       style="display:inline;opacity:0.997;fill:#87cdde;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       id="rect928-4-2-4-3-8"
+       width="25.532446"
+       height="6.1980996"
+       x="60.222466"
+       y="32.024391"
+       ry="1.7167649"
+       inkscape:export-xdpi="80.579697"
+       inkscape:export-ydpi="80.579697" />
+    <text
+       inkscape:export-ydpi="80.579697"
+       inkscape:export-xdpi="80.579697"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\calculate_button.png"
+       id="text1596-8"
+       y="36.895596"
+       x="63.372746"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#1a1a1a;fill-opacity:0.996078;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="fill:#1a1a1a;fill-opacity:0.996078;stroke-width:0.264583"
+         y="36.895596"
+         x="63.372746"
+         id="tspan1594-6"
+         sodipodi:role="line">Értékadás</tspan></text>
+    <rect
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\calculate_button.png"
+       style="display:inline;opacity:0.997;fill:#cf6679;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       id="rect928-4-2-4-3-9"
+       width="25.532446"
+       height="6.1980996"
+       x="59.72961"
+       y="55.903034"
+       ry="1.7167649"
+       inkscape:export-xdpi="80.579697"
+       inkscape:export-ydpi="80.579697" />
+    <text
+       inkscape:export-ydpi="80.579697"
+       inkscape:export-xdpi="80.579697"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\calculate_button.png"
+       id="text1596-4"
+       y="60.907909"
+       x="64.501823"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#1a1a1a;fill-opacity:0.996078;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="fill:#1a1a1a;fill-opacity:0.996078;stroke-width:0.264583"
+         y="60.907909"
+         x="64.501823"
+         id="tspan1594-9"
+         sodipodi:role="line">Számol</tspan></text>
+    <rect
+       inkscape:export-ydpi="80.579803"
+       inkscape:export-xdpi="80.579803"
+       ry="1.7167649"
+       y="59.014385"
+       x="369.64301"
+       height="6.1980996"
+       width="25.532448"
+       id="rect928-4-2-4-3-8-0"
+       style="display:inline;opacity:0.997;fill:#93ac9d;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\value_button.png" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#1a1a1a;fill-opacity:0.996078;stroke:none;stroke-width:0.264583"
+       x="372.79327"
+       y="63.88559"
+       id="text1596-8-4"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\value_button.png"
+       inkscape:export-xdpi="80.579803"
+       inkscape:export-ydpi="80.579803"><tspan
+         sodipodi:role="line"
+         id="tspan1594-6-4"
+         x="372.79327"
+         y="63.88559"
+         style="fill:#1a1a1a;fill-opacity:0.996078;stroke-width:0.264583">Értékadás</tspan></text>
   </g>
   <g
      sodipodi:insensitive="true"

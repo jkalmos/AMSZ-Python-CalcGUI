@@ -13,6 +13,7 @@ class SideMenu(tk.Frame):
         # self.canvas.grid(row=0, column=0, sticky="NSEW")
         self.canvas.pack(fill=tk.BOTH, expand = True)
 
+        ### For further design improvemnets: rounded card edges with canvas polygon object
         # def round_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):
         #     points = [x1+radius, y1,
         #                 x1+radius, y1,
@@ -211,12 +212,8 @@ class SideMenu(tk.Frame):
 
         # calculate button
         self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
-        # self.button_hover_img = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button_hover.png")
-        self.calc = tk.Label(self.canvas, image=self.buttonimage, activebackground=self["background"])
+        self.calc = tk.Label(self.canvas, image=self.buttonimage, activebackground=self["background"], border = 0, bg =self["background"])
         self.calc.bind('<Button-1>', func=lambda e: self.root.calculate())
-        # self.calc.bind("<ButtonRelease-1>", func=lambda e: self.calc.config(image=self.buttonimage))
-        self.calc["bg"] = self["background"]
-        self.calc["border"] = "0"
 
         # result labels
         self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)

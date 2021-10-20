@@ -36,18 +36,24 @@ class shapeBuilder(tk.Canvas):
         self.selected = None
 
         #############* Creating objects for side menu ##############
+        # self.place_holder = tk.Label(self.sb_sm,text="",width=30, bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_width = tk.Label(self.sb_sm,text="Szélesség:", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_heigth = tk.Label(self.sb_sm,text="Magasság:", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit1 = tk.Label(self.sb_sm,text=root.unit, bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.calc_button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
+        self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/calculate_button.png")
+        self.calc_button = tk.Label(self.sb_sm, image=self.buttonimage, activebackground=self["background"], border = 0, bg =self["background"])
+        self.calc_button.bind('<Button-1>', func=lambda e: self.calculate())
         self.e1 = tk.Entry(self.sb_sm, width = 10,bg=root.colors["entry_color"], fg=root.colors["text_color"])
         self.e2 = tk.Entry(self.sb_sm, width = 10,bg=root.colors["entry_color"], fg=root.colors["text_color"])
-        self.value_button = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
+        # self.value_button = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
+        self.value_buttonimage = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/value_button.png")
+        self.value_button = tk.Label(self.sb_sm, image=self.value_buttonimage, activebackground=self["background"], border = 0, bg =self["background"])
+        self.value_button.bind('<Button-1>', func=lambda e: self.overwrite())
         # self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
         #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.pos_lbl = self.create_text(15 ,15,text="",fill= "white") # position label
+        self.pos_lbl = self.create_text(15 ,15,text="",fill= root.colors['text_color']) # position label
 
         self.controls = []
         self.controls.append({"unit":self.l_unit1, "unit_type": "length"})
@@ -115,16 +121,17 @@ class shapeBuilder(tk.Canvas):
         self.root.bind("<Control-r>", self.resize_rectangle)
 
         ##############* Packing objects ###############
-        self.l_width.grid(row=1,column=0)
-        self.e1.grid(row=1,column=1,columnspan=3)
-        self.l_unit1.grid(row=1,column=4)
-        self.l_heigth.grid(row=2,column=0)
-        self.e2.grid(row=2,column=1,columnspan=3)
-        self.l_unit2.grid(row=2,column=4)
-        self.is_sticky.grid(row=3,columnspan=5)
-        self.calc_button.grid(row=4,column=3)
-        self.value_button.grid(row=1, column=5, rowspan=2)
-        self.label.grid(row=5,columnspan=5, pady= 50)
+        # self.place_holder.grid(row=0,column=1,columnspan=5)
+        self.l_width.grid(row=1,column=1,padx=(10,0),pady=(10,0))
+        self.e1.grid(row=1,column=2,pady=(10,0),padx=2)
+        self.l_unit1.grid(row=1,column=3,pady=(10,0))
+        self.l_heigth.grid(row=2,column=1,padx=(10,0))
+        self.e2.grid(row=2,column=2,padx=2)
+        self.l_unit2.grid(row=2,column=3)
+        self.value_button.grid(row=1,rowspan=2, column=5,pady=(15,0),padx=(5,10))
+        self.is_sticky.grid(row=3,columnspan=3)
+        self.calc_button.grid(row=4,column=1,columnspan=5,padx=(20))
+        self.label.grid(row=5,columnspan=5, pady= 50,padx=20)
         # self.cls.grid(row=6, column=1,columnspan=3)
 
     def popup(self, e): #right cklick menu shows up
@@ -388,7 +395,7 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.minus, e.width-45, e.height-40)
         self.coords(self.plus, e.width-80, e.height-40)
         self.coords(self.clear, 10, e.height-40)
-        self.coords(self.pos_lbl, e.width-50, 30)
+        self.coords(self.pos_lbl, e.width-50, 20)
         self.canvas_width = e.width
         self.canvas_height = e.height
         self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
