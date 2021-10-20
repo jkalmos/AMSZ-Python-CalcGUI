@@ -41,10 +41,10 @@ class shapeBuilder(tk.Canvas):
         self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit1 = tk.Label(self.sb_sm,text=root.unit, bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
-        self.e1 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
-        self.e2 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
-        self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
+        self.calc_button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
+        self.e1 = tk.Entry(self.sb_sm, width = 10,bg=root.colors["entry_color"], fg=root.colors["text_color"])
+        self.e2 = tk.Entry(self.sb_sm, width = 10,bg=root.colors["entry_color"], fg=root.colors["text_color"])
+        self.value_button = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         # self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
         #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.pos_lbl = self.create_text(15 ,15,text="",fill= "white") # position label
@@ -60,12 +60,22 @@ class shapeBuilder(tk.Canvas):
         self.img= (Image.open(f"{self.root.colors['path']}shape_builder/minus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.minus_img= ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open(f"{root.colors['path']}shape_builder/minus_hover.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.minus_hover_img = ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open(f"{root.colors['path']}shape_builder/plus_hover.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.plus_hover_img = ImageTk.PhotoImage(resized_image)
         self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
         self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
         self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(2))
         self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.5))
+        self.tag_bind(self.minus, '<Enter>', lambda e: self.itemconfig(self.minus,image=self.minus_hover_img))
+        self.tag_bind(self.plus, '<Enter>', lambda e: self.itemconfig(self.plus,image=self.plus_hover_img))
+        self.tag_bind(self.minus, '<Leave>', lambda e: self.itemconfig(self.minus,image=self.minus_img))
+        self.tag_bind(self.plus, '<Leave>', lambda e: self.itemconfig(self.plus,image=self.plus_img))
 
-        #############* Creating clear button ##############
+        #############* Creating clear button on canvas ##############
         self.clear_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear.png")
         self.clear_hover_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear_hover.png")
         self.clear = self.create_image(10, self.root.winfo_height()-110, anchor=tk.NW,image=self.clear_img, tags=("clear"))
@@ -112,8 +122,8 @@ class shapeBuilder(tk.Canvas):
         self.e2.grid(row=2,column=1,columnspan=3)
         self.l_unit2.grid(row=2,column=4)
         self.is_sticky.grid(row=3,columnspan=5)
-        self.button.grid(row=4,column=3)
-        self.button2.grid(row=4, column=1)
+        self.calc_button.grid(row=4,column=3)
+        self.value_button.grid(row=1, column=5, rowspan=2)
         self.label.grid(row=5,columnspan=5, pady= 50)
         # self.cls.grid(row=6, column=1,columnspan=3)
 
@@ -375,8 +385,8 @@ class shapeBuilder(tk.Canvas):
         for i in self.rectangles:
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
     def resize_canvas(self,e):
-        self.coords(self.minus, e.width-45, e.height-50)
-        self.coords(self.plus, e.width-80, e.height-50)
+        self.coords(self.minus, e.width-45, e.height-40)
+        self.coords(self.plus, e.width-80, e.height-40)
         self.coords(self.clear, 10, e.height-40)
         self.coords(self.pos_lbl, e.width-50, 30)
         self.canvas_width = e.width
@@ -439,5 +449,5 @@ class Rectangle():
             
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
-        super().__init__(root,width=30, bg=root.colors['secondary_color'])
+        super().__init__(root,width=40, bg=root.colors['secondary_color'])
         self.root = root

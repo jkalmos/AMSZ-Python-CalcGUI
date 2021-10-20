@@ -232,9 +232,9 @@ def transformed_coordinate_system(x, y, ax, phi, colors):
                          head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
     ax.arrow(ar2_x, ar2_y, ar2_dx, ar2_dy,
                          head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
-    ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$\xi$", horizontalalignment='center', color = color,
+    ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$x_1$", horizontalalignment='center', color = color,
                         verticalalignment='center', size='large')
-    ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$\eta$", horizontalalignment='center', color = color,
+    ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$y_1$", horizontalalignment='center', color = color,
                         verticalalignment='center', size='large')
 
 def transformation_dimensions(x, y, ax, colors):

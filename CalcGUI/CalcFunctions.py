@@ -17,7 +17,7 @@ def transform(func):
                 phi= math.radians(args[-1])
             else:
                 phi = args[-1]
-            ans["Ix"], ans["Iy"], ans["Ixy"] = Iarbitraryaxis(**ans, x=args[-3],y=args[-2], phi=phi)
+            ans["Ixi"], ans["Ieta"], ans["Ixieta"] = Iarbitraryaxis(**ans, x=args[-3],y=args[-2], phi=phi)
             
         else:
             ans = func(*args)
