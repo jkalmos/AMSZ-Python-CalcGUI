@@ -38,7 +38,7 @@ class main_window(tk.Tk):
 
         # main window opening size
         self.win_width = 1200
-        self.win_height = 650
+        self.win_height = 720
 
         # screen size
         self.screen_width = self.winfo_screenwidth()
@@ -456,12 +456,14 @@ class main_window(tk.Tk):
             if None in vissza:
                 return -1
             self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
-            self.sm.result2.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
             if self.transformed_coordinate_on.get() == True:
-                self.sm.result3.config(text="Iₓ₁ = Iᵧ₁" + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ₁ = " + str(round(self.values["Ieta"], 4)) + " " + self.unit + "\u2074")
                 self.sm.result4.config(text="Iₓ₁ᵧ₁ = " + str(round(self.values["Ixieta"], 4)) + " " + self.unit + "\u2074")
             else:
-                self.sm.result3.config(text="Iₓ = Iᵧ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result2.config(text="Iₓ = Iᵧ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
                 self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
             self.sm.result5.config(text="Főmásodrendű nyomatékok:")
             if round(self.values["Ix"], 4) > round(self.values["Iy"], 4):
@@ -472,6 +474,7 @@ class main_window(tk.Tk):
                 self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
             self.sm.result8.config(text="Keresztmetszeti tényezők:")
             self.sm.result9.config(text="Kₓ = Kᵧ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result10.config(text="Kₚ = " + str(round(self.values["Kp"], 4)) + " " + self.unit + "\u2074")
 
         elif self.sm.shape == "Ellipse":
             vissza, t = self.get_entry(2)
