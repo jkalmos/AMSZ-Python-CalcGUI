@@ -107,6 +107,8 @@ def RectangularHS(w2, h2, w1, h1):
 @transform
 def Ellipse(a, b, t = 0):
     if t == 0:
+        a = a/2
+        b = b/2
         A = a * b * np.pi
         Ix = a * b ** 3 * np.pi / 4
         Iy = a ** 3 * b * np.pi / 4

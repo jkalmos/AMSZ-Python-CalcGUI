@@ -381,8 +381,8 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
                             head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
         parent.principal_axis2 = ax.arrow(ar2_x1, ar2_y1, ar2_dx, ar2_dy,
                             head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
-        parent.principal_axis1_text = ax.text(ar1_dx/2+0.05, ar1_dy/2+0.05, r"$I_1$", horizontalalignment='center', color = color,
+        parent.principal_axis1_text = ax.text(ar1_dx/2+0.06, ar1_dy/2+0.06, r"$I_1$", horizontalalignment='center', color = color,
                     verticalalignment='center')
-        parent.principal_axis2_text = ax.text(ar2_dx/2+0.05, ar2_dy/2+0.05, r"$I_2$", horizontalalignment='center', color = color,
+        parent.principal_axis2_text = ax.text(ar2_dx/2+0.06, ar2_dy/2+0.06, r"$I_2$", horizontalalignment='center', color = color,
                     verticalalignment='center')
         parent.canvas.draw()

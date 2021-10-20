@@ -40,9 +40,9 @@ class SideMenu(tk.Frame):
         # self.result_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill='blue')
 
         # result label font
-        result_font = "Times", 12
+        result_font = "Roboto", 11
         # input labels font
-        input_font = "Times", 11
+        input_font = "Roboto", 11
         
         ## Custom combobox ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         combo_open = tk.BooleanVar(False)
@@ -225,12 +225,18 @@ class SideMenu(tk.Frame):
         self.result4 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result5 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result6 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result7 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result8 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result9 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result1.grid(row=12, column = 1, columnspan=3, padx=5, pady=5)
         self.result2.grid(row=13, column = 1, columnspan=3, padx=5, pady=5)
         self.result3.grid(row=14, column = 1, columnspan=3, padx=5, pady=5)
         self.result4.grid(row=15, column = 1, columnspan=3, padx=5, pady=5)
         self.result5.grid(row=16, column = 1, columnspan=3, padx=5, pady=5)
         self.result6.grid(row=17, column = 1, columnspan=3, padx=5, pady=5)
+        self.result7.grid(row=18, column = 1, columnspan=3, padx=5, pady=5)
+        self.result8.grid(row=19, column = 1, columnspan=3, padx=5, pady=5)
+        self.result9.grid(row=20, column = 1, columnspan=3, padx=5, pady=5)
 
         # Checkbox: set thickness
         self.thickness = tk.Checkbutton(
@@ -242,7 +248,7 @@ class SideMenu(tk.Frame):
 
         # Checkbox: transformed coordinate system
         self.transformed_coordinate_system = tk.Checkbutton(
-            self.canvas, text = "Transzformált"+'\n'+"koordináta rendszer", font=input_font, 
+            self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
             bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
             command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
@@ -267,6 +273,9 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result4)
         self.indicators.append(self.result5)
         self.indicators.append(self.result6)
+        self.indicators.append(self.result7)
+        self.indicators.append(self.result8)
+        self.indicators.append(self.result9)
         self.indicators.append(self.lbl)
         self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)
