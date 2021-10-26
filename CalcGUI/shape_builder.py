@@ -30,7 +30,7 @@ class shapeBuilder(tk.Canvas):
         self.width = WIDTH
         self.heigth = WIDTH
         self.last_click_pos = None
-        self.selected = None
+        self.selected = []
 
         #############* Creating objects for side menu ##############
         self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
@@ -119,34 +119,36 @@ class shapeBuilder(tk.Canvas):
                     break
     def delete_rectangle(self, e=None):
         print("deleteing rectangle")
-        self.delete(self.selected.canvas_repr)
-        self.rectangles.remove(self.selected)
-        self.selected = None
+        for i in self.selected:
+            self.delete(i.canvas_repr)
+            self.rectangles.remove(i)
+            self.selected = []
         for k in self.rectangles:
             k.is_overlapping()
     def resize_rectangle(self,e=None):
-        if not self.selected:
-            return 0
-        self.selected.refresh(self.selected.x1, self.selected.y1, self.selected.x1 + self.width, self.selected.y1 + self.heigth)
-        self.selected = None
+        for i in self.selected:
+            i.refresh(i.x1, i.y1, i.x1 + self.width, i.y1 + self.heigth)
+            i = None
         for k in self.rectangles:
             k.is_overlapping()
     def rectangle_info(self,e=None):
-        if not self.selected:
-            return 0
-        self.label.config(text=f"Szélesség = {self.selected.width/self.scale}\nMagasság = {self.selected.heigth/self.scale}\nKözéppont = ({(self.selected.center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.selected.center[1])/self.scale})" )
+        if len(self.selected)>1:
+            self.label.config(text="Hiba: Túl sok objektum van kijelölve!")
+            return -1
+        if len(self.selected)>0: self.label.config(text=f"Szélesség = {self.selected[0].width/self.scale}\nMagasság = {self.selected[0].heigth/self.scale}\nKözéppont = ({(self.selected[0].center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.selected[0].center[1])/self.scale})" )
+        
     def select(self,e):
-        self.deselect()
+        #self.deselect()
         tmp = self.find_closest(e.x,e.y)[0]
         for i in self.rectangles:
-            if i.canvas_repr == tmp:
-                self.selected = i
+            if i.canvas_repr == tmp and i not in self.selected:
+                self.selected.append(i)
                 break
         else:
             print("Selection_Error: Rectangle not found...")
             return -1  
-        
-        self.itemconfig(self.selected.canvas_repr, fill='pink')
+        for i in self.selected:
+            self.itemconfig(i.canvas_repr, fill='pink')
         print("Selecting rectangle")
     def deselect(self,e=None):
         if e is not None:
@@ -154,8 +156,9 @@ class shapeBuilder(tk.Canvas):
                 if e.x < i.x2 and e.x> i.x1 and i.y1 < e.y and i.y2 > e.y:
                     return 0
         try:
-            self.itemconfig(self.selected.canvas_repr, fill='blue')
-            self.selected = None
+            for i in self.selected:
+                self.itemconfig(i.canvas_repr, fill='blue')
+            self.selected = []
         except:
             pass
         for k in self.rectangles:
@@ -389,6 +392,8 @@ class shapeBuilder(tk.Canvas):
         #Rectangles
         for i in self.rectangles:
             i.refresh(i.x1+dx,i.y1+dy,i.x2+dx,i.y2+dy)
+    def place_objekt(self,x,y,object):
+        object.refresh(x,y,x+object.width,y+object.heigth) #rectangle
 
 class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
