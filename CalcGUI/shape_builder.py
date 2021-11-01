@@ -7,6 +7,8 @@ WIDTH = 30
 EPSILON = 10
 STICKY = True
 
+#! Selection_error: Rectangle not found...
+
 #self.root.sb_ha_vis = False
 #self.root.calc_for_orig_axis = False
 #self.root.show_orig_axis = True
@@ -30,6 +32,8 @@ class shapeBuilder(tk.Canvas):
         self.width = WIDTH
         self.heigth = WIDTH
         self.last_click_pos = None
+        self.starting_pos = None #selecting multiple objects
+        self.selecting_area = self.create_rectangle(0,0,0,0)
         self.selected = []
 
         #############* Creating objects for side menu ##############
@@ -137,8 +141,13 @@ class shapeBuilder(tk.Canvas):
             return -1
         if len(self.selected)>0: self.label.config(text=f"Szélesség = {self.selected[0].width/self.scale}\nMagasság = {self.selected[0].heigth/self.scale}\nKözéppont = ({(self.selected[0].center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.selected[0].center[1])/self.scale})" )
         
-    def select(self,e):
+    def select(self,e, object=None):
         #self.deselect()
+        if e is None and object is not None:
+            self.selected.append(object)
+            for i in self.selected:
+                self.itemconfig(i.canvas_repr, fill='pink')
+            return 0
         tmp = self.find_closest(e.x,e.y)[0]
         for i in self.rectangles:
             if i.canvas_repr == tmp and i not in self.selected:
@@ -157,6 +166,7 @@ class shapeBuilder(tk.Canvas):
                     return 0
         try:
             for i in self.selected:
+                print("deselect")
                 self.itemconfig(i.canvas_repr, fill='blue')
             self.selected = []
         except:
@@ -173,10 +183,11 @@ class shapeBuilder(tk.Canvas):
             return 0
         self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
         self.deselect()
+        self.label.config(text=f"")
         #choosing object
         for i in self.rectangles:
             pos = self.coords(i.canvas_repr)
-            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
+            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None:
                 self.rectangles.remove(i)
                 self.current = i
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
@@ -187,12 +198,23 @@ class shapeBuilder(tk.Canvas):
                 self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current:
+            ############### Selecting multiple objects ##############
+            if self.starting_pos is None: 
+                print("test")
+                self.starting_pos = (e.x,e.y)
+                self.itemconfigure(self.selecting_area,state="normal")
+            else:
+                try:
+                    self.coords(self.selecting_area,self.starting_pos[0],self.starting_pos[1],e.x,e.y)
+                except:
+                    print("Can not show selection area")
             return -1
         pos = self.coords(self.current.canvas_repr)
         if self.isMoving or e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
             self.isMoving = True
-        self.label.config(text=f"")
+            return 0
+        
     def release(self,e):
         self.delete("hauptachse")
         self.delete("s_axis")
@@ -254,6 +276,18 @@ class shapeBuilder(tk.Canvas):
             for k in self.rectangles:
                 k.is_overlapping()
             #self.current.is_overlapping()
+        if self.starting_pos is not None:
+            mwc = min(self.starting_pos[0],e.x)
+            mec = max(self.starting_pos[0],e.x)
+            mnc = min(self.starting_pos[1],e.y)
+            msc = max(self.starting_pos[1],e.y)
+            for i in self.rectangles:    
+                if i.center[0] > mwc and i.center[0]< mec and i.center[1] > mnc and i.center[1] < msc:
+                    self.select(None, i)
+            self.coords(self.selecting_area,mwc,mnc,mec,msc)
+            self.starting_pos = None
+        else:
+            self.itemconfigure(self.selecting_area,state="hidden")
             
             
         self.isMoving = False
@@ -427,7 +461,8 @@ class Rectangle():
                 if len({self.x1,self.x2}.intersection({i.x1,i.x2}))==0 and len({self.y1,self.y2}.intersection({i.y1,i.y2}))==0:
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
-        if not in_overlapping:
+        if not in_overlapping and self not in self.canvas.selected:
+            print(self, self.canvas.selected)
             self.canvas.itemconfig(self.canvas_repr, fill='blue')
             
 class sb_side_menu(tk.Frame):
