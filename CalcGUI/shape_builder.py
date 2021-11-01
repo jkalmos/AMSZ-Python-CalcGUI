@@ -194,7 +194,7 @@ class shapeBuilder(tk.Canvas):
                 break
         else:
             pos = self.coords(self.alap_negyzet.canvas_repr)
-            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
+            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None:
                 self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current:
