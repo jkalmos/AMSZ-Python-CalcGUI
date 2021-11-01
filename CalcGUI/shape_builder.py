@@ -21,6 +21,7 @@ class shapeBuilder(tk.Canvas):
         self.sb_sm = sb_sm #own side menu
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
+        self.clipboard = []
         self.Xcenter = 400
         self.Ycenter = 300
         self.canvas_width = 800
@@ -96,6 +97,9 @@ class shapeBuilder(tk.Canvas):
         self.root.bind("<Delete>", self.delete_rectangle)
         self.root.bind("<Control-i>", self.rectangle_info)
         self.root.bind("<Control-r>", self.resize_rectangle)
+
+        self.root.bind("<Control-c>", self.add_to_clp)
+        self.root.bind("<Control-v>", self.insert_from_clp)
 
         ##############* Packing objects ###############
         self.l_width.grid(row=1,column=0)
@@ -428,6 +432,11 @@ class shapeBuilder(tk.Canvas):
             i.refresh(i.x1+dx,i.y1+dy,i.x2+dx,i.y2+dy)
     def place_objekt(self,x,y,object):
         object.refresh(x,y,x+object.width,y+object.heigth) #rectangle
+    def add_to_clp(self,e=None):
+        self.clipboard = self.selected #! deepcopy???
+    def insert_from_clp(self,e=None):
+        for i in self.clipboard:
+            self.rectangles.append(Rectangle(self,i.x1+5,i.y1+5,i.x2+5,i.y2+5,self.create_rectangle(i.x1+5,i.y1+5,i.x2+5,i.y2+5,fill="blue", tags=("rect"))))
 
 class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
