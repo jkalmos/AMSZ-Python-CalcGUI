@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from math import cos, sin, sqrt, atan, pi
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
@@ -226,54 +227,8 @@ class shapeBuilder(tk.Canvas):
         self.itemconfig(self.pos_lbl, text="")
         #choosing object
         if self.sticky.get() and self.current:
-            pos = self.coords(self.current.canvas_repr)
+            self.current.align()
             #? prioritási sorrend???    
-            # sticking to another rectangles    
-            for i in self.rectangles:
-                i_pos = self.coords(i.canvas_repr)
-                if abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # current rect goes under the another 
-                    self.current.refresh(i_pos[0],i_pos[3],i_pos[0]+self.current.width,i_pos[3]+self.current.heigth)
-                    break
-                elif abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # TOP
-                    self.current.refresh(i_pos[0],i_pos[1]-self.current.heigth,i_pos[0]+self.current.width,i_pos[1])
-                    break
-                elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[0] - i_pos[2]) < EPSILON: # RIGHT
-                    self.current.refresh(i_pos[2],i_pos[1],i_pos[2]+self.current.width,i_pos[1]+self.current.heigth)
-                    break
-                elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[2] - i_pos[0]) < EPSILON: # LEFT
-                    self.current.refresh(i_pos[0]-self.current.width,i_pos[1],i_pos[0],i_pos[1]+self.current.heigth)
-                    break
-                elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # ??
-                    self.current.refresh(i_pos[2]-self.current.width,i_pos[1]-self.current.heigth,i_pos[2],i_pos[1])
-                    break
-                elif abs(pos[2] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # ??
-                    self.current.refresh(i_pos[0]-self.current.width,i_pos[3]-self.current.heigth,i_pos[0],i_pos[3])
-                    break
-                elif abs(pos[0] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # !
-                    self.current.refresh(i_pos[2],i_pos[3]-self.current.heigth,i_pos[2]+self.current.width,i_pos[3])
-                    break
-                elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # !
-                    self.current.refresh(i_pos[2]-self.current.width,i_pos[3],i_pos[2],i_pos[3]+self.current.heigth)
-                    break
-            else: #sicking to the coordinate system
-                if self.root.show_orig_axis:
-                    if abs(pos[0]-self.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
-                        self.current.refresh(self.Xcenter,pos[1],self.Xcenter+self.current.width,pos[3])
-                        pos = self.coords(self.current.canvas_repr)
-                    elif abs(pos[2]-self.Xcenter) < EPSILON: #right side sticks to the coordinatsystem
-                        self.current.refresh(self.Xcenter-self.current.width,pos[1],self.Xcenter,pos[3])
-                        pos = self.coords(self.current.canvas_repr)
-                    if abs(pos[1]-self.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
-                        self.current.refresh(pos[0],self.Ycenter,pos[2],self.Ycenter+self.current.heigth)
-                        pos = self.coords(self.current.canvas_repr)
-                    elif abs(pos[3]-self.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
-                        self.current.refresh(pos[0],self.Ycenter-self.current.heigth,pos[2],self.Ycenter)
-                        pos = self.coords(self.current.canvas_repr)
-                    #* Sticking with the center of the rectangle to the coordinate system
-                    if abs(self.current.center[0]-self.Xcenter)<EPSILON:
-                        self.current.refresh(self.Xcenter-self.current.width/2,self.current.y1,self.Xcenter+self.current.width/2,self.current.y2)
-                    if abs(self.current.center[1]-self.Ycenter)<EPSILON:
-                        self.current.refresh(self.current.x1,self.Ycenter-self.current.heigth/2,self.current.x2,self.Ycenter+self.current.heigth/2)
         if self.isMoving and self.current is not None:
             #self.itemconfig(self.current.canvas_repr, fill='blue')
             self.rectangles.append(self.current)
@@ -479,6 +434,79 @@ class Rectangle():
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
             self.canvas.itemconfig(self.canvas_repr, fill='blue')
+    def align(self):
+        self.align_by_side()# sticking to another rectangles 
+        self.align_by_center()
+        self.align_to_axis()#sicking to the coordinate system
+    def align_to_axis(self):
+        if self.canvas.root.show_orig_axis:
+            pos = pos=[self.x1,self.y1,self.x2,self.y2]
+            if abs(pos[0]-self.canvas.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
+                self.refresh(self.canvas.Xcenter,pos[1],self.canvas.Xcenter+self.width,pos[3])
+                pos = self.canvas.coords(self.canvas_repr)
+            elif abs(pos[2]-self.canvas.Xcenter) < EPSILON: #right side sticks to the coordinatsystem
+                self.refresh(self.canvas.Xcenter-self.width,pos[1],self.canvas.Xcenter,pos[3])
+                pos = self.canvas.coords(self.canvas_repr)
+            if abs(pos[1]-self.canvas.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
+                self.refresh(pos[0],self.canvas.Ycenter,pos[2],self.canvas.Ycenter+self.heigth)
+                pos = self.canvas.coords(self.canvas_repr)
+            elif abs(pos[3]-self.canvas.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
+                self.refresh(pos[0],self.canvas.Ycenter-self.heigth,pos[2],self.canvas.Ycenter)
+                pos = self.canvas.coords(self.canvas_repr)
+            #* Sticking with the center of the rectangle to the coordinate system
+            if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
+                self.refresh(self.canvas.Xcenter-self.width/2,self.y1,self.canvas.Xcenter+self.width/2,self.y2)
+            if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
+                self.refresh(self.x1,self.canvas.Ycenter-self.heigth/2,self.x2,self.canvas.Ycenter+self.heigth/2)
+    def align_to_corners(self): #! OLD VERSION - NOT USED
+        pos=[self.x1,self.y1,self.x2,self.y2]
+        for i in self.canvas.rectangles:
+            i_pos = self.canvas.coords(i.canvas_repr)
+            if abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # current rect goes under the another 
+                self.refresh(i_pos[0],i_pos[3],i_pos[0]+self.width,i_pos[3]+self.heigth)
+                break
+            elif abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # TOP
+                self.refresh(i_pos[0],i_pos[1]-self.heigth,i_pos[0]+self.width,i_pos[1])
+                break
+            elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[0] - i_pos[2]) < EPSILON: # RIGHT
+                self.refresh(i_pos[2],i_pos[1],i_pos[2]+self.width,i_pos[1]+self.heigth)
+                break
+            elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[2] - i_pos[0]) < EPSILON: # LEFT
+                self.refresh(i_pos[0]-self.width,i_pos[1],i_pos[0],i_pos[1]+self.heigth)
+                break
+            elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # ??
+                self.refresh(i_pos[2]-self.width,i_pos[1]-self.heigth,i_pos[2],i_pos[1])
+                break
+            elif abs(pos[2] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # ??
+                self.refresh(i_pos[0]-self.width,i_pos[3]-self.heigth,i_pos[0],i_pos[3])
+                break
+            elif abs(pos[0] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # !
+                self.refresh(i_pos[2],i_pos[3]-self.heigth,i_pos[2]+self.width,i_pos[3])
+                break
+            elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # !
+                self.refresh(i_pos[2]-self.width,i_pos[3],i_pos[2],i_pos[3]+self.heigth)
+                break
+        else:
+            return 0
+        return 1
+    def align_by_center(self):
+        for i in self.canvas.rectangles:
+            if abs(self.center[0]-i.center[0])<EPSILON:
+                self.refresh(i.center[0]-self.width/2,self.y1,i.center[0]+self.width/2,self.y2)
+                break
+            if abs(self.center[1]-i.center[1])<EPSILON:
+                self.refresh(self.x1,i.center[1]-self.heigth/2,self.x2,i.center[1]+self.heigth/2)
+                break
+    def align_by_side(self):
+        for i in self.canvas.rectangles:
+            if abs(self.x1-i.x1)<EPSILON: self.refresh(i.x1,self.y1,i.x1+self.width,self.y2) # sticking by left-left          
+            if abs(self.x1-i.x2)<EPSILON: self.refresh(i.x2,self.y1,i.x2+self.width,self.y2) #sicking by left-right
+            if abs(self.x2-i.x1)<EPSILON: self.refresh(i.x1-self.width,self.y1,i.x1,self.y2) #sticking by right-left
+            if abs(self.x2-i.x2)<EPSILON: self.refresh(i.x2-self.width,self.y1,i.x2,self.y2) #sticking by right-right
+            if abs(self.y1-i.y1)<EPSILON: self.refresh(self.x1,i.y1,self.x2,i.y1+self.heigth) # sticking by top-top
+            if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.heigth) # sticking by top-bottom
+            if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.heigth,self.x2,i.y1) # sticking by bottom-top
+            if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.heigth,self.x2,i.y2) # sticking by top-top
             
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
