@@ -290,8 +290,8 @@ class shapeBuilder(tk.Canvas):
                     self.select(None, i)
             self.coords(self.selecting_area,mwc,mnc,mec,msc)
             self.starting_pos = None
-        else:
-            self.itemconfigure(self.selecting_area,state="hidden")
+            self.rectangles
+        self.itemconfigure(self.selecting_area,state="hidden")
             
             
         self.isMoving = False
@@ -314,6 +314,7 @@ class shapeBuilder(tk.Canvas):
             Sx=0
             Sy=0
             for i in self.rectangles:
+                print((i.center[0]-self.Xcenter)/self.scale)
                 A += i.area
                 Sx += (i.center[0]-self.Xcenter)*i.area
                 Sy += (self.Ycenter-i.center[1])*i.area
@@ -435,8 +436,14 @@ class shapeBuilder(tk.Canvas):
     def add_to_clp(self,e=None):
         self.clipboard = self.selected #! deepcopy???
     def insert_from_clp(self,e=None):
+        print(f"{len(self.rectangles)=}")
+        print(f"{len(self.selected)=}")
         for i in self.clipboard:
+            print((i.center[0]-self.Xcenter)/self.scale)
             self.rectangles.append(Rectangle(self,i.x1+5,i.y1+5,i.x2+5,i.y2+5,self.create_rectangle(i.x1+5,i.y1+5,i.x2+5,i.y2+5,fill="blue", tags=("rect"))))
+            print((self.rectangles[-1].center[0]-self.Xcenter)/self.scale)
+        print(f"{len(self.rectangles)=}")
+        print(f"{len(self.selected)=}")
 
 class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
@@ -449,7 +456,7 @@ class Rectangle():
         self.width = x2-x1
         self.heigth = y2-y1
         self.area = self.width*self.heigth
-        self.center=((x1-x2)/2, (y1-y2)/2)
+        self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
         self.overlapping_with = []
     def refresh(self,x1,y1,x2,y2):
         self.x1 = x1
@@ -471,7 +478,6 @@ class Rectangle():
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
-            print(self, self.canvas.selected)
             self.canvas.itemconfig(self.canvas_repr, fill='blue')
             
 class sb_side_menu(tk.Frame):
