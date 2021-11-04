@@ -74,6 +74,10 @@ class shapeBuilder(tk.Canvas):
         self.width_label = self.create_text(20+self.width,10+ self.heigth/2,text=str(self.width/10))
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
 
+        ###########* Creating basic, green circle #############
+        self.alap_circle = self.create_arc(10,60,40,90,extent=180, start = 0, fill="green")
+        self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
+
         ##########* Creating axis #############
         self.x_axis = self.create_line(10,self.Ycenter,self.Xcenter*2,self.Ycenter, arrow=tk.LAST, fill= "gray", tags=("orig_axes")) #Drawing X-axis
         self.x_label = self.create_text(2*self.Xcenter-5,self.Ycenter+ 20,text="X",fill= "gray",tags=("orig_axes")) # X lavel
@@ -101,6 +105,8 @@ class shapeBuilder(tk.Canvas):
 
         self.root.bind("<Control-c>", self.add_to_clp)
         self.root.bind("<Control-v>", self.insert_from_clp)
+
+        #self.root.bind("<Control-n>", lambda e: self.hc.refresh(self.Xcenter-20,self.Ycenter-100, self.hc.r))
 
         ##############* Packing objects ###############
         self.l_width.grid(row=1,column=0)
@@ -507,7 +513,28 @@ class Rectangle():
             if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.heigth) # sticking by top-bottom
             if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.heigth,self.x2,i.y1) # sticking by bottom-top
             if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.heigth,self.x2,i.y2) # sticking by top-top
-            
+
+class Arc():
+    def __init__(self,canvas, center_x, center_y, r, angle=180, start=0):
+        self.canvas = canvas
+        self.center = (center_x,center_y)
+        self.r = r
+        self.d = 2*r
+        self.start = start
+        self.angle = min (360,angle)
+        self.area = r**2*pi*(self.angle/360)
+        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("circle"))
+    def refresh(self, center_x, center_y,r,angle=180, start=0):
+        self.center = (center_x,center_y)
+        self.r = r
+        self.d = 2*r
+        self.start = start
+        self.angle = max(360,angle)
+        self.area = r**2*pi*(self.angle/360)
+        self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
+
+
+
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
         super().__init__(root,width=30, bg=root.colors['secondary_color'])
