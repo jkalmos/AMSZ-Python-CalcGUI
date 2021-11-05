@@ -1,6 +1,6 @@
 import re
 import tkinter as tk
-from math import cos, sin, sqrt, atan, pi
+from math import cos, sin, sqrt, atan, asin, pi, degrees
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
@@ -15,6 +15,8 @@ STICKY = True
 #self.root.show_orig_axis = True
 #self.root.orig_axis_dissapier = False
 
+def dist(p1,p2):
+    return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
         super().__init__(root, bd=0, bg=root.colors["secondary_color"],highlightthickness=0)
@@ -22,6 +24,7 @@ class shapeBuilder(tk.Canvas):
         self.sb_sm = sb_sm #own side menu
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
+        self.arcs = []
         self.clipboard = []
         self.Xcenter = 400
         self.Ycenter = 300
@@ -75,6 +78,9 @@ class shapeBuilder(tk.Canvas):
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
 
         ###########* Creating basic, green circle #############
+        self.r=15
+        self.angle=180
+        self.start = 0
         self.alap_circle = self.create_arc(10,60,40,90,extent=180, start = 0, fill="green")
         self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
 
@@ -209,9 +215,17 @@ class shapeBuilder(tk.Canvas):
                 self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current:
+            pos = self.coords(self.alap_circle)
+            cent = (pos[0]+self.r,pos[1]+self.r)
+            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle:
+                print("kör")
+                #! Nem mindig jó helyre kattintva aktiválódik!!
+                self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
+                self.itemconfig(self.current.canvas_repr, fill='light blue')
+                print(type(self.current))
+        if not self.current:
             ############### Selecting multiple objects ##############
             if self.starting_pos is None: 
-                print("test")
                 self.starting_pos = (e.x,e.y)
                 self.itemconfigure(self.selecting_area,state="normal")
             else:
@@ -221,8 +235,12 @@ class shapeBuilder(tk.Canvas):
                     print("Can not show selection area")
             return -1
         pos = self.coords(self.current.canvas_repr)
-        if self.isMoving or e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
+        if type(self.current)==Rectangle and (self.isMoving or e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]):
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.heigth/2,e.x+self.current.width/2,e.y+self.current.heigth/2)
+            self.isMoving = True
+            return 0
+        elif self.isMoving or type(self.current)==Arc:
+            self.current.refresh(e.x,e.y,self.current.r,self.current.angle,self.current.start)
             self.isMoving = True
             return 0
         
@@ -235,12 +253,15 @@ class shapeBuilder(tk.Canvas):
         if self.sticky.get() and self.current:
             self.current.align()
             #? prioritási sorrend???    
-        if self.isMoving and self.current is not None:
+        if self.isMoving and self.current is not None and type(self.current)==Rectangle:
             #self.itemconfig(self.current.canvas_repr, fill='blue')
             self.rectangles.append(self.current)
             for k in self.rectangles:
                 k.is_overlapping()
-            #self.current.is_overlapping()
+        elif self.isMoving and self.current is not None and type(self.current)==Arc:
+            self.arcs.append(self.current)
+            for k in self.arcs:
+                k.is_overlapping()
         if self.starting_pos is not None:
             mwc = min(self.starting_pos[0],e.x)
             mec = max(self.starting_pos[0],e.x)
@@ -532,6 +553,10 @@ class Arc():
         self.angle = max(360,angle)
         self.area = r**2*pi*(self.angle/360)
         self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
+    def align(self):
+        pass
+    def is_overlapping(self):
+        self.canvas.itemconfig(self.canvas_repr, fill='blue')
 
 
 
