@@ -214,15 +214,22 @@ class shapeBuilder(tk.Canvas):
             if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None:
                 self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
-        if not self.current:
-            pos = self.coords(self.alap_circle)
-            cent = (pos[0]+self.r,pos[1]+self.r)
-            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle:
-                print("kör")
-                #! Nem mindig jó helyre kattintva aktiválódik!!
-                self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
-                self.itemconfig(self.current.canvas_repr, fill='light blue')
-                print(type(self.current))
+        if not self.current: # Circle
+            for i in self.arcs:
+                if i.is_inside((e.x,e.y)):
+                    self.current = i
+                    self.arcs.remove(i)
+                    self.itemconfig(self.current.canvas_repr, fill='light blue')
+                    break
+            else:
+                pos = self.coords(self.alap_circle)
+                cent = (pos[0]+self.r,pos[1]+self.r)
+                if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle:
+                    print("kör")
+                    #! Nem mindig jó helyre kattintva aktiválódik!!
+                    self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
+                    self.itemconfig(self.current.canvas_repr, fill='light blue')
+                    print(type(self.current))
         if not self.current:
             ############### Selecting multiple objects ##############
             if self.starting_pos is None: 
@@ -557,6 +564,10 @@ class Arc():
         pass
     def is_overlapping(self):
         self.canvas.itemconfig(self.canvas_repr, fill='blue')
+    def is_inside(self,point):
+        if dist(point,self.center)<=self.r: return True
+        return False
+
 
 
 
