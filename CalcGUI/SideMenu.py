@@ -58,7 +58,7 @@ class SideMenu(tk.Frame):
             self.combo_ellipse.lift()
             self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=130, anchor=tk.N)
             self.combo_isosceles.lift()
-        def combo_clear():
+        def combo_clear(self):
             combo_open.set(False)
             self.combo_rectangle.place_forget()
             self.combo_circle.place_forget()
@@ -72,7 +72,7 @@ class SideMenu(tk.Frame):
                 combo_show()
             
             else:
-                combo_clear()
+                combo_clear(self)
                 self.combo_rectangle.grid(row=1, column=0, columnspan=5)
                 self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_rectangle_closed.png")
                 self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
@@ -86,7 +86,7 @@ class SideMenu(tk.Frame):
                 combo_show()
             
             else:
-                combo_clear()
+                combo_clear(self)
                 self.combo_circle.grid(row=1, column=0, columnspan=5)
                 self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_circle_closed.png")
                 self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
@@ -100,7 +100,7 @@ class SideMenu(tk.Frame):
                 combo_show()
             
             else:
-                combo_clear()
+                combo_clear(self)
                 self.combo_ellipse.grid(row=1, column=0, columnspan=5)
                 self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_ellipse_closed.png")
                 self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
@@ -114,7 +114,7 @@ class SideMenu(tk.Frame):
                 combo_show()
             
             else:
-                combo_clear()
+                combo_clear(self)
                 self.combo_isosceles.grid(row=1, column=0, columnspan=5)
                 self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles_closed.png")
                 self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
@@ -127,7 +127,7 @@ class SideMenu(tk.Frame):
                 self.combo_default.grid_forget()
                 combo_show()
             else:
-                combo_clear()
+                combo_clear(self)
                 self.combo_default.grid(row=1, column=0, columnspan=5)
 
         self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_default.png")
@@ -275,6 +275,7 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result7)
         self.indicators.append(self.result8)
         self.indicators.append(self.result9)
+        self.indicators.append(self.result10)
         self.indicators.append(self.lbl)
         self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)

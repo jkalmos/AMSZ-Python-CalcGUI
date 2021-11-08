@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import BooleanVar, Toplevel, ttk
 from tkinter.constants import BOTH
 from PIL import Image, ImageTk
+from numpy.core.fromnumeric import shape
 import CalcFunctions as Calc
 import json
 from SideMenu import SideMenu
@@ -199,8 +200,13 @@ class main_window(tk.Tk):
             self.sb.pack_forget()
             self.sb_sm.pack_forget()
             self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
+            self.sm.clear()
+            # self.sm.combo_clear()
+            self.sm.combo_default.grid(row=1, column=0, columnspan=5)
             self.plotted = False
             self.shape_builder_mode = False
+            self.shape = None
+            plot(self, None, False, False, False, False, self.colors)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
@@ -492,14 +498,17 @@ class main_window(tk.Tk):
             self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
         else:
             print("Hiba, az alakzat nem talalhato")
-        plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+        if self.sm.shape == "Circle":
+            plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+            plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+        else:
+            plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, vissza[0], vissza[1], vissza[0])
+            plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape, vissza[0], vissza[1], vissza[0])
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        # 'main_color': '#2C394B',
-        # 'secondary_color': '#082032',
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',

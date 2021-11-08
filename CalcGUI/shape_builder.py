@@ -131,7 +131,7 @@ class shapeBuilder(tk.Canvas):
         self.value_button.grid(row=1,rowspan=2, column=5,pady=(15,0),padx=(5,10))
         self.is_sticky.grid(row=3,columnspan=3)
         self.calc_button.grid(row=4,column=1,columnspan=5,padx=(20))
-        self.label.grid(row=5,columnspan=5, pady= 50,padx=20)
+        self.label.grid(row=5,columnspan=5, pady= 50,padx=(10,0))
         # self.cls.grid(row=6, column=1,columnspan=3)
 
     def popup(self, e): #right cklick menu shows up
@@ -331,7 +331,7 @@ class shapeBuilder(tk.Canvas):
               
             Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2) 
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
-        i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
+        i1, i2, alpha = self.principal_axes(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
         self.label.config(text=out_str)
         
@@ -371,7 +371,7 @@ class shapeBuilder(tk.Canvas):
         self.delete("hauptachse")
         self.delete("s_axis")
         self.label.config(text="")   
-    def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy, a_length):
+    def principal_axes(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         if Ix != Iy and Ixy !=0:
