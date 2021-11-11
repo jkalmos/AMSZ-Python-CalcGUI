@@ -2,6 +2,7 @@ import re
 import tkinter as tk
 from math import cos, sin, sqrt, atan, asin, pi, degrees
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
+from typing import Container, List
 from PIL import ImageTk,Image
 import keyboard
 WIDTH = 30
@@ -25,6 +26,7 @@ class shapeBuilder(tk.Canvas):
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
         self.arcs = []
+        self.shapes = Shapes(self,self.rectangles,self.arcs)
         self.clipboard = []
         self.Xcenter = 400
         self.Ycenter = 300
@@ -79,9 +81,9 @@ class shapeBuilder(tk.Canvas):
 
         ###########* Creating basic, green circle #############
         self.r=15
-        self.angle=180
-        self.start = 0
-        self.alap_circle = self.create_arc(10,60,40,90,extent=180, start = 0, fill="green")
+        self.angle=70
+        self.start = 20
+        self.alap_circle = self.create_arc(10,60,40,90,extent=self.angle, start = self.start, fill="green")
         self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
 
         ##########* Creating axis #############
@@ -96,16 +98,17 @@ class shapeBuilder(tk.Canvas):
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
         self.bind('<ButtonRelease-1>',self.release) #when you relase the left mose button
         self.popup_menu = tk.Menu(self, tearoff=0) #right click menu
-        self.popup_menu.add_command(label="Delete",command=self.delete_rectangle)
+        self.popup_menu.add_command(label="Delete",command=self.delete_shape)
         self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
         self.popup_menu.add_command(label="Info",command=self.rectangle_info)
         self.bind("<Button-3>", self.popup) # right-click event
         self.bind("<Configure>", self.resize_canvas)
         #self.tag_bind("rect",'<Double-Button-1>',self.select)
-        self.tag_bind("rect",'<Button-1>',self.select)
+        self.tag_bind("shape",'<Button-1>',self.select)
+        #self.tag_bind("arc",'<Button-1>',self.select)
         self.bind("<Button-1>", self.deselect)
         self.bind("<Motion>", lambda e: self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}"))
-        self.root.bind("<Delete>", self.delete_rectangle)
+        self.root.bind("<Delete>", self.delete_shape)
         self.root.bind("<Control-i>", self.rectangle_info)
         self.root.bind("<Control-r>", self.resize_rectangle)
 
@@ -129,30 +132,29 @@ class shapeBuilder(tk.Canvas):
 
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
-            for i in self.rectangles:
-                pos = self.coords(i.canvas_repr)
-                if e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3]:
+            for i in self.shapes:
+                if i.is_inside((e.x,e.y)):
                     self.select(e)
                     try:
                         self.popup_menu.tk_popup(e.x_root, e.y_root, 0)
                     finally:
                         self.popup_menu.grab_release()
                     break
-    def delete_rectangle(self, e=None):
+    def delete_shape(self, e=None):
         print("deleteing rectangle")
         for i in self.selected:
             self.delete(i.canvas_repr)
-            self.rectangles.remove(i)
+            self.shapes.remove(i)
             self.selected = []
-        for k in self.rectangles:
+        for k in self.shapes:
             k.is_overlapping()
-    def resize_rectangle(self,e=None):
+    def resize_rectangle(self,e=None): #! Only rect
         for i in self.selected:
             i.refresh(i.x1, i.y1, i.x1 + self.width, i.y1 + self.heigth)
             i = None
         for k in self.rectangles:
             k.is_overlapping()
-    def rectangle_info(self,e=None):
+    def rectangle_info(self,e=None): #! Only rect
         if len(self.selected)>1:
             self.label.config(text="Hiba: Túl sok objektum van kijelölve!")
             return -1
@@ -166,20 +168,20 @@ class shapeBuilder(tk.Canvas):
                 self.itemconfig(i.canvas_repr, fill='pink')
             return 0
         tmp = self.find_closest(e.x,e.y)[0]
-        for i in self.rectangles:
+        for i in self.shapes:
             if i.canvas_repr == tmp and i not in self.selected:
                 self.selected.append(i)
                 break
         else:
-            print("Selection_Error: Rectangle not found...")
+            print("Selection_Error: Shape not found...")
             return -1  
         for i in self.selected:
             self.itemconfig(i.canvas_repr, fill='pink')
-        print("Selecting rectangle")
+        print("Selecting shape")
     def deselect(self,e=None):
         if e is not None:
-            for i in self.rectangles:
-                if e.x < i.x2 and e.x> i.x1 and i.y1 < e.y and i.y2 > e.y:
+            for i in self.shapes:
+                if i.is_inside((e.x,e.y)):
                     return 0
         try:
             for i in self.selected:
@@ -188,8 +190,9 @@ class shapeBuilder(tk.Canvas):
             self.selected = []
         except:
             pass
-        for k in self.rectangles:
+        for k in self.shapes:
             k.is_overlapping()
+    #################! EDDIG VAN ÁTNÉZVE! ###################
     def move(self,e):
         if keyboard.is_pressed("Ctrl"):
             if self.last_click_pos is None:
@@ -212,7 +215,7 @@ class shapeBuilder(tk.Canvas):
         else:
             pos = self.coords(self.alap_negyzet.canvas_repr)
             if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None:
-                self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect")))
+                self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect","shape")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current: # Circle
             for i in self.arcs:
@@ -262,7 +265,7 @@ class shapeBuilder(tk.Canvas):
             #? prioritási sorrend???    
         if self.isMoving and self.current is not None and type(self.current)==Rectangle:
             #self.itemconfig(self.current.canvas_repr, fill='blue')
-            self.rectangles.append(self.current)
+            self.shapes.append(self.current)
             for k in self.rectangles:
                 k.is_overlapping()
         elif self.isMoving and self.current is not None and type(self.current)==Arc:
@@ -407,19 +410,13 @@ class shapeBuilder(tk.Canvas):
         self.Xcenter += dx
         self.Ycenter += dy
         # Basic coord system
-        """
-        self.coords(self.x_axis,10,self.Ycenter,self.Xcenter*2,self.Ycenter)
-        self.coords(self.y_axis,self.Xcenter,10,self.Xcenter,self.Ycenter*2)
-        self.coords(self.x_label,2*self.Xcenter-5,self.Ycenter+ 20)
-        self.coords(self.y_label,self.Xcenter +20 ,15)
-        """
         self.coords(self.x_axis,10,self.Ycenter,self.canvas_width-10,self.Ycenter)
         self.coords(self.y_axis,self.Xcenter,10,self.Xcenter,self.canvas_height-10)
         self.coords(self.x_label,2*self.Xcenter-5,self.Ycenter+ 20)
         self.coords(self.y_label,self.Xcenter +20 ,15)
         #Rectangles
         for i in self.rectangles:
-            i.refresh(i.x1+dx,i.y1+dy,i.x2+dx,i.y2+dy)
+            i.translate(dx,dy)
     def place_objekt(self,x,y,object):
         object.refresh(x,y,x+object.width,y+object.heigth) #rectangle
     def add_to_clp(self,e=None):
@@ -474,7 +471,7 @@ class Rectangle():
         self.align_to_axis()#sicking to the coordinate system
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
-            pos = pos=[self.x1,self.y1,self.x2,self.y2]
+            pos=[self.x1,self.y1,self.x2,self.y2]
             if abs(pos[0]-self.canvas.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
                 self.refresh(self.canvas.Xcenter,pos[1],self.canvas.Xcenter+self.width,pos[3])
                 pos = self.canvas.coords(self.canvas_repr)
@@ -541,7 +538,13 @@ class Rectangle():
             if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.heigth) # sticking by top-bottom
             if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.heigth,self.x2,i.y1) # sticking by bottom-top
             if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.heigth,self.x2,i.y2) # sticking by top-top
-
+    def translate(self, dx,dy):
+        self.refresh(self.x1+dx,self.y1+dy,self.x2+dx,self.y2+dy)
+    def is_inside(self,point):
+        if point[0]>self.x1 and point[0]<self.x2 and point[1]>self.y1 and point[1]<self.y2:
+            return True
+        else:
+            return False
 class Arc():
     def __init__(self,canvas, center_x, center_y, r, angle=180, start=0):
         self.canvas = canvas
@@ -551,7 +554,7 @@ class Arc():
         self.start = start
         self.angle = min (360,angle)
         self.area = r**2*pi*(self.angle/360)
-        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("circle"))
+        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("arc","shape"))
     def refresh(self, center_x, center_y,r,angle=180, start=0):
         self.center = (center_x,center_y)
         self.r = r
@@ -561,13 +564,66 @@ class Arc():
         self.area = r**2*pi*(self.angle/360)
         self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
     def align(self):
-        pass
+        self.align_to_axis()
+    def align_to_axis(self):
+        if self.canvas.root.show_orig_axis:
+            #* Sticking with the center of the rectangle to the coordinate system
+            if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
+                self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
+            if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
+                self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
     def is_overlapping(self):
         self.canvas.itemconfig(self.canvas_repr, fill='blue')
     def is_inside(self,point):
         if dist(point,self.center)<=self.r: return True
         return False
+    def translate(self,dx,dy):
+        self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
 
+class Shapes():
+    def __init__(self, canvas, rectangles, arcs):
+        self.canvas = canvas
+        self.container = []
+        self.rectangles = rectangles
+        self.arcs = arcs
+        self.container.append(self.rectangles)
+        self.container.append(self.arcs)
+
+    def __iter__(self):
+        self.n = 0
+        self.max =0 
+        for i in self.container: self.max+=len(i)
+        return self
+    def __getitem__(self, key):
+        return self.__getelement_by_index(key)
+
+    def __next__(self):
+        if self.n < self.max:
+            x = self.n
+            self.n += 1
+            return self.__getelement_by_index(x)
+        else:
+            raise StopIteration
+    def __getelement_by_index(self,index):
+        tmp = []
+        for i in self.container:
+            for k in i:
+                tmp.append(k)
+        return tmp[index]
+    def append(self, obj):
+        if type(obj)==Rectangle:
+            self.rectangles.append(obj)
+        elif type(obj==Arc):
+            self.rectangles.append(obj)
+        else:
+            print("Hiba: A formatum nem megfelelo!")
+    def remove(self, obj):
+        if type(obj)==Rectangle:
+            self.rectangles.remove(obj)
+        elif type(obj==Arc):
+            self.arcs.remove(obj)
+        else:
+            print("Hiba: A formatum nem megfelelo!")
 
 
 
