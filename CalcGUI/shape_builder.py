@@ -9,7 +9,9 @@ WIDTH = 30
 EPSILON = 10
 STICKY = True
 
-#! Selection_error: Rectangle not found...
+#TODO: Overlapping not recognized while alignig rects
+#TODO: WARNING: Kijelölö négyzet használata közben tudunk új körcikkelyeket generálni... 
+#TODO: X-label elúszik a canvas mozgatásakor...
 
 #self.root.sb_ha_vis = False
 #self.root.calc_for_orig_axis = False
@@ -148,17 +150,22 @@ class shapeBuilder(tk.Canvas):
             self.selected = []
         for k in self.shapes:
             k.is_overlapping()
-    def resize_rectangle(self,e=None): #! Only rect
+    def resize_rectangle(self,e=None): #? Could be better
         for i in self.selected:
-            i.refresh(i.x1, i.y1, i.x1 + self.width, i.y1 + self.heigth)
+            if type(i)==Rectangle:
+                i.refresh(i.x1, i.y1, i.x1 + self.width, i.y1 + self.heigth)
+            if type(i)==Arc:
+                i.refresh(i.center[0],i.center[1],self.width/2,i.angle, i.start)
+            else:
+                raise TypeError
             i = None
         for k in self.rectangles:
             k.is_overlapping()
-    def rectangle_info(self,e=None): #! Only rect
+    def rectangle_info(self,e=None):
         if len(self.selected)>1:
-            self.label.config(text="Hiba: Túl sok objektum van kijelölve!")
+            self.label.config(text=f"{len(self.selected)} darab objektum van kijelölve")
             return -1
-        if len(self.selected)>0: self.label.config(text=f"Szélesség = {self.selected[0].width/self.scale}\nMagasság = {self.selected[0].heigth/self.scale}\nKözéppont = ({(self.selected[0].center[0]-self.Xcenter)/self.scale},{(self.Ycenter-self.selected[0].center[1])/self.scale})" )
+        if len(self.selected)>0: self.label.config(text= self.selected[0].get_info())
         
     def select(self,e, object=None):
         #self.deselect()
@@ -192,8 +199,7 @@ class shapeBuilder(tk.Canvas):
             pass
         for k in self.shapes:
             k.is_overlapping()
-    #################! EDDIG VAN ÁTNÉZVE! ###################
-    def move(self,e):
+    def move(self,e): #? could be better but works...
         if keyboard.is_pressed("Ctrl"):
             if self.last_click_pos is None:
                 self.last_click_pos = (e.x, e.y)
@@ -205,10 +211,9 @@ class shapeBuilder(tk.Canvas):
         self.deselect()
         self.label.config(text=f"")
         #choosing object
-        for i in self.rectangles:
-            pos = self.coords(i.canvas_repr)
-            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None:
-                self.rectangles.remove(i)
+        for i in self.shapes:
+            if self.current is None and i.is_inside((e.x,e.y)) and self.starting_pos is None:
+                self.shapes.remove(i)
                 self.current = i
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
                 break
@@ -218,21 +223,14 @@ class shapeBuilder(tk.Canvas):
                 self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect","shape")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current: # Circle
-            for i in self.arcs:
-                if i.is_inside((e.x,e.y)):
-                    self.current = i
-                    self.arcs.remove(i)
-                    self.itemconfig(self.current.canvas_repr, fill='light blue')
-                    break
-            else:
-                pos = self.coords(self.alap_circle)
-                cent = (pos[0]+self.r,pos[1]+self.r)
-                if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle:
-                    print("kör")
-                    #! Nem mindig jó helyre kattintva aktiválódik!!
-                    self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
-                    self.itemconfig(self.current.canvas_repr, fill='light blue')
-                    print(type(self.current))
+            pos = self.coords(self.alap_circle)
+            cent = (pos[0]+self.r,pos[1]+self.r)
+            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle:
+                print("kör")
+                #! Nem mindig jó helyre kattintva aktiválódik!!
+                self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
+                self.itemconfig(self.current.canvas_repr, fill='light blue')
+                print(type(self.current))
         if not self.current:
             ############### Selecting multiple objects ##############
             if self.starting_pos is None: 
@@ -263,26 +261,21 @@ class shapeBuilder(tk.Canvas):
         if self.sticky.get() and self.current:
             self.current.align()
             #? prioritási sorrend???    
-        if self.isMoving and self.current is not None and type(self.current)==Rectangle:
+        if self.isMoving and self.current is not None:
             #self.itemconfig(self.current.canvas_repr, fill='blue')
             self.shapes.append(self.current)
-            for k in self.rectangles:
-                k.is_overlapping()
-        elif self.isMoving and self.current is not None and type(self.current)==Arc:
-            self.arcs.append(self.current)
-            for k in self.arcs:
+            for k in self.shapes:
                 k.is_overlapping()
         if self.starting_pos is not None:
             mwc = min(self.starting_pos[0],e.x)
             mec = max(self.starting_pos[0],e.x)
             mnc = min(self.starting_pos[1],e.y)
             msc = max(self.starting_pos[1],e.y)
-            for i in self.rectangles:    
+            for i in self.shapes:    
                 if i.center[0] > mwc and i.center[0]< mec and i.center[1] > mnc and i.center[1] < msc:
                     self.select(None, i)
             self.coords(self.selecting_area,mwc,mnc,mec,msc)
             self.starting_pos = None
-            self.rectangles
         self.itemconfigure(self.selecting_area,state="hidden")
             
             
@@ -293,7 +286,7 @@ class shapeBuilder(tk.Canvas):
         self.tag_raise("plus_minus")
         self.tag_raise(self.pos_lbl)
         self.last_click_pos = None
-    def calculate(self):
+    def calculate(self): #! Only for rects
         if len(self.rectangles) == 0:
             self.label.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0")
             return -1
@@ -371,9 +364,11 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
         self.itemconfig(self.height_label, text=str(self.width/self.scale))
         self.itemconfig(self.width_label,text=str(self.heigth/self.scale))
-    def clear_all(self):
+    def clear_all(self): #? Could be better
         self.rectangles = []
+        self.arcs = []
         self.delete("rect") 
+        self.delete("arcs")
         self.delete("hauptachse")
         self.delete("s_axis")
         self.label.config(text="")   
@@ -388,15 +383,18 @@ class shapeBuilder(tk.Canvas):
             self.h1 = self.create_line(Sx-a_length*cos(alfa),Sy-a_length*sin(alfa),Sx+a_length*cos(alfa),Sy+a_length*sin(alfa), arrow=tk.LAST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
             self.h2 = self.create_line(Sx-a_length*cos(alfa+pi/2),Sy-a_length*sin(alfa+pi/2),Sx+a_length*cos(alfa+pi/2),Sy+a_length*sin(alfa+pi/2), arrow=tk.FIRST, fill=self.root.colors['draw_main'],tags=("hauptachse"))
         return I1, I2, alfa
-    def rescale(self,scale):
+    def rescale(self,scale): #!? Could be better
         self.scale *= scale
         self.alap_negyzet.refresh(10,10,10+self.width*scale,10+self.heigth*scale)
+        self.coords(self.alap_circle, 10,60,10+self.width*scale,60+self.width*scale) #? Esetleg külön sugár változó
         self.width *= scale
         self.heigth *= scale
         self.coords(self.width_label,25+self.width,10+ self.heigth/2)
         self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
-        for i in self.rectangles:
+        for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
+        for i in self.arcs:
+            i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.r*scale, i.angle, i.start)
     def resize_canvas(self,e):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
@@ -415,9 +413,9 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.x_label,2*self.Xcenter-5,self.Ycenter+ 20)
         self.coords(self.y_label,self.Xcenter +20 ,15)
         #Rectangles
-        for i in self.rectangles:
+        for i in self.shapes:
             i.translate(dx,dy)
-    def place_objekt(self,x,y,object):
+    def place_objekt(self,x,y,object): #? Not implemented
         object.refresh(x,y,x+object.width,y+object.heigth) #rectangle
     def add_to_clp(self,e=None):
         self.clipboard = self.selected #! deepcopy???
@@ -456,6 +454,8 @@ class Rectangle():
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overlapping(self):
         a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
+        #print(self.canvas_repr in a)
+        a = [p for p in a if "rect" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
         in_overlapping = False
         for i in self.canvas.rectangles:
@@ -545,6 +545,9 @@ class Rectangle():
             return True
         else:
             return False
+    def get_info(self):
+        text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.heigth/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
+        return text
 class Arc():
     def __init__(self,canvas, center_x, center_y, r, angle=180, start=0):
         self.canvas = canvas
@@ -579,7 +582,9 @@ class Arc():
         return False
     def translate(self,dx,dy):
         self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
-
+    def get_info(self):
+        text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
+        return text
 class Shapes():
     def __init__(self, canvas, rectangles, arcs):
         self.canvas = canvas
@@ -588,7 +593,6 @@ class Shapes():
         self.arcs = arcs
         self.container.append(self.rectangles)
         self.container.append(self.arcs)
-
     def __iter__(self):
         self.n = 0
         self.max =0 
@@ -596,7 +600,6 @@ class Shapes():
         return self
     def __getitem__(self, key):
         return self.__getelement_by_index(key)
-
     def __next__(self):
         if self.n < self.max:
             x = self.n
@@ -614,7 +617,7 @@ class Shapes():
         if type(obj)==Rectangle:
             self.rectangles.append(obj)
         elif type(obj==Arc):
-            self.rectangles.append(obj)
+            self.arcs.append(obj)
         else:
             print("Hiba: A formatum nem megfelelo!")
     def remove(self, obj):
