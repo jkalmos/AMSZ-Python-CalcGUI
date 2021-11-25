@@ -46,114 +46,32 @@ class SideMenu(tk.Frame):
         input_font = "Roboto", 11
         
         ## Custom combobox ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        combo_open = tk.BooleanVar(False)
-        def combo_show():
-            combo_open.set(True)
-            self.combo_default.grid(row=1, column=0, columnspan=5)
-            self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=55, anchor=tk.N)
-            self.combo_rectangle.lift()
-            self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=80, anchor=tk.N)
-            self.combo_circle.lift()
-            self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=105, anchor=tk.N)
-            self.combo_ellipse.lift()
-            self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=130, anchor=tk.N)
-            self.combo_isosceles.lift()
-        def combo_clear(self):
-            combo_open.set(False)
-            self.combo_rectangle.place_forget()
-            self.combo_circle.place_forget()
-            self.combo_ellipse.place_forget()
-            self.combo_isosceles.place_forget()
-            self.canvas.update()
-
-        def rectangle_click():
-            if combo_open.get() == False:
-                self.combo_rectangle.grid_forget()
-                combo_show()
-            
-            else:
-                combo_clear(self)
-                self.combo_rectangle.grid(row=1, column=0, columnspan=5)
-                self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_rectangle_closed.png")
-                self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
-                self.combo_default.bind('<Button-1>', func=lambda e:combo_click())
-                self.combo_default.grid(row=1, column=0, columnspan=5)
-                self.combo_default["border"] = "0"
-                self.root.choose_object("Rectangle")
-        def circle_click():
-            if combo_open.get() == False:
-                self.combo_circle.grid_forget()
-                combo_show()
-            
-            else:
-                combo_clear(self)
-                self.combo_circle.grid(row=1, column=0, columnspan=5)
-                self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_circle_closed.png")
-                self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
-                self.combo_default.bind('<Button-1>', func=lambda e:combo_click())
-                self.combo_default.grid(row=1, column=0, columnspan=5)
-                self.combo_default["border"] = "0"
-                self.root.choose_object("Circle")
-        def ellipse_click():
-            if combo_open.get() == False:
-                self.combo_ellipse.grid_forget()
-                combo_show()
-            
-            else:
-                combo_clear(self)
-                self.combo_ellipse.grid(row=1, column=0, columnspan=5)
-                self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_ellipse_closed.png")
-                self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
-                self.combo_default.bind('<Button-1>', func=lambda e:combo_click())
-                self.combo_default.grid(row=1, column=0, columnspan=5)
-                self.combo_default["border"] = "0"
-                self.root.choose_object("Ellipse")
-        def isosceles_click():
-            if combo_open.get() == False:
-                self.combo_isosceles.grid_forget()
-                combo_show()
-            
-            else:
-                combo_clear(self)
-                self.combo_isosceles.grid(row=1, column=0, columnspan=5)
-                self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles_closed.png")
-                self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
-                self.combo_default.bind('<Button-1>', func=lambda e:combo_click())
-                self.combo_default.grid(row=1, column=0, columnspan=5)
-                self.combo_default["border"] = "0"
-                self.root.choose_object("Isosceles_triangle")
-        def combo_click():
-            if combo_open.get() == False:
-                self.combo_default.grid_forget()
-                combo_show()
-            else:
-                combo_clear(self)
-                self.combo_default.grid(row=1, column=0, columnspan=5)
+        self.combo_open = tk.BooleanVar(False)
 
         self.combo_default_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_default.png")
         self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
-        self.combo_default.bind('<Button-1>', func=lambda e:combo_click())
+        self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
         self.combo_default.grid(row=1, column=0, columnspan=5)
         self.combo_default["border"] = "0"
 
         self.combo_rectangle_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_rectangle.png")
         self.combo_rectangle = tk.Label(self.canvas, image=self.combo_rectangle_img, bg=self["background"], activebackground=self["background"])
-        self.combo_rectangle.bind('<Button-1>', func=lambda e:rectangle_click())
+        self.combo_rectangle.bind('<Button-1>', func=lambda e:self.rectangle_click())
         self.combo_rectangle["border"] = "0"
 
         self.combo_circle_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_circle.png")
         self.combo_circle = tk.Label(self.canvas, image=self.combo_circle_img, bg=self["background"], activebackground=self["background"])
-        self.combo_circle.bind('<Button-1>', func=lambda e:circle_click())
+        self.combo_circle.bind('<Button-1>', func=lambda e:self.circle_click())
         self.combo_circle["border"] = "0"
 
         self.combo_ellipse_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_ellipse.png")
         self.combo_ellipse = tk.Label(self.canvas, image=self.combo_ellipse_img, bg=self["background"], activebackground=self["background"])
-        self.combo_ellipse.bind('<Button-1>', func=lambda e:ellipse_click())
+        self.combo_ellipse.bind('<Button-1>', func=lambda e:self.ellipse_click())
         self.combo_ellipse["border"] = "0"
 
         self.combo_isosceles_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles.png")
         self.combo_isosceles = tk.Label(self.canvas, image=self.combo_isosceles_img, bg=self["background"], activebackground=self["background"])
-        self.combo_isosceles.bind('<Button-1>', func=lambda e:isosceles_click())
+        self.combo_isosceles.bind('<Button-1>', func=lambda e:self.isosceles_click())
         self.combo_isosceles["border"] = "0"
 
         self.combo_rectangle_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_rectangle_hover.png")
@@ -199,9 +117,11 @@ class SideMenu(tk.Frame):
         self.tm3 = tk.Label(self.canvas, text=self.root.angle_unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # transformed coordinate system input entries
-        self.te1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
-        self.te2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
-        self.te3 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
+        default_value = tk.StringVar()
+        default_value.set("0")
+        self.te1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'], textvariable = default_value)
+        self.te2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'], textvariable = default_value)
+        self.te3 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'], textvariable = default_value)
 
         # thickness input labels
         self.thl1 = tk.Label(self.canvas, text="t", bg=self["background"], fg=root.colors['text_color'], font=input_font)
@@ -293,6 +213,92 @@ class SideMenu(tk.Frame):
         ### VARIABLES-------------------------------------------------------------------------------
         # y-paddign between input widgets
         self.pady_val = 1
+## COMBOBOX FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
+    def combo_show(self):
+        self.combo_open.set(True)
+        self.combo_default.grid(row=1, column=0, columnspan=5)
+        self.combo_rectangle.place(bordermode=tk.OUTSIDE, relx=0.5,y=55, anchor=tk.N)
+        self.combo_rectangle.lift()
+        self.combo_circle.place(bordermode=tk.OUTSIDE, relx=0.5,y=80, anchor=tk.N)
+        self.combo_circle.lift()
+        self.combo_ellipse.place(bordermode=tk.OUTSIDE, relx=0.5,y=105, anchor=tk.N)
+        self.combo_ellipse.lift()
+        self.combo_isosceles.place(bordermode=tk.OUTSIDE, relx=0.5,y=130, anchor=tk.N)
+        self.combo_isosceles.lift()
+    def combo_clear(self):
+        self.combo_open.set(False)
+        self.combo_rectangle.place_forget()
+        self.combo_circle.place_forget()
+        self.combo_ellipse.place_forget()
+        self.combo_isosceles.place_forget()
+        self.canvas.update()
+
+    def rectangle_click(self):
+        if self.combo_open.get() == False:
+            self.combo_rectangle.grid_forget()
+            self.combo_show()
+        
+        else:
+            self.combo_clear()
+            # self.combo_rectangle.grid(row=1, column=0, columnspan=5)
+            self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_rectangle_closed.png")
+            self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
+            self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
+            self.combo_default.grid(row=1, column=0, columnspan=5)
+            self.combo_default["border"] = "0"
+            self.root.choose_object("Rectangle")
+    def circle_click(self):
+        if self.combo_open.get() == False:
+            self.combo_circle.grid_forget()
+            self.combo_show()
+        
+        else:
+            self.combo_clear()
+            # self.combo_circle.grid(row=1, column=0, columnspan=5)
+            self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_circle_closed.png")
+            self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
+            self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
+            self.combo_default.grid(row=1, column=0, columnspan=5)
+            self.combo_default["border"] = "0"
+            self.root.choose_object("Circle")
+    def ellipse_click(self):
+        if self.combo_open.get() == False:
+            self.combo_ellipse.grid_forget()
+            self.combo_show()
+        
+        else:
+            self.combo_clear()
+            # self.combo_ellipse.grid(row=1, column=0, columnspan=5)
+            self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_ellipse_closed.png")
+            self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
+            self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
+            self.combo_default.grid(row=1, column=0, columnspan=5)
+            self.combo_default["border"] = "0"
+            self.root.choose_object("Ellipse")
+    def isosceles_click(self):
+        if self.combo_open.get() == False:
+            self.combo_isosceles.grid_forget()
+            self.combo_show()
+        
+        else:
+            self.combo_clear()
+            # self.combo_isosceles.grid(row=1, column=0, columnspan=5)
+            self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_isosceles_closed.png")
+            self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
+            self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
+            self.combo_default.grid(row=1, column=0, columnspan=5)
+            self.combo_default["border"] = "0"
+            self.root.choose_object("Isosceles_triangle")
+    def combo_click(self):
+        if self.combo_open.get() == False:
+            self.combo_default.grid_forget()
+            self.combo_show()
+        else:
+            self.combo_clear()
+            self.combo_default.grid(row=1, column=0, columnspan=5)
+
+
+
 
     def change_color(self, color):
         self["background"] = color["secondary_color"]

@@ -37,7 +37,7 @@ class main_window(tk.Tk):
         super().__init__()
 
         # main window opening size
-        self.win_width = 1200
+        self.win_width = 1201
         self.win_height = 650
 
         # screen size
@@ -200,12 +200,24 @@ class main_window(tk.Tk):
             self.sb.pack_forget()
             self.sb_sm.pack_forget()
             self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
+            # calling = eval(f'self.sm.{self.sm.shape.lower()}_click')
+            # calling()
+
+            self.sm.combo_clear()
+            # self.combo_rectangle.grid(row=1, column=0, columnspan=5)
+            self.sm.combo_default_img = tk.PhotoImage(file=f"{self.colors['path']}combobox/combo_default.png")
+            self.sm.combo_default = tk.Label(self.sm.canvas, image=self.sm.combo_default_img, bg=self["background"], activebackground=self["background"])
+            self.sm.combo_default.bind('<Button-1>', func=lambda e:self.sm.combo_click())
+            self.sm.combo_default.grid(row=1, column=0, columnspan=5)
+            self.sm.combo_default["border"] = "0"
             self.sm.clear()
             # self.sm.combo_clear()
-            self.sm.combo_default.grid(row=1, column=0, columnspan=5)
+            # self.sm.combo_rectangle.grid_forget() ## TODO eval func stringet códdá alakít
+            # self.sm.combo_default.grid(row=1, column=0, columnspan=5)
+            # self.sm.calling
             self.plotted = False
             self.shape_builder_mode = False
-            self.shape = None
+            self.sm.shape = None
             plot(self, None, False, False, False, False, self.colors)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")

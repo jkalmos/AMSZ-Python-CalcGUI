@@ -29,6 +29,7 @@ def settings_window(self):
         self.settings_window.title("Beállítások")
         self.settings_window.geometry(f"{win_width}x{win_height}")
         self.settings_window.resizable(0, 0)
+        self.settings_window.tk.call('wm', 'iconphoto', self.settings_window._w, tk.PhotoImage(file='logo_A.png'))
 
         # setting window menubar
         self.settings_menu = tk.Canvas(self.settings_window, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
