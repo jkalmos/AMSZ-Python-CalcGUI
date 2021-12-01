@@ -1,6 +1,6 @@
 import re
 import tkinter as tk
-from math import cos, sin, sqrt, atan, asin, pi, degrees
+from math import cos, radians, sin, sqrt, atan, asin, pi, degrees
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from typing import Container, List
 from PIL import ImageTk,Image
@@ -8,7 +8,8 @@ import keyboard
 WIDTH = 30
 EPSILON = 10
 STICKY = True
-
+#* https://structx.com/Shape_Formulas_004.html
+#* https://hu.wikipedia.org/wiki/K%C3%B6rcikk
 #TODO: Overlapping not recognized while alignig rects
 #TODO: WARNING: Kijelölö négyzet használata közben tudunk új körcikkelyeket generálni... 
 #TODO: X-label elúszik a canvas mozgatásakor...
@@ -82,9 +83,9 @@ class shapeBuilder(tk.Canvas):
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
 
         ###########* Creating basic, green circle #############
-        self.r=15
-        self.angle=70
-        self.start = 20
+        self.r=30
+        self.angle=90
+        self.start = 90
         self.alap_circle = self.create_arc(10,60,40,90,extent=self.angle, start = self.start, fill="green")
         self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
 
@@ -287,7 +288,7 @@ class shapeBuilder(tk.Canvas):
         self.tag_raise(self.pos_lbl)
         self.last_click_pos = None
     def calculate(self): #! Only for rects
-        if len(self.rectangles) == 0:
+        if len(self.shapes) == 0:
             self.label.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0")
             return -1
         Ix = 0
@@ -298,11 +299,11 @@ class shapeBuilder(tk.Canvas):
         if not self.root.calc_for_orig_axis:
             Sx=0
             Sy=0
-            for i in self.rectangles:
-                print((i.center[0]-self.Xcenter)/self.scale)
+            for i in self.shapes:
+                #print((i.center[0]-self.Xcenter)/self.scale)
                 A += i.area
-                Sx += (i.center[0]-self.Xcenter)*i.area
-                Sy += (self.Ycenter-i.center[1])*i.area
+                Sx += (i.s_center[0]-self.Xcenter)*i.area
+                Sy += (self.Ycenter-i.s_center[1])*i.area
             Sx /= A
             Sy /= A
             Sx += self.Xcenter
@@ -441,6 +442,7 @@ class Rectangle():
         self.heigth = y2-y1
         self.area = self.width*self.heigth
         self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
+        self.s_center = self.center
         self.overlapping_with = []
     def refresh(self,x1,y1,x2,y2):
         self.x1 = x1
@@ -451,6 +453,7 @@ class Rectangle():
         self.heigth = self.y2-self.y1
         self.area = self.width*self.heigth
         self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
+        self.s_center = self.center
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overlapping(self):
         a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
@@ -557,14 +560,16 @@ class Arc():
         self.start = start
         self.angle = min (360,angle)
         self.area = r**2*pi*(self.angle/360)
+        self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
         self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("arc","shape"))
     def refresh(self, center_x, center_y,r,angle=180, start=0):
         self.center = (center_x,center_y)
         self.r = r
         self.d = 2*r
         self.start = start
-        self.angle = max(360,angle)
+        self.angle = min(360,angle)
         self.area = r**2*pi*(self.angle/360)
+        self.s_center = (center_x + (4/3*r*sin(radians(angle/2))/radians(angle))*cos(radians(start+angle/2)),center_y - (4/3*r*sin(radians(angle/2))/radians(angle))*sin(radians(start+angle/2)))
         self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
     def align(self):
         self.align_to_axis()
@@ -607,6 +612,10 @@ class Shapes():
             return self.__getelement_by_index(x)
         else:
             raise StopIteration
+    def __len__(self):
+        l = 0
+        for i in self.container: l+=len(i)
+        return l
     def __getelement_by_index(self,index):
         tmp = []
         for i in self.container:
