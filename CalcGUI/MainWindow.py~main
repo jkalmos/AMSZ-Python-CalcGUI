@@ -6,10 +6,10 @@ import CalcFunctions as Calc
 import json
 from SideMenu import SideMenu
 from tkvideo import tkvideo
-from PlotFunctions import plot
+from PlotFunctions import plot, plot_principal_axes
 import shape_builder
 from SettingsWindow import settings_window
-
+import numpy as np
 ## ANIMATION WINDOW -----------------------------------------------------------------------------------------------------------------------------------------------------------
 class starting_window(tk.Tk):
     def __init__(self):
@@ -36,7 +36,7 @@ class main_window(tk.Tk):
         super().__init__()
 
         # main window opening size
-        self.win_width = 1200
+        self.win_width = 1201
         self.win_height = 650
 
         # screen size
@@ -140,6 +140,7 @@ class main_window(tk.Tk):
         # self.sm.pack(side=tk.LEFT, fill=tk.Y)
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
+        plot(self, None, False, False, False, False, self.colors)
         
     ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     def theme_change(self, theme):
@@ -148,13 +149,13 @@ class main_window(tk.Tk):
             if self.theme=="dark":
                 self.colors=DARK_THEME
                 self.sm.change_color(DARK_THEME)
-                if self.plotted==True:
-                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+                # if self.plotted==True:
+                #     plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             elif self.theme == "light":
                 self.colors=LIGHT_THEME
                 self.sm.change_color(LIGHT_THEME)
-                if self.plotted==True:
-                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+                # if self.plotted==True:
+                #     plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             else:
                 print("ERROR: Unknown Theme")
                 return -1
@@ -173,9 +174,12 @@ class main_window(tk.Tk):
         for i in self.sm.controls:
             if i["unit_type"] == unit_type:
                 i["unit"].config(text = unit)
-        for i in self.sb.controls:
-            if i["unit_type"] == unit_type:
-                i["unit"].config(text = unit)
+        try:
+            for i in self.sb.controls:
+                if i["unit_type"] == unit_type:
+                    i["unit"].config(text = unit)
+        except:
+            None
     def build_shape(self):
         if not self.shape_builder_mode:
             print("opening sb")
@@ -196,8 +200,25 @@ class main_window(tk.Tk):
             self.sb.pack_forget()
             self.sb_sm.pack_forget()
             self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
+            # calling = eval(f'self.sm.{self.sm.shape.lower()}_click')
+            # calling()
+
+            self.sm.combo_clear()
+            # self.combo_rectangle.grid(row=1, column=0, columnspan=5)
+            self.sm.combo_default_img = tk.PhotoImage(file=f"{self.colors['path']}combobox/combo_default.png")
+            self.sm.combo_default = tk.Label(self.sm.canvas, image=self.sm.combo_default_img, bg=self["background"], activebackground=self["background"])
+            self.sm.combo_default.bind('<Button-1>', func=lambda e:self.sm.combo_click())
+            self.sm.combo_default.grid(row=1, column=0, columnspan=5)
+            self.sm.combo_default["border"] = "0"
+            self.sm.clear()
+            # self.sm.combo_clear()
+            # self.sm.combo_rectangle.grid_forget() ## TODO eval func stringet códdá alakít
+            # self.sm.combo_default.grid(row=1, column=0, columnspan=5)
+            # self.sm.calling
             self.plotted = False
             self.shape_builder_mode = False
+            self.sm.shape = None
+            plot(self, None, False, False, False, False, self.colors)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
@@ -225,6 +246,11 @@ class main_window(tk.Tk):
         elif shape == "Isosceles_triangle":
             self.sm.shape = "Isosceles_triangle"
             self.sm.change_to_isosceles_triangle()
+            print(self.sm.shape)
+        elif shape == "Right_triangle":
+            self.sm.shape = "Right_triangle"
+            self.sm.change_to_right_triangle()
+            print(self.sm.shape)
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
@@ -237,42 +263,97 @@ class main_window(tk.Tk):
                 i+=1
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
-                self.sm.controls[i]["entry"].config({"background": self.colors['secondary_color']})
+                self.sm.controls[i]["entry"].config({"background": self.colors['entry_color']})
             except:
                 print("Hiba")
-                self.sm.controls[i]["entry"].config({"background": "#eb4034"})
+                self.sm.controls[i]["entry"].config({"background": self.colors['error_color']})
                 for i in self.sm.indicators:
                         i.config(text="")
                 self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                 vissza.append(None)
-        if self.thickness_on.get(): #TODO HÁROMSZÖGNÉL A FALVASTAGSÁGNAK AZ OLDAFELEZŐ MER: FELÉNÉL KELL KISEBBNEK LENNIE
+        if self.thickness_on.get():
             if self.sm.shape == "Circle":
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                 d = float(self.sm.controls[0]["entry"].get().replace(',','.'))
                 if t <= d/2:
                     print("kor lehetseges")
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                    self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
                 else:
                     print("Hiba")
-                    self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                     for i in self.sm.indicators:
                         i.config(text="")
                     self.sm.result1.config(text="Hiba a falvastagságban!")
                     vissza.append(None)
                     t = None
-            else:
-                t = float(self.sm.controls[-1]["entry"].get().replace(',','.')) 
+            elif self.sm.shape == "Isosceles_triangle" or "Right_triangle":
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                 a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
                 b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-                if t < a/2 and t < b/2:
-                    print("lehetseges")     
+                phi = np.arctan(a / (b / 2))
+                s1 = a * np.sin(phi)
+                s2 = b
+                if t < s1/2 and t < s2/2:
+                    print("haromszog lehetseges")
                     try:
                         t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                         self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
                     except:
                         print("Hiba")
                         self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        t = None
+                else:
+                    if t >= s1/2 and s1 == s2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                    if t >= s1/2 and t <= s2/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= s2/2 and t <= s1/2:
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif t >= s2/2 and t >= s1/2:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        vissza.append(None)
+            else:
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                if t < a/2 and t < b/2:
+                    #print("lehetseges")
+                    try:
+                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
+                    except:
+                        print("Hiba")
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -304,7 +385,7 @@ class main_window(tk.Tk):
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
-                    elif t >= b/2 and t >= a/2:
+                    elif t >= a/2 and t >= b/2:
                         self.sm.controls[0]["entry"].config({"background": "#eb4034"})
                         self.sm.controls[1]["entry"].config({"background": "#eb4034"})
                         for i in self.sm.indicators:
@@ -312,10 +393,18 @@ class main_window(tk.Tk):
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
-                
+                    else:
+                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
         else:
             t = 0
-        #self.sm.e2.config({"background": "#475C6F"})    
+        #self.sm.e2.config({"background": "#475C6F"})
         return vissza,t
 
     def calculate(self, event=None):
@@ -325,61 +414,162 @@ class main_window(tk.Tk):
                 return -1
             self.values = Calc.Rectangle(*vissza[:2], t, *vissza[2:], rad = self.angle_unit == "rad")
             self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
-            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            if self.transformed_coordinate_on.get() == True:
+                print("transformed")
+                self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ₁ = " + str(round(self.values["Ieta"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓ₁ᵧ₁ = " + str(round(self.values["Ixieta"], 4)) + " " + self.unit + "\u2074")
+            else:
+                print("notransformed")
+                self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                print("x nagyobb")
+            else:
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                print("y nagyobb")
+            self.sm.result8.config(text="Keresztmetszeti tényezők:")
+            self.sm.result9.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+
         elif self.sm.shape == "Circle":
             vissza, t = self.get_entry(1)
             if None in vissza:
                 return -1
             self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
-            self.sm.result2.config(text="Iₓ = Iᵧ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result3.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result4.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result5.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            if self.transformed_coordinate_on.get() == True:
+                self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ₁ = " + str(round(self.values["Ieta"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓ₁ᵧ₁ = " + str(round(self.values["Ixieta"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result2.config(text="Iₓ = Iᵧ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result8.config(text="Keresztmetszeti tényezők:")
+            self.sm.result9.config(text="Kₓ = Kᵧ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result10.config(text="Kₚ = " + str(round(self.values["Kp"], 4)) + " " + self.unit + "\u2074")
+
         elif self.sm.shape == "Ellipse":
             vissza, t = self.get_entry(2)
             if None in vissza:
                 return -1
             self.values = Calc.Ellipse(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
-            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            if self.transformed_coordinate_on.get() == True:
+                print("transcoord")
+                self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ₁ = " + str(round(self.values["Ieta"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓ₁ᵧ₁ = " + str(round(self.values["Ixieta"], 4)) + " " + self.unit + "\u2074")
+            else:
+                print("notrans")
+                self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result8.config(text="Keresztmetszeti tényezők:")
+            self.sm.result9.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+
         elif self.sm.shape == "Isosceles_triangle":
             vissza, t = self.get_entry(2)
             if None in vissza:
                 return -1
             self.values = Calc.IsoscelesTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
-            self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result5.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
-            self.sm.result6.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+            if self.transformed_coordinate_on.get() == True:
+                print("transcoord")
+                self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ₁ = " + str(round(self.values["Ieta"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓ₁ᵧ₁ = " + str(round(self.values["Ixieta"], 4)) + " " + self.unit + "\u2074")
+            else:
+                print("notrans")
+                self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result8.config(text="Keresztmetszeti tényezők:")
+            self.sm.result9.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+
+        elif self.sm.shape == "Right_triangle":
+            vissza, t = self.get_entry(2)
+            if None in vissza:
+                return -1
+            self.values = Calc.RightTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
+            self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            if self.transformed_coordinate_on.get() == True:
+                print("transcoord")
+                self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ₁ = " + str(round(self.values["Ieta"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓ₁ᵧ₁ = " + str(round(self.values["Ixieta"], 4)) + " " + self.unit + "\u2074")
+            else:
+                print("notrans")
+                self.sm.result2.config(text="Iₓ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result5.config(text="Főmásodrendű nyomatékok:")
+            if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            else:
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result8.config(text="Keresztmetszeti tényezők:")
+            self.sm.result9.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
+            self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
+
+
         else:
             print("Hiba, az alakzat nem talalhato")
-        # plot(self, self.dimensions, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get())
-
+        if self.sm.shape == "Circle":
+            plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+            plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+        else:
+            plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, vissza[0], vissza[1], vissza[0])
+            plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape, vissza[0], vissza[1], vissza[0])
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
 
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
+        # 'main_color': '#2C394B',
+        # 'secondary_color': '#082032',
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',
-        'entry_color': '#4d4d4d',
+        'entry_color': '#262626',
         'disabled_color':'#333333',
+        'error_color':'red',
         'draw_main': '#87aade',
         'draw_secondary': '#1a1a1a',
         'draw_tertiary': 'grey',
+        'draw_principal': 'red',
         'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
@@ -388,9 +578,11 @@ LIGHT_THEME = {
         'text_color': '#333333',
         'entry_color': '#d9dcdf',
         'disabled_color':'#f4f2f4',
+        'error_color':'red',
         'draw_main': '#a4ade9',
         'draw_secondary': '#000000',
         'draw_tertiary': '#4d4d4d',
+        'draw_principal': 'red',
         'path': 'figures/light_theme/'
         }
 

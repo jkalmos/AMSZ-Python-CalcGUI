@@ -47,35 +47,94 @@ class shapeBuilder(tk.Canvas):
         self.selected = []
 
         #############* Creating objects for side menu ##############
-        self.label = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.l_width = tk.Label(self.sb_sm,text="Szélesség", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.l_heigth = tk.Label(self.sb_sm,text="Magasság", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        # self.place_holder = tk.Label(self.sb_sm,text="",width=30, bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        #Gege megoldása az eredményekre: self.label = tk.Label(self.sb_sm,text="EMPTY LABEL", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        # self.results_label = tk.Label(self.sb_sm,text="results label", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_width = tk.Label(self.sb_sm,text="Szélesség:", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        self.l_heigth = tk.Label(self.sb_sm,text="Magasság:", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit1 = tk.Label(self.sb_sm,text=root.unit, bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit2 = tk.Label(self.sb_sm,text=f"{self.root.unit}", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.button = tk.Button(self.sb_sm, text="Számolás", command=self.calculate)
-        self.e1 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
-        self.e2 = tk.Entry(self.sb_sm,bg=root.colors["entry_color"], fg=root.colors["text_color"])
-        self.button2 = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
-        self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
+        self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/calculate_button.png")
+        self.calc_button = tk.Label(self.sb_sm, image=self.buttonimage, activebackground=self["background"], border = 0, bg =self["background"])
+        self.calc_button.bind('<Button-1>', func=lambda e: self.calculate())
+        self.e1 = tk.Entry(self.sb_sm, width = 10,bg=root.colors["entry_color"], fg=root.colors["text_color"])
+        self.e2 = tk.Entry(self.sb_sm, width = 10,bg=root.colors["entry_color"], fg=root.colors["text_color"])
+
+        # result fonts
+        self.result_font = "Roboto", 10
+
+        ## result labels ##
+        self.results = tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result1 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result2 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result3 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result4 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result5 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result6 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result7 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result8 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result9 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result10 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result11 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+        self.result12 =  tk.Label(self.sb_sm,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"], font=self.result_font)
+
+        self.results_block = []
+        self.results_block.append(self.result1)
+        self.results_block.append(self.result2)
+        self.results_block.append(self.result3)
+        self.results_block.append(self.result4)
+        self.results_block.append(self.result5)
+        self.results_block.append(self.result6)
+        self.results_block.append(self.result7)
+        self.results_block.append(self.result8)
+        self.results_block.append(self.result9)
+        self.results_block.append(self.result10)
+        self.results_block.append(self.result11)
+        self.results_block.append(self.result12)
+
+
+        # self.value_button = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
+        self.value_buttonimage = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/value_button.png")
+        self.value_button = tk.Label(self.sb_sm, image=self.value_buttonimage, activebackground=self["background"], border = 0, bg =self["background"])
+        self.value_button.bind('<Button-1>', func=lambda e: self.overwrite())
+        # self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
         #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
-        self.pos_lbl = self.create_text(15 ,15,text="",fill= "white") # position label
+        self.pos_lbl = self.create_text(15 ,15,text="",fill= root.colors['text_color']) # position label
 
         self.controls = []
         self.controls.append({"unit":self.l_unit1, "unit_type": "length"})
         self.controls.append({"unit":self.l_unit2, "unit_type": "length"})
 
         #############* Creating + and - buttons ##############
-        self.img= (Image.open("plus.png"))
+        self.img= (Image.open(f"{self.root.colors['path']}shape_builder/plus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.plus_img= ImageTk.PhotoImage(resized_image)
-        self.img= (Image.open("minus.png"))
+        self.img= (Image.open(f"{self.root.colors['path']}shape_builder/minus.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.minus_img= ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open(f"{root.colors['path']}shape_builder/minus_hover.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.minus_hover_img = ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open(f"{root.colors['path']}shape_builder/plus_hover.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.plus_hover_img = ImageTk.PhotoImage(resized_image)
         self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
         self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
         self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(2))
         self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.5))
-        
+        self.tag_bind(self.minus, '<Enter>', lambda e: self.itemconfig(self.minus,image=self.minus_hover_img))
+        self.tag_bind(self.plus, '<Enter>', lambda e: self.itemconfig(self.plus,image=self.plus_hover_img))
+        self.tag_bind(self.minus, '<Leave>', lambda e: self.itemconfig(self.minus,image=self.minus_img))
+        self.tag_bind(self.plus, '<Leave>', lambda e: self.itemconfig(self.plus,image=self.plus_img))
+
+        #############* Creating clear button on canvas ##############
+        self.clear_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear.png")
+        self.clear_hover_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear_hover.png")
+        self.clear = self.create_image(10, self.root.winfo_height()-110, anchor=tk.NW,image=self.clear_img, tags=("clear"))
+        self.tag_bind(self.clear, '<Button-1>', lambda e: self.clear_all())
+        self.tag_bind(self.clear, '<Enter>', lambda e: self.itemconfig(self.clear,image=self.clear_hover_img))
+        self.tag_bind(self.clear, '<Leave>', lambda e: self.itemconfig(self.clear,image=self.clear_img))
+
         ###########* Creating the basic, green rectangle #############
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
@@ -121,17 +180,25 @@ class shapeBuilder(tk.Canvas):
         #self.root.bind("<Control-n>", lambda e: self.hc.refresh(self.Xcenter-20,self.Ycenter-100, self.hc.r))
 
         ##############* Packing objects ###############
-        self.l_width.grid(row=1,column=0)
-        self.e1.grid(row=1,column=1,columnspan=3)
-        self.l_unit1.grid(row=1,column=4)
-        self.l_heigth.grid(row=2,column=0)
-        self.e2.grid(row=2,column=1,columnspan=3)
-        self.l_unit2.grid(row=2,column=4)
-        self.is_sticky.grid(row=3,columnspan=5)
-        self.button.grid(row=4,column=3)
-        self.button2.grid(row=4, column=1)
-        self.label.grid(row=5,columnspan=5, pady= 50)
-        self.cls.grid(row=6, column=1,columnspan=3)
+        # self.place_holder.grid(row=0,column=1,columnspan=5)
+        self.l_width.grid(row=1,column=1,padx=(10,0),pady=(20,0))
+        self.e1.grid(row=1,column=2,pady=(20,0),padx=2)
+        self.l_unit1.grid(row=1,column=3,pady=(20,0))
+        self.l_heigth.grid(row=2,column=1,padx=(10,0))
+        self.e2.grid(row=2,column=2,padx=2)
+        self.l_unit2.grid(row=2,column=3)
+        self.value_button.grid(row=1,rowspan=2, column=5,pady=(15,0),padx=(5,10))
+        self.is_sticky.grid(row=3,columnspan=3)
+        self.calc_button.grid(row=4,column=1,columnspan=5,padx=(20))
+        self.rowcount = 7
+        for i in self.results_block:
+            i.grid(row=self.rowcount+1, column=1, columnspan=5, padx=30, pady=2, sticky=tk.W)
+            self.rowcount += 1
+
+        self.results_block[0].grid(padx=15)
+        self.results_block[3].grid(padx=15)
+        self.results_block[8].grid(padx=15)
+        # self.cls.grid(row=6, column=1,columnspan=3)
 
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
@@ -210,7 +277,7 @@ class shapeBuilder(tk.Canvas):
             return 0
         self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
         self.deselect()
-        self.label.config(text=f"")
+        # self.label.config(text=f"")
         #choosing object
         for i in self.shapes:
             if self.current is None and i.is_inside((e.x,e.y)) and self.starting_pos is None:
@@ -282,7 +349,7 @@ class shapeBuilder(tk.Canvas):
             
         self.isMoving = False
         self.current=None
-        self.label.config(text="")
+        # self.label.config(text="")
         self.itemconfig(self.pos_lbl, text=f"x: {(e.x-self.Xcenter)/self.scale} y: {(self.Ycenter-e.y)/self.scale}")
         self.tag_raise("plus_minus")
         self.tag_raise(self.pos_lbl)
@@ -316,6 +383,10 @@ class shapeBuilder(tk.Canvas):
             if self.root.orig_axis_dissapier: self.itemconfigure("orig_axes",state="hidden")
             print(Sx/self.scale,Sy/self.scale)
             out_str += f"Sx: {Sx/self.scale}\nSy: {Sy/self.scale}\n"
+            #TODO: Sx és Sy koordináták a canvas bal felső sarkától vannak mérve, nem a globális kordináta rendszertől, így kicsit nehéz rajta kiigazodni
+            self.result1.config(text="Súlypont koordinátái:")
+            self.result2.config(text="Sₓ = " + str(round((Sx - self.Xcenter)/self.scale,4)) + " " + self.root.unit)
+            self.result3.config(text="Sᵧ = " + str(round((self.Ycenter - Sy)/self.scale,4)) + " " + self.root.unit)
         else:
             out_str += "Számítások fix tengelyre:\n"
             Sx = self.Xcenter
@@ -333,7 +404,16 @@ class shapeBuilder(tk.Canvas):
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
-        self.label.config(text=out_str)
+        self.result4.config(text="Keresztmetszeti jellemzők:")
+        self.result5.config(text="A = " + str(round(A/self.scale**2, 4)) + " " + self.root.unit + "²")
+        self.result6.config(text="Iₓ = " + str(round(Ix/self.scale**4, 4)) + " " + self.root.unit + "\u2074")
+        self.result7.config(text="Iᵧ = " + str(round(Iy/self.scale**4,4)) + " " + self.root.unit + "\u2074")
+        self.result8.config(text="Iₓᵧ = " + str(round(Ixy/self.scale**4,4)) + " " + self.root.unit + "\u2074")
+
+        self.result9.config(text="Főmásodrendű nyomatékok:")
+        self.result10.config(text="I₁ = " + str(round(i1,4)) + " " + self.root.unit + "\u2074")
+        self.result11.config(text="I₂ = " + str(round(i2,4)) + " " + self.root.unit + "\u2074")
+        self.result12.config(text="\u03B1 = " + str(round(alpha,4)) + " " + self.root.angle_unit)
         
     def overwrite(self):
         ok = True
