@@ -230,11 +230,12 @@ class shapeBuilder(tk.Canvas):
             i = None
         for k in self.rectangles:
             k.is_overlapping()
-    def rectangle_info(self,e=None): #! Label
+    def rectangle_info(self,e=None): #! Formating
+        self.clear_results()
         if len(self.selected)>1:
-            self.label.config(text=f"{len(self.selected)} darab objektum van kijelölve")
+            self.result1.config(text=f"{len(self.selected)} darab objektum van kijelölve")
             return -1
-        if len(self.selected)>0: self.label.config(text= self.selected[0].get_info())
+        if len(self.selected)>0: self.result1.config(text= self.selected[0].get_info())
         
     def select(self,e, object=None):
         #self.deselect()
@@ -355,9 +356,10 @@ class shapeBuilder(tk.Canvas):
         self.tag_raise("plus_minus")
         self.tag_raise(self.pos_lbl)
         self.last_click_pos = None
-    def calculate(self): #! Only for rects + hibaüzenet
+    def calculate(self):
         if len(self.shapes) == 0:
-            #self.label.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0")#! Hibaüzenet
+            self.clear_results()
+            self.result1.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0") #! Formatting
             return -1
         Ix = 0
         Iy = 0
@@ -519,6 +521,10 @@ class shapeBuilder(tk.Canvas):
             print((self.rectangles[-1].center[0]-self.Xcenter)/self.scale)
         print(f"{len(self.rectangles)=}")
         print(f"{len(self.selected)=}")
+    def clear_results(self):
+        for i in self.results_block:
+            i.config(text="")
+            
 
 class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
