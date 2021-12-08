@@ -142,9 +142,9 @@ class shapeBuilder(tk.Canvas):
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
 
         ###########* Creating basic, green circle #############
-        self.r=30
-        self.angle=90
-        self.start = 90
+        self.r=50
+        self.angle=70
+        self.start = 60
         self.alap_circle = self.create_arc(10,60,40,90,extent=self.angle, start = self.start, fill="green")
         self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
 
@@ -218,18 +218,19 @@ class shapeBuilder(tk.Canvas):
             self.selected = []
         for k in self.shapes:
             k.is_overlapping()
-    def resize_rectangle(self,e=None): #? Could be better
+    def resize_rectangle(self,e=None): #! Something is wrong...
         for i in self.selected:
             if type(i)==Rectangle:
                 i.refresh(i.x1, i.y1, i.x1 + self.width, i.y1 + self.heigth)
             if type(i)==Arc:
                 i.refresh(i.center[0],i.center[1],self.width/2,i.angle, i.start)
             else:
+                print(type(i),"\n" ,i)
                 raise TypeError
             i = None
         for k in self.rectangles:
             k.is_overlapping()
-    def rectangle_info(self,e=None):
+    def rectangle_info(self,e=None): #! Label
         if len(self.selected)>1:
             self.label.config(text=f"{len(self.selected)} darab objektum van kijelölve")
             return -1
@@ -354,9 +355,9 @@ class shapeBuilder(tk.Canvas):
         self.tag_raise("plus_minus")
         self.tag_raise(self.pos_lbl)
         self.last_click_pos = None
-    def calculate(self): #! Only for rects
+    def calculate(self): #! Only for rects + hibaüzenet
         if len(self.shapes) == 0:
-            self.label.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0")
+            #self.label.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0")#! Hibaüzenet
             return -1
         Ix = 0
         Iy = 0
@@ -393,14 +394,22 @@ class shapeBuilder(tk.Canvas):
             Sy = self.Ycenter
             a_length = min(min(Sx,Sy),self.canvas_height-Sy,self.canvas_width-Sx)
         A = 0
-        for i in self.rectangles:
+        for i in self.shapes.rectangles:
             pos = self.coords(i.canvas_repr)
             A_current = (pos[2]-pos[0]) * (pos[3]-pos[1])
             A += A_current
             Ix += ((pos[2]-pos[0]) * (pos[3]-pos[1])**3 )/12+ A_current*(Sy-pos[1]-(pos[3]-pos[1])/2)**2
             Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12+ A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)**2
               
-            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2) 
+            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2)
+        for i in self.shapes.arcs: #! Check rotation
+            A += i.area
+            Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
+            Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
+            # rotation + translation
+            Ix += ((Ixc+Iyc)/2 + (Ixc-Iyc)/2 *cos(2*radians(i.start-i.angle/2))) + i.area*(Sy-i.center[1])**2
+            Iy += ((Ixc+Iyc)/2 - (Ixc-Iyc)/2 *cos(2*radians(i.start-i.angle/2))) + i.area*(Sy-i.center[1])**2
+            Ixy +=  ((Ixc-Iyc)/2 *sin(2*radians(i.start-i.angle/2))) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
@@ -448,11 +457,12 @@ class shapeBuilder(tk.Canvas):
     def clear_all(self): #? Could be better
         self.rectangles = []
         self.arcs = []
-        self.delete("rect") 
-        self.delete("arcs")
+        self.delete("shape") 
         self.delete("hauptachse")
         self.delete("s_axis")
-        self.label.config(text="")   
+        del self.shapes
+        self.shapes = Shapes(self,self.rectangles,self.arcs)
+        #self.label.config(text="")   
     def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
