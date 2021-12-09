@@ -107,8 +107,8 @@ def RectangularHS(w2, h2, w1, h1):
 @transform
 def Ellipse(a, b, t = 0):
     if t == 0:
-        a = a/2
-        b = b/2
+        # a = a/2 # EZ KELL?????????????????????????
+        # b = b/2
         A = a * b * np.pi
         Ix = a * b ** 3 * np.pi / 4
         Iy = a ** 3 * b * np.pi / 4
@@ -187,9 +187,50 @@ def IsoscelesTriangle(w, h, t = 0):
         }
     return properties
 
+@transform
+def RightTriangle(w, h, t = 0):
+    if t == 0:
+        A = w * h / 2
+        Ix = w * h ** 3 / 36
+        Iy = w ** 3 * h / 36
+        Ixy = w**2 * h**2 / 72
+        Kx = Ix / (2/3 * h)
+        Ky = Ix / (2/3 * w)
+        if Iy > Ix:
+            alpha = np.pi / 2
+        else:
+            alpha = 0
+    else:
+        w2 = w
+        h2 = h
+        # w1 = w - t # HIBA # itt a falvastagság értelmezése nem helyes, ezt javítva
+        # h1 = h - t
+        phi = np.arctan(h / (w / 2))
+        u = t / np.sin(phi)
+        v = t / np.tan(phi)
+        w1 = w - 2 * (u + v)
+        h1 = h * (w1 / w)
+        A = (w2 * h2 - w1 * h1) / 2
+        Ix = (w2 * h2 ** 3 - w1 * h1 ** 3) / 36
+        Iy = (w2 ** 3 * h2 - w1 ** 3 * h1) / 48
+        Ixy = 0
+        Kx = 3 * Ix / 2 / h2
+        Ky = 2 * Iy / w2
+        alpha = None #! CHECK!!!!
+    properties = {
+            "A": A,
+            "Ix": Ix,
+            "Iy": Iy,
+            "Ixy": Ixy,
+            "Kx": Kx,
+            "Ky": Ky,
+            "alpha": alpha,
+        }
+    return properties
+
 def Iarbitraryaxis(A, Ix, Iy, Ixy, x, y, phi, *args, **kwargs):
-    Ix2 = Ix + x ** 2 * A 
-    Iy2 = Iy + y ** 2 * A 
+    Ix2 = Ix + x ** 2 * A
+    Iy2 = Iy + y ** 2 * A
     Ix2y2 = Ixy + x * y * A
     Ixi = Ix2 * np.cos(phi) ** 2 + Iy2 * np.sin(phi) ** 2 - Ix2y2 * np.sin(2 * phi)
     Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 + Ix2y2 * np.sin(2 * phi) # itt pedig az utolsó tagnak negatív volt az előjele, Kossa A. jegyzetében én pozitívan találtam

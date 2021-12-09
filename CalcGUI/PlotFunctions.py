@@ -83,7 +83,21 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         tri_y_th = [-y/3+0.075, -y/3+0.075, y/3*2-0.1, -y/3+0.075]
 
         parent.ax.plot(tri_x, tri_y, colors["draw_main"], lw=2)
-        parent.ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9) 
+        parent.ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9)
+        if thickness_on == True:
+            parent.ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
+            parent.ax.fill(tri_x_th,tri_y_th,color=colors["secondary_color"])
+        coordinate_displacement = y/6
+    elif shape == "Right_triangle":
+        x, y, proportional = set_dimensions(a, b)
+        tri_x = [-x/2, x/2, -x/2, -x/2]
+        tri_y = [-y/3, -y/3, y/3*2, -y/3]
+
+        tri_x_th = [-x/2+0.1, x/2-0.4, -x/2+0.1, -x/2+0.1]
+        tri_y_th = [-y/3+0.1, -y/3+0.1, y/3*2-0.175, -y/3+0.1]
+
+        parent.ax.plot(tri_x, tri_y, colors["draw_main"], lw=2)
+        parent.ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9)
         if thickness_on == True:
             parent.ax.plot(tri_x_th, tri_y_th, colors["draw_main"], lw=2)
             parent.ax.fill(tri_x_th,tri_y_th,color=colors["secondary_color"])
@@ -178,7 +192,54 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
             size='large',
             color = color,
             alpha=transparency)
+        ax.text(
+            -x/2-x*y/16*5, e,
+            t2,
+            horizontalalignment='center',
+            verticalalignment='center',
+            size='large',
+            color = color,
+            alpha=transparency)
+    
 def coordinate_system(x, y, ax, e, colors):
+    # if plot.shape == "Right_triangle":
+    # color = colors['draw_secondary']
+    # transparency = 1
+    # hw = 0.015*max(x,y)
+    # hl = 2*hw
+    # ax.arrow(
+    #     -x/2-x*y/8, 0, x+x*y/3, 0,
+    #     head_width=hw,
+    #     head_length=hl,
+    #     fc=color, ec=color,
+    #     length_includes_head = True,
+    #     alpha=transparency,
+    #     zorder=3)
+    # ax.arrow(
+    #     -x/3/2, -y/2-x*y/8+e, 0, y+x*y/3,
+    #     head_width=hw,
+    #     head_length=hl,
+    #     fc=color, ec=color,
+    #     length_includes_head = True,
+    #     alpha=transparency,
+    #     zorder=3)
+    # ax.text(
+    #     x/2+x*y/5, -x*y/20,
+    #     r"$x$",
+    #     horizontalalignment='center',
+    #     verticalalignment='center',
+    #     size='large',
+    #     color = color,
+    #     alpha=transparency)
+    # ax.text(
+    #     -x*y/20, y/2+x*y/5+e,
+    #     r"$y$",
+    #     horizontalalignment='center',
+    #     verticalalignment='center',
+    #     size='large',
+    #     color = color,
+    #     alpha=transparency)
+    # else:
     color = colors['draw_secondary']
     transparency = 1
     hw = 0.015*max(x,y)
@@ -251,7 +312,7 @@ def transformation_dimensions(x, y, ax, colors):
                          head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
     ax.arrow(x/2+x/8, y/5, 0, -y/5,
                          head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
-    ax.text(x/2+x/6, y/8, r"$y$", horizontalalignment='center', color = color,
+    ax.text(x/2+x/6, y/8, r"$v$", horizontalalignment='center', color = color,
                         verticalalignment='center', alpha=transparency)
     x_disp_x = [x/5, x/5]
     x_disp_y = [y/5, -y/5]
@@ -260,7 +321,7 @@ def transformation_dimensions(x, y, ax, colors):
                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
     ax.arrow(x/5, -y/8, -x/5, 0,
                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
-    ax.text(x/8, -y/12, r"$x$", horizontalalignment='center', color = color,
+    ax.text(x/8, -y/12, r"$u$", horizontalalignment='center', color = color,
                     verticalalignment='center', alpha=transparency)
     style = "Simple, tail_width=0.2, head_width=4, head_length=8"
     kw = dict(arrowstyle=style, color=color)
