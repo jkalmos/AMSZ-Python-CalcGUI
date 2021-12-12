@@ -1,26 +1,19 @@
-import re
 import tkinter as tk
 from math import cos, radians, sin, sqrt, atan, asin, pi, degrees
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
-from typing import Container, List
 from PIL import ImageTk,Image
 import keyboard
 WIDTH = 30
 EPSILON = 10
 STICKY = True
+from shapes import Rectangle, Arc, Shapes, dist
 #* https://structx.com/Shape_Formulas_004.html
 #* https://hu.wikipedia.org/wiki/K%C3%B6rcikk
+
 #TODO: Overlapping not recognized while alignig rects
 #TODO: WARNING: Kijelölö négyzet használata közben tudunk új körcikkelyeket generálni... 
 #TODO: X-label elúszik a canvas mozgatásakor...
 
-#self.root.sb_ha_vis = False
-#self.root.calc_for_orig_axis = False
-#self.root.show_orig_axis = True
-#self.root.orig_axis_dissapier = False
-
-def dist(p1,p2):
-    return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
         super().__init__(root, bd=0, bg=root.colors["secondary_color"],highlightthickness=0)
@@ -45,6 +38,7 @@ class shapeBuilder(tk.Canvas):
         self.starting_pos = None #selecting multiple objects
         self.selecting_area = self.create_rectangle(0,0,0,0)
         self.selected = []
+        self.active_shape = "Rectangle"
 
         #############* Creating objects for side menu ##############
         # self.place_holder = tk.Label(self.sb_sm,text="",width=30, bg=self.sb_sm["background"], fg=root.colors["text_color"])
@@ -126,7 +120,25 @@ class shapeBuilder(tk.Canvas):
         self.tag_bind(self.plus, '<Enter>', lambda e: self.itemconfig(self.plus,image=self.plus_hover_img))
         self.tag_bind(self.minus, '<Leave>', lambda e: self.itemconfig(self.minus,image=self.minus_img))
         self.tag_bind(self.plus, '<Leave>', lambda e: self.itemconfig(self.plus,image=self.plus_img))
-
+        
+        #############* Creating up and down button #################
+        self.img= (Image.open("up.png"))
+        resized_image= self.img.resize((15,30), Image.ANTIALIAS)
+        self.up_img= ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open("down.png"))
+        resized_image= self.img.resize((15,30), Image.ANTIALIAS)
+        self.down_img= ImageTk.PhotoImage(resized_image)
+        #self.img= (Image.open(f"{root.colors['path']}shape_builder/minus_hover.png"))
+        #resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        #self.minus_hover_img = ImageTk.PhotoImage(resized_image)
+        #self.img= (Image.open(f"{root.colors['path']}shape_builder/plus_hover.png"))
+        #resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        #self.plus_hover_img = ImageTk.PhotoImage(resized_image)
+        self.up= self.create_image(10, 20, anchor=tk.NW,image=self.up_img, tags=("up_down", "navigate"))
+        self.down= self.create_image(10, 60, anchor=tk.NW,image=self.down_img, tags=("up_down", "navigate"))
+        self.tag_bind(self.up, '<Button-1>', lambda e: self.change_active_shape())
+        self.tag_bind(self.down, '<Button-1>', lambda e: self.change_active_shape("down"))
+        
         #############* Creating clear button on canvas ##############
         self.clear_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear.png")
         self.clear_hover_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear_hover.png")
@@ -136,17 +148,31 @@ class shapeBuilder(tk.Canvas):
         self.tag_bind(self.clear, '<Leave>', lambda e: self.itemconfig(self.clear,image=self.clear_img))
 
         ###########* Creating the basic, green rectangle #############
+        """
         self.alap = self.create_rectangle(10,10,10+WIDTH,10+WIDTH,fill="green")
         self.alap_negyzet = Rectangle(self,10,10,10+WIDTH,10+WIDTH, self.alap)
         self.width_label = self.create_text(20+self.width,10+ self.heigth/2,text=str(self.width/10))
         self.height_label = self.create_text(10+self.width/2,self.heigth+ 20,text=str(self.heigth/10))
+        """
+        self.alap = self.create_rectangle(30,10,30+WIDTH,10+WIDTH,fill="green", tags=("alap_rectangle"))
+        self.alap_negyzet = Rectangle(self,30,10,30+WIDTH,10+WIDTH, self.alap)
+        self.width_label = self.create_text(40+self.width,10+ self.heigth/2,text=str(self.width/10),tags=("alap_rectangle"))
+        self.height_label = self.create_text(40+self.width/2,self.heigth+ 20,text=str(self.heigth/10),tags=("alap_rectangle"))
+        
 
         ###########* Creating basic, green circle #############
-        self.r=50
-        self.angle=70
-        self.start = 60
+        
+        self.r=20
+        self.angle=180
+        self.start = 0
+        """
         self.alap_circle = self.create_arc(10,60,40,90,extent=self.angle, start = self.start, fill="green")
         self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
+        """
+        self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=self.angle, start = self.start, fill="green", tags=("alap_circle"))
+        self.r_label = self.create_text(30+30/2,10+30,text=f"r={30/2}",tags=("alap_circle"))
+        self.itemconfigure("alap_circle",state="hidden")
+        
 
         ##########* Creating axis #############
         self.x_axis = self.create_line(10,self.Ycenter,self.Xcenter*2,self.Ycenter, arrow=tk.LAST, fill= "gray", tags=("orig_axes")) #Drawing X-axis
@@ -289,13 +315,13 @@ class shapeBuilder(tk.Canvas):
                 break
         else:
             pos = self.coords(self.alap_negyzet.canvas_repr)
-            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None:
+            if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None and self.active_shape == "Rectangle":
                 self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect","shape")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current: # Circle
             pos = self.coords(self.alap_circle)
             cent = (pos[0]+self.r,pos[1]+self.r)
-            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle:
+            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and self.active_shape == "Arc":
                 print("kör")
                 #! Nem mindig jó helyre kattintva aktiválódik!!
                 self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
@@ -478,12 +504,13 @@ class shapeBuilder(tk.Canvas):
         return I1, I2, alfa
     def rescale(self,scale): #!? Could be better
         self.scale *= scale
-        self.alap_negyzet.refresh(10,10,10+self.width*scale,10+self.heigth*scale)
-        self.coords(self.alap_circle, 10,60,10+self.width*scale,60+self.width*scale) #? Esetleg külön sugár változó
+        self.alap_negyzet.refresh(40,10,40+self.width*scale,10+self.heigth*scale)
+        self.coords(self.alap_circle, 40,10,40+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
         self.width *= scale
         self.heigth *= scale
-        self.coords(self.width_label,25+self.width,10+ self.heigth/2)
-        self.coords(self.height_label,10+self.width/2,self.heigth+ 25)
+        self.coords(self.width_label,50+self.width,10+ self.heigth/2)
+        self.coords(self.height_label,30+self.width/2,self.heigth+ 25)
+        self.coords(self.r_label,45+self.width/2,15+ self.heigth) #! sugár ???
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
         for i in self.arcs:
@@ -497,6 +524,8 @@ class shapeBuilder(tk.Canvas):
         self.translation(e.width/2-self.Xcenter, e.height/2-self.Ycenter)
         self.delete("s_axis")
         self.delete("hauptachse")
+        self.coords(self.clear, 10, e.height-50)
+        
     def translation(self, dx, dy):
         self.Xcenter += dx
         self.Ycenter += dy
@@ -524,216 +553,19 @@ class shapeBuilder(tk.Canvas):
     def clear_results(self):
         for i in self.results_block:
             i.config(text="")
-            
-
-class Rectangle():  
-    def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
-        self.canvas = canvas
-        self.canvas_repr = canvas_repr
-        self.x1 = x1
-        self.x2 = x2
-        self.y1 = y1
-        self.y2 = y2
-        self.width = x2-x1
-        self.heigth = y2-y1
-        self.area = self.width*self.heigth
-        self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
-        self.s_center = self.center
-        self.overlapping_with = []
-    def refresh(self,x1,y1,x2,y2):
-        self.x1 = x1
-        self.x2 = x2
-        self.y1 = y1
-        self.y2 = y2
-        self.width = self.x2-self.x1
-        self.heigth = self.y2-self.y1
-        self.area = self.width*self.heigth
-        self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
-        self.s_center = self.center
-        self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
-    def is_overlapping(self):
-        a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
-        #print(self.canvas_repr in a)
-        a = [p for p in a if "rect" in self.canvas.gettags(p)]
-        a.remove(self.canvas_repr)
-        in_overlapping = False
-        for i in self.canvas.rectangles:
-            if i.canvas_repr in a:
-                if len({self.x1,self.x2}.intersection({i.x1,i.x2}))==0 and len({self.y1,self.y2}.intersection({i.y1,i.y2}))==0:
-                    self.canvas.itemconfig(self.canvas_repr, fill='red')
-                    in_overlapping = True
-        if not in_overlapping and self not in self.canvas.selected:
-            self.canvas.itemconfig(self.canvas_repr, fill='blue')
-    def align(self):
-        self.align_by_side()# sticking to another rectangles 
-        self.align_by_center()
-        self.align_to_axis()#sicking to the coordinate system
-    def align_to_axis(self):
-        if self.canvas.root.show_orig_axis:
-            pos=[self.x1,self.y1,self.x2,self.y2]
-            if abs(pos[0]-self.canvas.Xcenter) < EPSILON: #left side sticks to the coordinatsystem
-                self.refresh(self.canvas.Xcenter,pos[1],self.canvas.Xcenter+self.width,pos[3])
-                pos = self.canvas.coords(self.canvas_repr)
-            elif abs(pos[2]-self.canvas.Xcenter) < EPSILON: #right side sticks to the coordinatsystem
-                self.refresh(self.canvas.Xcenter-self.width,pos[1],self.canvas.Xcenter,pos[3])
-                pos = self.canvas.coords(self.canvas_repr)
-            if abs(pos[1]-self.canvas.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
-                self.refresh(pos[0],self.canvas.Ycenter,pos[2],self.canvas.Ycenter+self.heigth)
-                pos = self.canvas.coords(self.canvas_repr)
-            elif abs(pos[3]-self.canvas.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
-                self.refresh(pos[0],self.canvas.Ycenter-self.heigth,pos[2],self.canvas.Ycenter)
-                pos = self.canvas.coords(self.canvas_repr)
-            #* Sticking with the center of the rectangle to the coordinate system
-            if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
-                self.refresh(self.canvas.Xcenter-self.width/2,self.y1,self.canvas.Xcenter+self.width/2,self.y2)
-            if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
-                self.refresh(self.x1,self.canvas.Ycenter-self.heigth/2,self.x2,self.canvas.Ycenter+self.heigth/2)
-    def align_to_corners(self): #! OLD VERSION - NOT USED
-        pos=[self.x1,self.y1,self.x2,self.y2]
-        for i in self.canvas.rectangles:
-            i_pos = self.canvas.coords(i.canvas_repr)
-            if abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # current rect goes under the another 
-                self.refresh(i_pos[0],i_pos[3],i_pos[0]+self.width,i_pos[3]+self.heigth)
-                break
-            elif abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # TOP
-                self.refresh(i_pos[0],i_pos[1]-self.heigth,i_pos[0]+self.width,i_pos[1])
-                break
-            elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[0] - i_pos[2]) < EPSILON: # RIGHT
-                self.refresh(i_pos[2],i_pos[1],i_pos[2]+self.width,i_pos[1]+self.heigth)
-                break
-            elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[2] - i_pos[0]) < EPSILON: # LEFT
-                self.refresh(i_pos[0]-self.width,i_pos[1],i_pos[0],i_pos[1]+self.heigth)
-                break
-            elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # ??
-                self.refresh(i_pos[2]-self.width,i_pos[1]-self.heigth,i_pos[2],i_pos[1])
-                break
-            elif abs(pos[2] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # ??
-                self.refresh(i_pos[0]-self.width,i_pos[3]-self.heigth,i_pos[0],i_pos[3])
-                break
-            elif abs(pos[0] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # !
-                self.refresh(i_pos[2],i_pos[3]-self.heigth,i_pos[2]+self.width,i_pos[3])
-                break
-            elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # !
-                self.refresh(i_pos[2]-self.width,i_pos[3],i_pos[2],i_pos[3]+self.heigth)
-                break
-        else:
-            return 0
-        return 1
-    def align_by_center(self):
-        for i in self.canvas.rectangles:
-            if abs(self.center[0]-i.center[0])<EPSILON:
-                self.refresh(i.center[0]-self.width/2,self.y1,i.center[0]+self.width/2,self.y2)
-                break
-            if abs(self.center[1]-i.center[1])<EPSILON:
-                self.refresh(self.x1,i.center[1]-self.heigth/2,self.x2,i.center[1]+self.heigth/2)
-                break
-    def align_by_side(self):
-        for i in self.canvas.rectangles:
-            if abs(self.x1-i.x1)<EPSILON: self.refresh(i.x1,self.y1,i.x1+self.width,self.y2) # sticking by left-left          
-            if abs(self.x1-i.x2)<EPSILON: self.refresh(i.x2,self.y1,i.x2+self.width,self.y2) #sicking by left-right
-            if abs(self.x2-i.x1)<EPSILON: self.refresh(i.x1-self.width,self.y1,i.x1,self.y2) #sticking by right-left
-            if abs(self.x2-i.x2)<EPSILON: self.refresh(i.x2-self.width,self.y1,i.x2,self.y2) #sticking by right-right
-            if abs(self.y1-i.y1)<EPSILON: self.refresh(self.x1,i.y1,self.x2,i.y1+self.heigth) # sticking by top-top
-            if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.heigth) # sticking by top-bottom
-            if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.heigth,self.x2,i.y1) # sticking by bottom-top
-            if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.heigth,self.x2,i.y2) # sticking by top-top
-    def translate(self, dx,dy):
-        self.refresh(self.x1+dx,self.y1+dy,self.x2+dx,self.y2+dy)
-    def is_inside(self,point):
-        if point[0]>self.x1 and point[0]<self.x2 and point[1]>self.y1 and point[1]<self.y2:
-            return True
-        else:
-            return False
-    def get_info(self):
-        text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.heigth/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
-        return text
-class Arc():
-    def __init__(self,canvas, center_x, center_y, r, angle=180, start=0):
-        self.canvas = canvas
-        self.center = (center_x,center_y)
-        self.r = r
-        self.d = 2*r
-        self.start = start
-        self.angle = min (360,angle)
-        self.area = r**2*pi*(self.angle/360)
-        self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
-        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("arc","shape"))
-    def refresh(self, center_x, center_y,r,angle=180, start=0):
-        self.center = (center_x,center_y)
-        self.r = r
-        self.d = 2*r
-        self.start = start
-        self.angle = min(360,angle)
-        self.area = r**2*pi*(self.angle/360)
-        self.s_center = (center_x + (4/3*r*sin(radians(angle/2))/radians(angle))*cos(radians(start+angle/2)),center_y - (4/3*r*sin(radians(angle/2))/radians(angle))*sin(radians(start+angle/2)))
-        self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
-    def align(self):
-        self.align_to_axis()
-    def align_to_axis(self):
-        if self.canvas.root.show_orig_axis:
-            #* Sticking with the center of the rectangle to the coordinate system
-            if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
-                self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
-            if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
-                self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
-    def is_overlapping(self):
-        self.canvas.itemconfig(self.canvas_repr, fill='blue')
-    def is_inside(self,point):
-        if dist(point,self.center)<=self.r: return True
-        return False
-    def translate(self,dx,dy):
-        self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
-    def get_info(self):
-        text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
-        return text
-class Shapes():
-    def __init__(self, canvas, rectangles, arcs):
-        self.canvas = canvas
-        self.container = []
-        self.rectangles = rectangles
-        self.arcs = arcs
-        self.container.append(self.rectangles)
-        self.container.append(self.arcs)
-    def __iter__(self):
-        self.n = 0
-        self.max =0 
-        for i in self.container: self.max+=len(i)
-        return self
-    def __getitem__(self, key):
-        return self.__getelement_by_index(key)
-    def __next__(self):
-        if self.n < self.max:
-            x = self.n
-            self.n += 1
-            return self.__getelement_by_index(x)
-        else:
-            raise StopIteration
-    def __len__(self):
-        l = 0
-        for i in self.container: l+=len(i)
-        return l
-    def __getelement_by_index(self,index):
-        tmp = []
-        for i in self.container:
-            for k in i:
-                tmp.append(k)
-        return tmp[index]
-    def append(self, obj):
-        if type(obj)==Rectangle:
-            self.rectangles.append(obj)
-        elif type(obj==Arc):
-            self.arcs.append(obj)
-        else:
-            print("Hiba: A formatum nem megfelelo!")
-    def remove(self, obj):
-        if type(obj)==Rectangle:
-            self.rectangles.remove(obj)
-        elif type(obj==Arc):
-            self.arcs.remove(obj)
-        else:
-            print("Hiba: A formatum nem megfelelo!")
-
-
+    def change_active_shape(self, direction="up"):
+        print(direction)
+        if direction == "up":
+            self.itemconfigure("alap_rectangle",state="normal")
+            self.itemconfigure("alap_circle",state="hidden")
+            self.active_shape = "Rectangle"
+        elif direction == "down":
+            self.itemconfigure("alap_circle",state="normal")
+            self.itemconfigure("alap_rectangle",state="hidden")
+            self.active_shape = "Arc"
+        else: 
+            print("Error: Invalid command by changing shape.")
+            raise ValueError
 
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
