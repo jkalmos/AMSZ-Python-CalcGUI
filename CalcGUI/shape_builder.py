@@ -3,6 +3,7 @@ from math import cos, radians, sin, sqrt, atan, asin, pi, degrees
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
+from itertools import cycle
 WIDTH = 30
 EPSILON = 10
 STICKY = True
@@ -39,6 +40,9 @@ class shapeBuilder(tk.Canvas):
         self.selecting_area = self.create_rectangle(0,0,0,0)
         self.selected = []
         self.active_shape = "Rectangle"
+        self.possible_shape_list = ["Rectangle","Semicircle","quartrer_circle"]
+        self.possible_shapes = cycle(self.possible_shape_list)
+        next(self.possible_shapes)
 
         #############* Creating objects for side menu ##############
         # self.place_holder = tk.Label(self.sb_sm,text="",width=30, bg=self.sb_sm["background"], fg=root.colors["text_color"])
@@ -316,12 +320,12 @@ class shapeBuilder(tk.Canvas):
         else:
             pos = self.coords(self.alap_negyzet.canvas_repr)
             if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None and self.active_shape == "Rectangle":
-                self.current = Rectangle(self,10,10,10+self.width,10+self.heigth,self.create_rectangle(10,10,10+self.width,10+self.heigth,fill="blue", tags=("rect","shape")))
+                self.current = Rectangle(self,pos[0],pos[1],pos[0]+self.width,pos[1]+self.heigth,self.create_rectangle(pos[0],pos[1],pos[0]+self.width,pos[1]+self.heigth,fill="blue", tags=("rect","shape")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current: # Circle
             pos = self.coords(self.alap_circle)
             cent = (pos[0]+self.r,pos[1]+self.r)
-            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and self.active_shape == "Arc":
+            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and (self.active_shape == "Semicircle" or self.active_shape == "quartrer_circle"):
                 print("kör")
                 #! Nem mindig jó helyre kattintva aktiválódik!!
                 self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
@@ -556,16 +560,34 @@ class shapeBuilder(tk.Canvas):
     def change_active_shape(self, direction="up"):
         print(direction)
         if direction == "up":
-            self.itemconfigure("alap_rectangle",state="normal")
-            self.itemconfigure("alap_circle",state="hidden")
-            self.active_shape = "Rectangle"
+            self.active_shape = next(self.possible_shapes)
         elif direction == "down":
-            self.itemconfigure("alap_circle",state="normal")
-            self.itemconfigure("alap_rectangle",state="hidden")
-            self.active_shape = "Arc"
+            for i in range(len(self.possible_shape_list)-2): next(self.possible_shapes)
+            self.active_shape = next(self.possible_shapes)
         else: 
             print("Error: Invalid command by changing shape.")
             raise ValueError
+        print(self.active_shape)
+        # Set icon for active_shape:
+        if self.active_shape == "Rectangle":
+            self.itemconfigure("alap_rectangle",state="normal")
+            self.itemconfigure("alap_circle",state="hidden")
+        elif self.active_shape == "Semicircle":
+            self.itemconfigure("alap_rectangle",state="hidden")
+            c = self.coords(self.alap_circle)
+            self.delete(self.alap_circle)
+            self.angle = 180
+            self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=180, start = 0, fill="green", tags=("alap_circle"))
+        elif self.active_shape == "quartrer_circle":
+            self.itemconfigure("alap_rectangle",state="hidden")
+            self.delete(self.alap_circle)
+            self.angle = 90
+            self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=90, start = 0, fill="green", tags=("alap_circle"))
+        else: raise ValueError
+
+
+
+
 
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
