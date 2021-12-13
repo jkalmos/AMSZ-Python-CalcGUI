@@ -325,7 +325,7 @@ class shapeBuilder(tk.Canvas):
         if not self.current: # Circle
             pos = self.coords(self.alap_circle)
             cent = (pos[0]+self.r,pos[1]+self.r)
-            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and (self.active_shape == "Semicircle" or self.active_shape == "quartrer_circle"):
+            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and self.starting_pos is None and (self.active_shape == "Semicircle" or self.active_shape == "quartrer_circle"):
                 print("kör")
                 #! Nem mindig jó helyre kattintva aktiválódik!!
                 self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
