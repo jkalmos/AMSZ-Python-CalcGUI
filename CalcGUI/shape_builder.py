@@ -12,7 +12,6 @@ from shapes import Rectangle, Arc, Shapes, dist
 #* https://hu.wikipedia.org/wiki/K%C3%B6rcikk
 
 #TODO: Overlapping not recognized while alignig rects
-#TODO: WARNING: Kijelölö négyzet használata közben tudunk új körcikkelyeket generálni... 
 #TODO: X-label elúszik a canvas mozgatásakor...
 
 class shapeBuilder(tk.Canvas):
@@ -40,7 +39,7 @@ class shapeBuilder(tk.Canvas):
         self.selecting_area = self.create_rectangle(0,0,0,0)
         self.selected = []
         self.active_shape = "Rectangle"
-        self.possible_shape_list = ["Rectangle","Semicircle","quartrer_circle"]
+        self.possible_shape_list = ["Rectangle","Semicircle","quarter_circle"]
         self.possible_shapes = cycle(self.possible_shape_list)
         next(self.possible_shapes)
 
@@ -142,6 +141,24 @@ class shapeBuilder(tk.Canvas):
         self.down= self.create_image(10, 60, anchor=tk.NW,image=self.down_img, tags=("up_down", "navigate"))
         self.tag_bind(self.up, '<Button-1>', lambda e: self.change_active_shape())
         self.tag_bind(self.down, '<Button-1>', lambda e: self.change_active_shape("down"))
+
+        #############* Creating rotation button #################
+        self.img= (Image.open("rotate_left.png"))
+        resized_image= self.img.resize((20,20), Image.ANTIALIAS)
+        self.rotate_left_img= ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open("rotate_right.png"))
+        resized_image= self.img.resize((20,20), Image.ANTIALIAS)
+        self.rotate_right_img= ImageTk.PhotoImage(resized_image)
+        #self.img= (Image.open(f"{root.colors['path']}shape_builder/minus_hover.png"))
+        #resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        #self.minus_hover_img = ImageTk.PhotoImage(resized_image)
+        #self.img= (Image.open(f"{root.colors['path']}shape_builder/plus_hover.png"))
+        #resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        #self.plus_hover_img = ImageTk.PhotoImage(resized_image)
+        self.rotate_left= self.create_image(10, 100, anchor=tk.NW,image=self.rotate_left_img, tags=("rotate", "navigate"))
+        self.rotate_right= self.create_image(10, 125, anchor=tk.NW,image=self.rotate_right_img, tags=("rotate", "navigate"))
+        self.tag_bind(self.rotate_left, '<Button-1>', lambda e: self.rotate(90))
+        self.tag_bind(self.rotate_right, '<Button-1>', lambda e: self.rotate(-90))
         
         #############* Creating clear button on canvas ##############
         self.clear_img = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/clear.png")
@@ -325,7 +342,7 @@ class shapeBuilder(tk.Canvas):
         if not self.current: # Circle
             pos = self.coords(self.alap_circle)
             cent = (pos[0]+self.r,pos[1]+self.r)
-            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and self.starting_pos is None and (self.active_shape == "Semicircle" or self.active_shape == "quartrer_circle"):
+            if dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))<self.r and degrees(asin(abs(e.y-(pos[1]+self.r))/dist((e.x,e.y), (pos[0]+self.r,pos[1]+self.r))))<self.angle and self.starting_pos is None and (self.active_shape == "Semicircle" or self.active_shape == "quarter_circle"):
                 print("kör")
                 #! Nem mindig jó helyre kattintva aktiválódik!!
                 self.current = Arc(self,e.x,e.y,self.r,self.angle,self.start)
@@ -574,17 +591,27 @@ class shapeBuilder(tk.Canvas):
             self.itemconfigure("alap_circle",state="hidden")
         elif self.active_shape == "Semicircle":
             self.itemconfigure("alap_rectangle",state="hidden")
-            c = self.coords(self.alap_circle)
+            self.start = 0
             self.delete(self.alap_circle)
             self.angle = 180
             self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=180, start = 0, fill="green", tags=("alap_circle"))
-        elif self.active_shape == "quartrer_circle":
+        elif self.active_shape == "quarter_circle":
+            self.start = 0
             self.itemconfigure("alap_rectangle",state="hidden")
             self.delete(self.alap_circle)
             self.angle = 90
             self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=90, start = 0, fill="green", tags=("alap_circle"))
         else: raise ValueError
-
+    def rotate(self, directon = 90, object = None):
+        if object is None:
+            if self.active_shape == "Rectangle":
+                self.width, self.heigth = self.heigth, self.width
+                self.alap_negyzet.refresh(self.alap_negyzet.x1, self.alap_negyzet.y1, self.alap_negyzet.x1 + self.width, self.alap_negyzet.y1 + self.heigth)
+            elif self.active_shape == "Semicircle" or self.active_shape == "quarter_circle":
+                self.delete(self.alap_circle)
+                self.start = (self.start+directon)%360
+                self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=self.angle, start = self.start , fill="green", tags=("alap_circle"))
+            else: raise TypeError
 
 
 
