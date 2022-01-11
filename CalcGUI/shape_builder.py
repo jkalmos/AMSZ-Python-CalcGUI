@@ -451,19 +451,19 @@ class shapeBuilder(tk.Canvas):
             Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12+ A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)**2
               
             Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2)
-        for i in self.shapes.arcs: #! Check rotation
+        for i in self.shapes.arcs: #! Not sure if works for not semi or quarter circle, but any arc...
             A += i.area
             print(i.r/self.scale, i.angle)
             #Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
             #Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
             Ixc = (i.r**4 / 8)*(radians(i.angle)) 
             Iyc = (i.r**4 / 8)*(radians(i.angle))
-            Ixy = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
+            Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
             print(Ixc, Iyc)
             # rotation + translation
-            Ix += ((Ixc+Iyc)/2 + (Ixc-Iyc)/2 *cos(2*radians(i.start-i.angle/2))) + i.area*(Sy-i.center[1])**2
-            Iy += ((Ixc+Iyc)/2 - (Ixc-Iyc)/2 *cos(2*radians(i.start-i.angle/2))) + i.area*(Sy-i.center[1])**2
-            Ixy +=  ((Ixc-Iyc)/2 *sin(2*radians(i.start-i.angle/2))) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            Ix += Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start))  + i.area*(Sy-i.center[1])**2
+            Iy += Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start)) + i.area*(Sy-i.center[1])**2
+            Ixy +=  (Ixc-Iyc)*sin(radians(i.start))*cos(radians(i.start)) + Ixyc*((cos(radians(i.start))**2-sin(radians(i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
