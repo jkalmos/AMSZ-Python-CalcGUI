@@ -30,14 +30,21 @@ class Rectangle():
         self.s_center = self.center
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overlapping(self):
-        a=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
-        #print(self.canvas_repr in a)
-        a = [p for p in a if "rect" in self.canvas.gettags(p)]
+        orig=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
+        ############# with another Rect ##################
+        a = [p for p in orig if "rect" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
         in_overlapping = False
         for i in self.canvas.rectangles:
             if i.canvas_repr in a:
                 if len({self.x1,self.x2}.intersection({i.x1,i.x2}))==0 and len({self.y1,self.y2}.intersection({i.y1,i.y2}))==0:
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############ with Arc #################
+        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        for i in self.canvas.arcs:
+            if i.canvas_repr in a:
+                if True: #!Ez szintén nem jó így de kezdetnek megteszi...
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
@@ -155,7 +162,26 @@ class Arc():
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
                 self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
     def is_overlapping(self):
-        self.canvas.itemconfig(self.canvas_repr, fill='blue')
+        orig=list(self.canvas.find_overlapping(self.center[0]-self.r,self.center[1]-self.r,self.center[0]+self.r,self.center[1]+self.r))
+        ############# with another Arc ##################
+        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        a.remove(self.canvas_repr)
+        print(len(a))
+        in_overlapping = False
+        for i in self.canvas.arcs:
+            if i.canvas_repr in a:
+                if True: #! Ezt javitani kell, de jobb mint a semmi...
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############### with Rectangle ###################
+        a = [p for p in orig if "rect" in self.canvas.gettags(p)]
+        for i in self.canvas.rectangles:
+            if i.canvas_repr in a:
+                if True: #! Ezt is ki kéne számolni, de legalább valamit csinál
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        if not in_overlapping and self not in self.canvas.selected:
+            self.canvas.itemconfig(self.canvas_repr, fill='blue')
     def is_inside(self,point):
         if dist(point,self.center)<=self.r: return True
         return False
