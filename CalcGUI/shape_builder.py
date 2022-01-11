@@ -453,8 +453,13 @@ class shapeBuilder(tk.Canvas):
             Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2)
         for i in self.shapes.arcs: #! Check rotation
             A += i.area
-            Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
-            Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
+            print(i.r/self.scale, i.angle)
+            #Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
+            #Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
+            Ixc = (i.r**4 / 8)*(radians(i.angle)) 
+            Iyc = (i.r**4 / 8)*(radians(i.angle))
+            Ixy = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
+            print(Ixc, Iyc)
             # rotation + translation
             Ix += ((Ixc+Iyc)/2 + (Ixc-Iyc)/2 *cos(2*radians(i.start-i.angle/2))) + i.area*(Sy-i.center[1])**2
             Iy += ((Ixc+Iyc)/2 - (Ixc-Iyc)/2 *cos(2*radians(i.start-i.angle/2))) + i.area*(Sy-i.center[1])**2
@@ -515,7 +520,7 @@ class shapeBuilder(tk.Canvas):
     def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
-        if Ix != Iy and Ixy !=0:
+        if Ixy !=0:
             alfa = atan((Ix-I1)/Ixy)
         else:
             alfa = 0
