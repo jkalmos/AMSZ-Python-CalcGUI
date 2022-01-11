@@ -13,7 +13,7 @@ from shapes import Rectangle, Arc, Shapes, dist
 
 #TODO: Overlapping not recognized while alignig rects
 #TODO: X-label elúszik a canvas mozgatásakor...
-
+#! Not active basic shape doesnt get rescaled by pushing + - buttons
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
         super().__init__(root, bd=0, bg=root.colors["secondary_color"],highlightthickness=0)
@@ -529,6 +529,7 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.alap_circle, 40,10,40+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
         self.width *= scale
         self.heigth *= scale
+        self.r *= scale
         self.coords(self.width_label,50+self.width,10+ self.heigth/2)
         self.coords(self.height_label,30+self.width/2,self.heigth+ 25)
         self.coords(self.r_label,45+self.width/2,15+ self.heigth) #! sugár ???
@@ -592,15 +593,19 @@ class shapeBuilder(tk.Canvas):
         elif self.active_shape == "Semicircle":
             self.itemconfigure("alap_rectangle",state="hidden")
             self.start = 0
-            self.delete(self.alap_circle)
             self.angle = 180
-            self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=180, start = 0, fill="green", tags=("alap_circle"))
+            a,b,c,d = self.coords(self.alap_circle)
+            self.delete(self.alap_circle)
+            self.alap_circle = self.create_arc(a,b,c,d,extent=180, start = 0, fill="green", tags=("alap_circle"))
         elif self.active_shape == "quarter_circle":
             self.start = 0
             self.itemconfigure("alap_rectangle",state="hidden")
-            self.delete(self.alap_circle)
+            #self.delete(self.alap_circle)
             self.angle = 90
-            self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=90, start = 0, fill="green", tags=("alap_circle"))
+            #self.alap_circle = self.create_arc(50-self.r,25-self.r,50+self.r,25+self.r,extent=90, start = 0, fill="green", tags=("alap_circle"))
+            a,b,c,d = self.coords(self.alap_circle)
+            self.delete(self.alap_circle)
+            self.alap_circle = self.create_arc(a,b,c,d,extent=90, start = 0, fill="green", tags=("alap_circle"))
         else: raise ValueError
     def rotate(self, directon = 90, object = None):
         if object is None:
