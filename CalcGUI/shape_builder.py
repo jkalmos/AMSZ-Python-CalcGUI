@@ -8,12 +8,10 @@ WIDTH = 30
 EPSILON = 10
 STICKY = True
 from shapes import Rectangle, Arc, Shapes, dist
-#* https://structx.com/Shape_Formulas_004.html
-#* https://hu.wikipedia.org/wiki/K%C3%B6rcikk
 
 #TODO: Overlapping not recognized while alignig rects
 #TODO: X-label elúszik a canvas mozgatásakor...
-#! Not active basic shape doesnt get rescaled by pushing + - buttons
+
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
         super().__init__(root, bd=0, bg=root.colors["secondary_color"],highlightthickness=0)

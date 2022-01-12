@@ -161,8 +161,25 @@ class Arc():
                 self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
                 self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
+    def get_bounding_box(self):
+        # Karnaugh - tábla alapján
+        C = bool(self.start == 90) or (self.start == 270)
+        B = 180 <= self.start
+        #B = cos(radians(self.angle)) == 0
+        A = self.angle == 180
+        
+        print(self.angle, self.start,A,B,C)
+
+        l = self.center[0] - self.r*((A and not C) or (B and not C) or (C and not B))
+        r = self.center[0] + self.r*((A and B) or (not (C or B) or (C and B)))
+        t = self.center[1] - self.r*((C and A) or not B)
+        b = self.center[1] + self.r*(B or (A and C))
+        print((l-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-t)/self.canvas.scale,(r-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-b)/self.canvas.scale)
+        return l,r,t,b
+
     def is_overlapping(self):
-        orig=list(self.canvas.find_overlapping(self.center[0]-self.r,self.center[1]-self.r,self.center[0]+self.r,self.center[1]+self.r))
+        l,r,t,b = self.get_bounding_box()
+        orig=list(self.canvas.find_overlapping(l,t,r,b))
         ############# with another Arc ##################
         a = [p for p in orig if "arc" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
