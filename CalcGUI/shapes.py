@@ -1,5 +1,5 @@
 from shape_builder import EPSILON
-from math import sin, cos, radians,pi, sqrt
+from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
@@ -168,13 +168,13 @@ class Arc():
         #B = cos(radians(self.angle)) == 0
         A = self.angle == 180
         
-        print(self.angle, self.start,A,B,C)
+        #print(self.angle, self.start,A,B,C)
 
         l = self.center[0] - self.r*((A and not C) or (B and not C) or (C and not B))
         r = self.center[0] + self.r*((A and B) or (not (C or B) or (C and B)))
         t = self.center[1] - self.r*((C and A) or not B)
         b = self.center[1] + self.r*(B or (A and C))
-        print((l-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-t)/self.canvas.scale,(r-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-b)/self.canvas.scale)
+        #print((l-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-t)/self.canvas.scale,(r-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-b)/self.canvas.scale)
         return l,r,t,b
 
     def is_overlapping(self):
@@ -183,7 +183,6 @@ class Arc():
         ############# with another Arc ##################
         a = [p for p in orig if "arc" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
-        print(len(a))
         in_overlapping = False
         for i in self.canvas.arcs:
             if i.canvas_repr in a:
@@ -200,7 +199,11 @@ class Arc():
         if not in_overlapping and self not in self.canvas.selected:
             self.canvas.itemconfig(self.canvas_repr, fill='blue')
     def is_inside(self,point):
-        if dist(point,self.center)<=self.r: return True
+        dy = point[1]-self.center[1]
+        dx = point[0]-self.center[0]
+        szog = degrees(atan2(-dy,dx))
+        if szog <0: szog = 360+szog
+        if dist(point,self.center)<=self.r and  szog>self.start and szog<self.start+self.angle: return True
         return False
     def translate(self,dx,dy):
         self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
