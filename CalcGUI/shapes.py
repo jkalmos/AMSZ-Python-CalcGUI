@@ -5,19 +5,21 @@ def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 
 class Rectangle():  
-    def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
+    def __init__(self,canvas,x1,y1,x2,y2, canvas_repr, Negative = False):
         self.canvas = canvas
         self.canvas_repr = canvas_repr
         self.x1 = x1
         self.x2 = x2
         self.y1 = y1
         self.y2 = y2
+        self.negative = Negative
         self.width = x2-x1
         self.heigth = y2-y1
         self.area = self.width*self.heigth
         self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
         self.s_center = self.center
         self.overlapping_with = []
+        if self.negative: self.canvas.negatives.append(self)
     def refresh(self,x1,y1,x2,y2):
         self.x1 = x1
         self.x2 = x2
@@ -30,12 +32,16 @@ class Rectangle():
         self.s_center = self.center
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overlapping(self):
+        if self.negative: 
+            self.canvas.itemconfig(self.canvas_repr, fill='gray')
+            return 0
         orig=list(self.canvas.find_overlapping(self.x1,self.y1,self.x2,self.y2))
         ############# with another Rect ##################
         a = [p for p in orig if "rect" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
         in_overlapping = False
         for i in self.canvas.rectangles:
+            if i.negative: continue
             if i.canvas_repr in a:
                 if len({self.x1,self.x2}.intersection({i.x1,i.x2}))==0 and len({self.y1,self.y2}.intersection({i.y1,i.y2}))==0:
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
@@ -43,6 +49,7 @@ class Rectangle():
         ############ with Arc #################
         a = [p for p in orig if "arc" in self.canvas.gettags(p)]
         for i in self.canvas.arcs:
+            if i.negative: continue
             if i.canvas_repr in a:
                 if True: #!Ez szintén nem jó így de kezdetnek megteszi...
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
@@ -133,16 +140,18 @@ class Rectangle():
         text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.heigth/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
 class Arc():
-    def __init__(self,canvas, center_x, center_y, r, angle=180, start=0):
+    def __init__(self,canvas, center_x, center_y, r, angle=180, start=0, Negative=False):
         self.canvas = canvas
         self.center = (center_x,center_y)
         self.r = r
         self.d = 2*r
+        self.negative = Negative
         self.start = start
         self.angle = min (360,angle)
         self.area = r**2*pi*(self.angle/360)
         self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
         self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("arc","shape"))
+        if self.negative: self.canvas.negatives.append(self)
     def refresh(self, center_x, center_y,r,angle=180, start=0):
         self.center = (center_x,center_y)
         self.r = r
@@ -178,6 +187,9 @@ class Arc():
         return l,r,t,b
 
     def is_overlapping(self):
+        if self.negative: 
+            self.canvas.itemconfig(self.canvas_repr, fill='gray')
+            return 0
         l,r,t,b = self.get_bounding_box()
         orig=list(self.canvas.find_overlapping(l,t,r,b))
         ############# with another Arc ##################
@@ -185,6 +197,7 @@ class Arc():
         a.remove(self.canvas_repr)
         in_overlapping = False
         for i in self.canvas.arcs:
+            if i.negative: continue
             if i.canvas_repr in a:
                 if True: #! Ezt javitani kell, de jobb mint a semmi...
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
@@ -192,6 +205,7 @@ class Arc():
         ############### with Rectangle ###################
         a = [p for p in orig if "rect" in self.canvas.gettags(p)]
         for i in self.canvas.rectangles:
+            if i.negative: continue
             if i.canvas_repr in a:
                 if True: #! Ezt is ki kéne számolni, de legalább valamit csinál
                     self.canvas.itemconfig(self.canvas_repr, fill='red')

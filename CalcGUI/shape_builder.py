@@ -20,6 +20,7 @@ class shapeBuilder(tk.Canvas):
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
         self.arcs = []
+        self.negatives = []
         self.shapes = Shapes(self,self.rectangles,self.arcs)
         self.clipboard = []
         self.Xcenter = 400
@@ -208,6 +209,7 @@ class shapeBuilder(tk.Canvas):
         self.popup_menu.add_command(label="Delete",command=self.delete_shape)
         self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
         self.popup_menu.add_command(label="Info",command=self.rectangle_info)
+        self.popup_menu.add_command(label="Set to negative",command=self.set_to_negative)
         self.bind("<Button-3>", self.popup) # right-click event
         self.bind("<Configure>", self.resize_canvas)
         #self.tag_bind("rect",'<Double-Button-1>',self.select)
@@ -281,7 +283,21 @@ class shapeBuilder(tk.Canvas):
             self.result1.config(text=f"{len(self.selected)} darab objektum van kijelölve")
             return -1
         if len(self.selected)>0: self.result1.config(text= self.selected[0].get_info())
-        
+    def set_to_negative(self, object = None):
+        if object is None:
+            for i in self.selected:
+                i.negative = not i.negative
+                if i.negative: 
+                    self.tag_raise(i.canvas_repr)
+                    self.negatives.append(i)
+                else: self.negatives.remove(i)
+        else:
+            object.negative = not object.negative
+            if object.negative: 
+                self.tag_raise(object.canvas_repr)
+                self.negatives.append(object)
+            else: self.negatives.remove(object)
+        for k in self.shapes: k.is_overlapping()
     def select(self,e, object=None):
         #self.deselect()
         if e is None and object is not None:
@@ -392,6 +408,7 @@ class shapeBuilder(tk.Canvas):
             self.coords(self.selecting_area,mwc,mnc,mec,msc)
             self.starting_pos = None
         self.itemconfigure(self.selecting_area,state="hidden")
+        for i in self.negatives: self.tag_raise(i.canvas_repr)
             
             
         self.isMoving = False
@@ -416,9 +433,12 @@ class shapeBuilder(tk.Canvas):
             Sy=0
             for i in self.shapes:
                 #print((i.center[0]-self.Xcenter)/self.scale)
-                A += i.area
-                Sx += (i.s_center[0]-self.Xcenter)*i.area
-                Sy += (self.Ycenter-i.s_center[1])*i.area
+                A += i.area*(1-2* (i.negative))
+                Sx += (i.s_center[0]-self.Xcenter)*i.area*(1-2* (i.negative))
+                Sy += (self.Ycenter-i.s_center[1])*i.area*(1-2* (i.negative))
+            if A <= 0:
+                self.result1.config(text=f"Hiba: Az össz terület negatív vagy nulla")
+                return -1 
             Sx /= A
             Sy /= A
             Sx += self.Xcenter
@@ -444,13 +464,13 @@ class shapeBuilder(tk.Canvas):
         for i in self.shapes.rectangles:
             pos = self.coords(i.canvas_repr)
             A_current = (pos[2]-pos[0]) * (pos[3]-pos[1])
-            A += A_current
-            Ix += ((pos[2]-pos[0]) * (pos[3]-pos[1])**3 )/12+ A_current*(Sy-pos[1]-(pos[3]-pos[1])/2)**2
-            Iy += (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12+ A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)**2
+            A += (1-2* (i.negative))*A_current
+            Ix += (1-2* (i.negative)) * ((pos[2]-pos[0]) * (pos[3]-pos[1])**3 )/12+ A_current*(Sy-pos[1]-(pos[3]-pos[1])/2)**2
+            Iy += (1-2* (i.negative)) * (pos[2]-pos[0])**3 * (pos[3]-pos[1]) /12+ A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)**2
               
-            Ixy += A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2)
+            Ixy += (1-2* (i.negative)) * A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2)
         for i in self.shapes.arcs: #! Not sure if works for not semi or quarter circle, but any arc...
-            A += i.area
+            A += (1-2* (i.negative))*i.area
             print(i.r/self.scale, i.angle)
             #Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
             #Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
@@ -459,9 +479,9 @@ class shapeBuilder(tk.Canvas):
             Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
             print(Ixc, Iyc)
             # rotation + translation
-            Ix += Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start))  + i.area*(Sy-i.center[1])**2
-            Iy += Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start)) + i.area*(Sy-i.center[1])**2
-            Ixy +=  (Ixc-Iyc)*sin(radians(i.start))*cos(radians(i.start)) + Ixyc*((cos(radians(i.start))**2-sin(radians(i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start))  + i.area*(Sy-i.center[1])**2
+            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start)) + i.area*(Sy-i.center[1])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(i.start))*cos(radians(i.start)) + Ixyc*((cos(radians(i.start))**2-sin(radians(i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
