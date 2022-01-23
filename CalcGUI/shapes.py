@@ -1,6 +1,6 @@
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
-
+EPSILON = 10
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 
@@ -60,6 +60,7 @@ class Rectangle():
         self.align_by_side()# sticking to another rectangles 
         self.align_by_center()
         self.align_to_axis()#sicking to the coordinate system
+        self.align_to_arc()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             pos=[self.x1,self.y1,self.x2,self.y2]
@@ -129,6 +130,34 @@ class Rectangle():
             if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.heigth) # sticking by top-bottom
             if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.heigth,self.x2,i.y1) # sticking by bottom-top
             if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.heigth,self.x2,i.y2) # sticking by top-top
+    def align_to_arc(self):
+        for i in self.canvas.arcs:
+            own = i.get_charachteristic_points()
+            x = [p[0] for p in own]
+            y = [p[1] for p in own]
+            arc_x = max(set(x), key=x.count)
+            arc_y = max(set(y), key=y.count)
+            dx = 0
+            dy = 0
+            # align by x
+            for j in [self.x1,self.x2,self.center[0]]:
+                if abs(j-arc_x) < EPSILON:
+                    dx = j- arc_x
+                    break
+            #align by y
+            for j in [self.y1,self.y2,self.center[1]]:
+                if abs(j-arc_y) < EPSILON:
+                    dy = j- arc_y
+                    break
+            if dx != 0 or dy != 0:
+                self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
+                for k in own:
+                    for l in [(self.x1,self.y1),(self.x1,self.y2),(self.x2,self.y1),(self.x2,self.y2)]:
+                        if dist(k,l)<EPSILON:
+                            dx = l[0]-k[0]
+                            dy = l[1]-k[1]
+                            self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
+                            
     def translate(self, dx,dy):
         self.refresh(self.x1+dx,self.y1+dy,self.x2+dx,self.y2+dy)
     def is_inside(self,point):
@@ -163,6 +192,8 @@ class Arc():
         self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
     def align(self):
         self.align_to_axis()
+        self.align_to_rect()
+        self.align_to_arc()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
@@ -170,6 +201,61 @@ class Arc():
                 self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
                 self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
+    def align_to_arc(self):
+        own = self.get_charachteristic_points()
+        for i in self.canvas.arcs:
+            aling_score = 0 # if at least two points are near eachother, then it alignes them
+            other = i.get_charachteristic_points()
+            for k in own:
+                for j in other:
+                    if dist(k,j) <= EPSILON: 
+                        aling_score+=1
+                        displacement = (j[0]-k[0], j[1]-k[1])
+            if aling_score >= 2:
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.r, self.angle,self.start)
+                break
+    def align_to_rect(self):
+        own = self.get_charachteristic_points()
+        x = [p[0] for p in own]
+        y = [p[1] for p in own]
+        arc_x = max(set(x), key=x.count)
+        arc_y = max(set(y), key=y.count)
+        dx = 0
+        dy = 0
+        for i in self.canvas.rectangles:
+            # align by x
+            for j in [i.x1,i.x2,i.center[0]]:
+                if abs(j-arc_x) < EPSILON:
+                    dx = j- arc_x
+                    break
+            #align by y
+            for j in [i.y1,i.y2,i.center[1]]:
+                if abs(j-arc_y) < EPSILON:
+                    dy = j- arc_y
+                    break
+            if dx != 0 or dy != 0:
+                self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                own = self.get_charachteristic_points()
+                x = [p[0] for p in own]
+                y = [p[1] for p in own]
+                arc_x = max(set(x), key=x.count)
+                arc_y = max(set(y), key=y.count)
+                dx = 0
+                dy = 0
+                for k in own:
+                    for l in [(i.x1,i.y1),(i.x1,i.y2),(i.x2,i.y1),(i.x2,i.y2)]:
+                        if dist(k,l)<EPSILON:
+                            dx = l[0]-k[0]
+                            dy = l[1]-k[1]
+                            self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                            own = self.get_charachteristic_points()
+                            x = [p[0] for p in own]
+                            y = [p[1] for p in own]
+                            arc_x = max(set(x), key=x.count)
+                            arc_y = max(set(y), key=y.count)
+                            dx = 0
+                            dy = 0
+           
     def get_bounding_box(self):
         # Karnaugh - tábla alapján
         C = bool(self.start == 90) or (self.start == 270)
@@ -185,7 +271,11 @@ class Arc():
         b = self.center[1] + self.r*(B or (A and C))
         #print((l-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-t)/self.canvas.scale,(r-self.canvas.Xcenter)/self.canvas.scale,(self.canvas.Ycenter-b)/self.canvas.scale)
         return l,r,t,b
-
+    def get_charachteristic_points(self):
+        p1 = self.center
+        p2 = (p1[0]+self.r*cos(radians(self.start)), p1[1]-self.r*sin(radians(self.start)))
+        p3 = (p1[0]+self.r*cos(radians(self.start+self.angle)), p1[1]-self.r*sin(radians(self.start+self.angle)))
+        return p2, p1, p3
     def is_overlapping(self):
         if self.negative: 
             self.canvas.itemconfig(self.canvas_repr, fill='gray')
