@@ -3,7 +3,14 @@ from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 EPSILON = 10
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
-
+def check_overlapping_of_boundig_box(ax1,ax2,ay1,ay2, x1,x2,y1,y2):
+    p1 = (x1,y1)
+    p2 = (x1,y2)
+    p3 = (x2, y1)
+    p4 = (x2, y2)
+    tmp1 = False
+    for point in [p1,p2,p3,p4]: tmp1 = tmp1 or (point[0]>ax1 and point[0]<ax2 and point[1]>ay1 and point[1]<ay2)
+    return tmp1
 class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr, Negative = False):
         self.canvas = canvas
@@ -42,8 +49,8 @@ class Rectangle():
         in_overlapping = False
         for i in self.canvas.rectangles:
             if i.negative: continue
-            if i.canvas_repr in a:
-                if len({self.x1,self.x2}.intersection({i.x1,i.x2}))==0 and len({self.y1,self.y2}.intersection({i.y1,i.y2}))==0:
+            if i.canvas_repr in a: 
+                if check_overlapping_of_boundig_box(self.x1,self.x2,self.y1,self.y2,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,self.x1,self.x2,self.y1,self.y2):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############ with Arc #################
@@ -51,7 +58,8 @@ class Rectangle():
         for i in self.canvas.arcs:
             if i.negative: continue
             if i.canvas_repr in a:
-                if True: #!Ez szintén nem jó így de kezdetnek megteszi...
+                l,r,t,b=i.get_bounding_box()
+                if check_overlapping_of_boundig_box(self.x1,self.x2,self.y1,self.y2, l,r,t,b ) or check_overlapping_of_boundig_box(l,r,t,b, self.x1,self.x2,self.y1,self.y2): #!Ez szintén nem jó így de kezdetnek megteszi...
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
@@ -289,7 +297,8 @@ class Arc():
         for i in self.canvas.arcs:
             if i.negative: continue
             if i.canvas_repr in a:
-                if True: #! Ezt javitani kell, de jobb mint a semmi...
+                l2,r2,t2,b2 = i.get_bounding_box()
+                if check_overlapping_of_boundig_box(l,r,b,t,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,b,t):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Rectangle ###################
@@ -297,7 +306,7 @@ class Arc():
         for i in self.canvas.rectangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                if True: #! Ezt is ki kéne számolni, de legalább valamit csinál
+                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,b,t):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
