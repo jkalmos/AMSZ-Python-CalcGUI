@@ -522,6 +522,7 @@ class main_window(tk.Tk):
                 return -1
             self.values = Calc.RightTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
             self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+            print("alfa: " + str(self.values["alpha"]))
             if self.transformed_coordinate_on.get() == True:
                 print("transcoord")
                 self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
@@ -533,12 +534,12 @@ class main_window(tk.Tk):
                 self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                 self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
             self.sm.result5.config(text="Főmásodrendű nyomatékok:")
-            if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
-                self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+            if round(self.values["I1"], 4) >= round(self.values["I2"], 4):
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["I1"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["I2"], 4)) + " " + self.unit + "\u2074")
             else:
-                self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result6.config(text="I₁ = " + str(round(self.values["I2"], 4)) + " " + self.unit + "\u2074")
+                self.sm.result7.config(text="I₂ = " + str(round(self.values["I1"], 4)) + " " + self.unit + "\u2074")
             self.sm.result8.config(text="Keresztmetszeti tényezők:")
             self.sm.result9.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
             self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
