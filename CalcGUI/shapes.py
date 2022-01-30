@@ -4,13 +4,15 @@ EPSILON = 10
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 def check_overlapping_of_boundig_box(ax1,ax2,ay1,ay2, x1,x2,y1,y2):
-    p1 = (x1,y1)
-    p2 = (x1,y2)
-    p3 = (x2, y1)
-    p4 = (x2, y2)
-    tmp1 = False
-    for point in [p1,p2,p3,p4]: tmp1 = tmp1 or (point[0]>ax1 and point[0]<ax2 and point[1]>ay1 and point[1]<ay2)
-    return tmp1
+    eps = 10**(-9)
+    p1 = (x1+eps,y1+eps)
+    p2 = (x1+eps,y2-eps)
+    p3 = (x2-eps,y1+eps)
+    p4 = (x2-eps,y2-eps)
+    tmp = False
+    for point in [p1,p2,p3,p4]: tmp = tmp or (point[0]>ax1 and point[0]<ax2 and point[1]>ay1 and point[1]<ay2)
+    
+    return tmp
 class Rectangle():  
     def __init__(self,canvas,x1,y1,x2,y2, canvas_repr, Negative = False):
         self.canvas = canvas
@@ -298,7 +300,7 @@ class Arc():
             if i.negative: continue
             if i.canvas_repr in a:
                 l2,r2,t2,b2 = i.get_bounding_box()
-                if check_overlapping_of_boundig_box(l,r,b,t,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,b,t):
+                if check_overlapping_of_boundig_box(l,r,t,b,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,t,b):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Rectangle ###################
@@ -306,7 +308,7 @@ class Arc():
         for i in self.canvas.rectangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,b,t):
+                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
