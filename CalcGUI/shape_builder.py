@@ -692,7 +692,8 @@ class shapeBuilder(tk.Canvas):
         self.coords(self.alap_circle, 40,10,40+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
         self.width *= scale
         self.height *= scale
-        self.r *= scale
+        self.r1 *= scale
+        self.r2 *= scale
         self.coords(self.width_label,50+self.width,10+ self.height/2)
         self.coords(self.height_label,30+self.width/2,self.height+ 25)
         self.coords(self.r_label,45+self.width/2,15+ self.height) #! sugár ???
