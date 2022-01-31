@@ -565,6 +565,11 @@ DARK_THEME = {
         'draw_secondary': '#1a1a1a',
         'draw_tertiary': 'grey',
         'draw_principal': 'red',
+        'sb_draw':'#87aade',
+        'sb_draw_2nd':'#008080',
+        'sb_selected':'',
+        'sb_error':'',
+        'sb_negative':'',
         'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
@@ -578,6 +583,11 @@ LIGHT_THEME = {
         'draw_secondary': '#000000',
         'draw_tertiary': '#4d4d4d',
         'draw_principal': 'red',
+        'sb_draw':'#a4ade9',
+        'sb_draw_2nd':'#5d93d1',
+        'sb_selected':'',
+        'sb_error':'',
+        'sb_negative':'',
         'path': 'figures/light_theme/'
         }
 

@@ -5,8 +5,9 @@ def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 
 class Rectangle():  
-    def __init__(self,canvas,x1,y1,x2,y2, canvas_repr):
+    def __init__(self,canvas,root,x1,y1,x2,y2, canvas_repr):
         self.canvas = canvas
+        self.root = root
         self.type = "Rectangle"
         self.canvas_repr = canvas_repr
         self.x1 = x1
@@ -49,7 +50,7 @@ class Rectangle():
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
-            self.canvas.itemconfig(self.canvas_repr, fill='blue')
+            self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
     def align(self):
         self.align_by_side()# sticking to another rectangles 
         self.align_by_center()
@@ -134,8 +135,9 @@ class Rectangle():
         text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.height/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
 class Arc():
-    def __init__(self,canvas, center_x, center_y, r, angle=180, start=0):
+    def __init__(self,canvas,root, center_x, center_y, r, angle=180, start=0):
         self.canvas = canvas
+        self.root = root
         self.center = (center_x,center_y)
         self.r = r
         # self.width = self.r
@@ -149,7 +151,7 @@ class Arc():
             self.type = "quarter_circle"
         self.area = r**2*pi*(self.angle/360)
         self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
-        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("arc","shape"))
+        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill=self.root.colors["sb_draw"], tags=("arc","shape"))
     def refresh(self, center_x, center_y,r,angle=180, start=0):
         self.center = (center_x,center_y)
         self.r = r
@@ -204,7 +206,7 @@ class Arc():
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
-            self.canvas.itemconfig(self.canvas_repr, fill='blue')
+            self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
     def is_inside(self,point):
         dy = point[1]-self.center[1]
         dx = point[0]-self.center[0]
