@@ -217,7 +217,7 @@ class Arc():
     def translate(self,dx,dy):
         self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
     def get_info(self):
-        text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
+        text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})\n {self.start}"
         return text
 class Shapes():
     def __init__(self, canvas, rectangles, arcs):

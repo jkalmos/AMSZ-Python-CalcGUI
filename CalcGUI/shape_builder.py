@@ -724,7 +724,7 @@ class shapeBuilder(tk.Canvas):
         y_coord = (-y+self.Ycenter)
         if len(self.selected)==1:
             object = self.selected[0]
-            if object.type == "Recatangle":
+            if object.type == "Rectangle":
                 object.refresh(x_coord,y_coord,x_coord+object.width,y_coord+object.height)
             else:
                 object.refresh(x_coord,y_coord,object.r,angle=object.angle, start = object.start)
