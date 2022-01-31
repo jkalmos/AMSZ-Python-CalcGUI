@@ -14,8 +14,10 @@ def check_overlapping_of_boundig_box(ax1,ax2,ay1,ay2, x1,x2,y1,y2):
     
     return tmp
 class Rectangle():  
-    def __init__(self,canvas,x1,y1,x2,y2, canvas_repr, Negative = False):
+    def __init__(self,canvas,root,x1,y1,x2,y2, canvas_repr, Negative = False):
         self.canvas = canvas
+        self.root = root
+        self.type = "Rectangle"
         self.canvas_repr = canvas_repr
         self.x1 = x1
         self.x2 = x2
@@ -23,9 +25,9 @@ class Rectangle():
         self.y2 = y2
         self.negative = Negative
         self.width = x2-x1
-        self.heigth = y2-y1
-        self.area = self.width*self.heigth
-        self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
+        self.height = y2-y1
+        self.area = self.width*self.height
+        self.center=(self.x1+self.width/2, self.y1+self.height/2)
         self.s_center = self.center
         self.overlapping_with = []
         if self.negative: self.canvas.negatives.append(self)
@@ -35,9 +37,9 @@ class Rectangle():
         self.y1 = y1
         self.y2 = y2
         self.width = self.x2-self.x1
-        self.heigth = self.y2-self.y1
-        self.area = self.width*self.heigth
-        self.center=(self.x1+self.width/2, self.y1+self.heigth/2)
+        self.height = self.y2-self.y1
+        self.area = self.width*self.height
+        self.center=(self.x1+self.width/2, self.y1+self.height/2)
         self.s_center = self.center
         self.canvas.coords(self.canvas_repr,x1,y1,x2,y2)
     def is_overlapping(self):
@@ -65,7 +67,7 @@ class Rectangle():
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
-            self.canvas.itemconfig(self.canvas_repr, fill='blue')
+            self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
     def align(self):
         self.align_by_side()# sticking to another rectangles 
         self.align_by_center()
@@ -81,43 +83,43 @@ class Rectangle():
                 self.refresh(self.canvas.Xcenter-self.width,pos[1],self.canvas.Xcenter,pos[3])
                 pos = self.canvas.coords(self.canvas_repr)
             if abs(pos[1]-self.canvas.Ycenter) < EPSILON: #top side sticks to the coordinatsystem
-                self.refresh(pos[0],self.canvas.Ycenter,pos[2],self.canvas.Ycenter+self.heigth)
+                self.refresh(pos[0],self.canvas.Ycenter,pos[2],self.canvas.Ycenter+self.height)
                 pos = self.canvas.coords(self.canvas_repr)
             elif abs(pos[3]-self.canvas.Ycenter) < EPSILON: #bottomí side sticks to the coordinatsystem
-                self.refresh(pos[0],self.canvas.Ycenter-self.heigth,pos[2],self.canvas.Ycenter)
+                self.refresh(pos[0],self.canvas.Ycenter-self.height,pos[2],self.canvas.Ycenter)
                 pos = self.canvas.coords(self.canvas_repr)
             #* Sticking with the center of the rectangle to the coordinate system
             if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
                 self.refresh(self.canvas.Xcenter-self.width/2,self.y1,self.canvas.Xcenter+self.width/2,self.y2)
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
-                self.refresh(self.x1,self.canvas.Ycenter-self.heigth/2,self.x2,self.canvas.Ycenter+self.heigth/2)
+                self.refresh(self.x1,self.canvas.Ycenter-self.height/2,self.x2,self.canvas.Ycenter+self.height/2)
     def align_to_corners(self): #! OLD VERSION - NOT USED
         pos=[self.x1,self.y1,self.x2,self.y2]
         for i in self.canvas.rectangles:
             i_pos = self.canvas.coords(i.canvas_repr)
             if abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # current rect goes under the another 
-                self.refresh(i_pos[0],i_pos[3],i_pos[0]+self.width,i_pos[3]+self.heigth)
+                self.refresh(i_pos[0],i_pos[3],i_pos[0]+self.width,i_pos[3]+self.height)
                 break
             elif abs(pos[0] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # TOP
-                self.refresh(i_pos[0],i_pos[1]-self.heigth,i_pos[0]+self.width,i_pos[1])
+                self.refresh(i_pos[0],i_pos[1]-self.height,i_pos[0]+self.width,i_pos[1])
                 break
             elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[0] - i_pos[2]) < EPSILON: # RIGHT
-                self.refresh(i_pos[2],i_pos[1],i_pos[2]+self.width,i_pos[1]+self.heigth)
+                self.refresh(i_pos[2],i_pos[1],i_pos[2]+self.width,i_pos[1]+self.height)
                 break
             elif abs(pos[1] - i_pos[1]) < EPSILON and abs(pos[2] - i_pos[0]) < EPSILON: # LEFT
-                self.refresh(i_pos[0]-self.width,i_pos[1],i_pos[0],i_pos[1]+self.heigth)
+                self.refresh(i_pos[0]-self.width,i_pos[1],i_pos[0],i_pos[1]+self.height)
                 break
             elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[1]) < EPSILON: # ??
-                self.refresh(i_pos[2]-self.width,i_pos[1]-self.heigth,i_pos[2],i_pos[1])
+                self.refresh(i_pos[2]-self.width,i_pos[1]-self.height,i_pos[2],i_pos[1])
                 break
             elif abs(pos[2] - i_pos[0]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # ??
-                self.refresh(i_pos[0]-self.width,i_pos[3]-self.heigth,i_pos[0],i_pos[3])
+                self.refresh(i_pos[0]-self.width,i_pos[3]-self.height,i_pos[0],i_pos[3])
                 break
             elif abs(pos[0] - i_pos[2]) < EPSILON and abs(pos[3] - i_pos[3]) < EPSILON: # !
-                self.refresh(i_pos[2],i_pos[3]-self.heigth,i_pos[2]+self.width,i_pos[3])
+                self.refresh(i_pos[2],i_pos[3]-self.height,i_pos[2]+self.width,i_pos[3])
                 break
             elif abs(pos[2] - i_pos[2]) < EPSILON and abs(pos[1] - i_pos[3]) < EPSILON: # !
-                self.refresh(i_pos[2]-self.width,i_pos[3],i_pos[2],i_pos[3]+self.heigth)
+                self.refresh(i_pos[2]-self.width,i_pos[3],i_pos[2],i_pos[3]+self.height)
                 break
         else:
             return 0
@@ -128,7 +130,7 @@ class Rectangle():
                 self.refresh(i.center[0]-self.width/2,self.y1,i.center[0]+self.width/2,self.y2)
                 break
             if abs(self.center[1]-i.center[1])<EPSILON:
-                self.refresh(self.x1,i.center[1]-self.heigth/2,self.x2,i.center[1]+self.heigth/2)
+                self.refresh(self.x1,i.center[1]-self.height/2,self.x2,i.center[1]+self.height/2)
                 break
     def align_by_side(self):
         for i in self.canvas.rectangles:
@@ -136,10 +138,10 @@ class Rectangle():
             if abs(self.x1-i.x2)<EPSILON: self.refresh(i.x2,self.y1,i.x2+self.width,self.y2) #sicking by left-right
             if abs(self.x2-i.x1)<EPSILON: self.refresh(i.x1-self.width,self.y1,i.x1,self.y2) #sticking by right-left
             if abs(self.x2-i.x2)<EPSILON: self.refresh(i.x2-self.width,self.y1,i.x2,self.y2) #sticking by right-right
-            if abs(self.y1-i.y1)<EPSILON: self.refresh(self.x1,i.y1,self.x2,i.y1+self.heigth) # sticking by top-top
-            if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.heigth) # sticking by top-bottom
-            if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.heigth,self.x2,i.y1) # sticking by bottom-top
-            if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.heigth,self.x2,i.y2) # sticking by top-top
+            if abs(self.y1-i.y1)<EPSILON: self.refresh(self.x1,i.y1,self.x2,i.y1+self.height) # sticking by top-top
+            if abs(self.y1-i.y2)<EPSILON: self.refresh(self.x1,i.y2,self.x2,i.y2+self.height) # sticking by top-bottom
+            if abs(self.y2-i.y1)<EPSILON: self.refresh(self.x1,i.y1-self.height,self.x2,i.y1) # sticking by bottom-top
+            if abs(self.y2-i.y2)<EPSILON: self.refresh(self.x1,i.y2-self.height,self.x2,i.y2) # sticking by top-top
     def align_to_arc(self):
         for i in self.canvas.arcs:
             own = i.get_charachteristic_points()
@@ -176,20 +178,25 @@ class Rectangle():
         else:
             return False
     def get_info(self):
-        text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.heigth/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
+        text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.height/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
 class Arc():
-    def __init__(self,canvas, center_x, center_y, r, angle=180, start=0, Negative=False):
+    def __init__(self,canvas,root, center_x, center_y, r, angle=180, start=0, Negative=False):
         self.canvas = canvas
+        self.root = root
         self.center = (center_x,center_y)
         self.r = r
         self.d = 2*r
         self.negative = Negative
         self.start = start
         self.angle = min (360,angle)
+        if self.angle == 180:
+            self.type = "Semicircle"
+        elif self.angle == 90:
+            self.type = "quarter_circle"
         self.area = r**2*pi*(self.angle/360)
         self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
-        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill="blue", tags=("arc","shape"))
+        self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill=self.root.colors["sb_draw"], tags=("arc","shape"))
         if self.negative: self.canvas.negatives.append(self)
     def refresh(self, center_x, center_y,r,angle=180, start=0):
         self.center = (center_x,center_y)
@@ -312,7 +319,7 @@ class Arc():
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
-            self.canvas.itemconfig(self.canvas_repr, fill='blue')
+            self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
     def is_inside(self,point):
         dy = point[1]-self.center[1]
         dx = point[0]-self.center[0]

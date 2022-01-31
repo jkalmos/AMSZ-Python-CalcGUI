@@ -74,7 +74,7 @@ class SideMenu(tk.Frame):
         self.combo_isosceles.bind('<Button-1>', func=lambda e:self.isosceles_click())
         self.combo_isosceles["border"] = "0"
 
-        self.combo_right_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles.png")
+        self.combo_right_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_right.png")
         self.combo_right = tk.Label(self.canvas, image=self.combo_right_img, bg=self["background"], activebackground=self["background"])
         self.combo_right.bind('<Button-1>', func=lambda e:self.right_click())
         self.combo_right["border"] = "0"
@@ -95,7 +95,7 @@ class SideMenu(tk.Frame):
         self.combo_isosceles.bind("<Enter>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_hover_img))
         self.combo_isosceles.bind("<Leave>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_img))
 
-        self.combo_right_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles_hover.png")
+        self.combo_right_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_right_hover.png")
         self.combo_right.bind("<Enter>", func=lambda e: self.combo_right.config(image=self.combo_right_hover_img))
         self.combo_right.bind("<Leave>", func=lambda e: self.combo_right.config(image=self.combo_right_img))
 
@@ -115,8 +115,8 @@ class SideMenu(tk.Frame):
         self.m2 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # dimension input entries
-        self.e1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'])
-        self.e2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'])
+        self.e1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'],insertbackground=root.colors['text_color'])
+        self.e2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'],insertbackground=root.colors['text_color'])
 
         # transformed coordinate system input labels
         self.tl1 = tk.Label(self.canvas, text="x", bg=self["background"], fg=root.colors['text_color'], font=input_font)
@@ -127,16 +127,16 @@ class SideMenu(tk.Frame):
         self.tm3 = tk.Label(self.canvas, text=self.root.angle_unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # transformed coordinate system input entries
-        self.te1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
-        self.te2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
-        self.te3 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
+        self.te1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'],insertbackground=root.colors['text_color'])
+        self.te2 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'],insertbackground=root.colors['text_color'])
+        self.te3 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'],insertbackground=root.colors['text_color'])
 
         # thickness input labels
         self.thl1 = tk.Label(self.canvas, text="t", bg=self["background"], fg=root.colors['text_color'], font=input_font)
         self.thm1 = tk.Label(self.canvas, text=self.root.unit, bg=self["background"], fg=root.colors['text_color'], font=input_font)
 
         # thickness input entry
-        self.the1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'])
+        self.the1 = tk.Entry(self.canvas, width = 10, bg=root.colors['entry_color'], fg=root.colors['text_color'], state='disabled', disabledbackground=root.colors['disabled_color'],insertbackground=root.colors['text_color'])
 
         # calculate button
         self.buttonimage = tk.PhotoImage(file=f"{root.colors['path']}/calculate_button.png")
@@ -308,7 +308,7 @@ class SideMenu(tk.Frame):
             else:
                 self.combo_clear()
                 self.combo_right.grid(row=1, column=0, columnspan=5)
-                self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_isosceles_closed.png")
+                self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_right_closed.png")
                 self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
                 self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
                 self.combo_default.grid(row=1, column=0, columnspan=5)
