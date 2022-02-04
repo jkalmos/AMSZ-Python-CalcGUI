@@ -9,7 +9,7 @@ R1 = 20 # radius of semicircle (represenatation)
 R2 = 20 # radius of quarter_circle (represenatation)
 EPSILON = 10
 STICKY = True
-from shapes import Rectangle, Arc, Shapes, dist
+from shapes import Rectangle, Arc, Shapes, dist, RightTriangle
 
 #TODO: Overlapping not recognized while alignig rects
 #TODO: X-label elúszik a canvas mozgatásakor...
@@ -22,8 +22,9 @@ class shapeBuilder(tk.Canvas):
         self.scale = 10 #scale between drawing and given value
         self.rectangles = []
         self.arcs = []
+        self.rightTriangles = []
         self.negatives = []
-        self.shapes = Shapes(self,self.rectangles,self.arcs)
+        self.shapes = Shapes(self,self.rectangles,self.arcs,self.rightTriangles)
         self.clipboard = []
         self.Xcenter = 400
         self.Ycenter = 300
@@ -220,7 +221,9 @@ class shapeBuilder(tk.Canvas):
 
         self.root.bind("<Control-c>", self.add_to_clp)
         self.root.bind("<Control-v>", self.insert_from_clp)
-
+        self.triang = RightTriangle(self,self.root,self.Xcenter,self.Ycenter,40,20)
+        self.shapes.append(self.triang)
+        self.root.bind("<Control-t>", lambda e: print(self.selected))
         #self.root.bind("<Control-n>", lambda e: self.hc.refresh(self.Xcenter-20,self.Ycenter-100, self.hc.r))
 
         ##############* Packing objects ###############
@@ -462,8 +465,9 @@ class shapeBuilder(tk.Canvas):
             self.current.refresh(e.x-self.current.width/2,e.y-self.current.height/2,e.x+self.current.width/2,e.y+self.current.height/2)
             self.isMoving = True
             return 0
-        elif self.isMoving or type(self.current)==Arc:
-            self.current.refresh(e.x,e.y,self.current.r,self.current.angle,self.current.start)
+        elif self.isMoving or type(self.current)==Arc or type(self.current) == RightTriangle: #! Itt valami furán van meírva de úgy néz ki működik
+            if type(self.current) == Arc: self.current.refresh(e.x,e.y,self.current.r,self.current.angle,self.current.start)
+            elif type(self.current) == RightTriangle: self.current.refresh(e.x,e.y,self.current.w,self.current.h)
             self.isMoving = True
             return 0
         
@@ -673,7 +677,7 @@ class shapeBuilder(tk.Canvas):
         self.delete("hauptachse")
         self.delete("s_axis")
         del self.shapes
-        self.shapes = Shapes(self,self.rectangles,self.arcs)
+        self.shapes = Shapes(self,self.rectangles,self.arcs,self.rightTriangles)
         #self.label.config(text="")   
     def hauptachsen(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
