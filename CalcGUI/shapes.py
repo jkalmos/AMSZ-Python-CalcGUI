@@ -352,7 +352,7 @@ class RightTriangle():
         self.rotation_matrix =np.matrix([[cos(radians(orientation)),-sin(radians(orientation))] , [sin(radians(orientation)),cos(radians(orientation))]])
         self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-h]))[0]] 
         self.s_center = sum(self.points)/3
-        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1],fill='white', tags=("arc","shape"))
+        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("arc","shape"))
         if self.negative: self.canvas.negatives.append(self)
         #print(self.canvas.coords(self.canvas_repr))
     def refresh(self, center_x, center_y,w,h):
@@ -443,11 +443,12 @@ class RightTriangle():
                             dx = 0
                             dy = 0
     def is_overlapping(self):
-        print("Warning: overlapping detection is not implemented")
-        return -1
         if self.negative: 
             self.canvas.itemconfig(self.canvas_repr, fill='gray')
             return 0
+        self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
+        print("Warning: overlapping detection is not implemented")
+        return -1
         l,r,t,b = self.get_bounding_box()
         orig=list(self.canvas.find_overlapping(l,t,r,b))
         ############# with another Arc ##################
@@ -489,8 +490,7 @@ class RightTriangle():
     def translate(self,dx,dy):
         self.refresh(self.center[0]+dx,self.center[1]+dy, self.w,self.h)
     def get_info(self):
-        raise NotImplementedError
-        text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
+        text=f"Befogó 1 = {self.w/self.canvas.scale}\nBefogó 2 = {self.h/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale} Irányultság = {self.orietation})"
         return text
 class Shapes():
     def __init__(self, canvas, rectangles, arcs,rightTriangles):
