@@ -120,8 +120,8 @@ class shapeBuilder(tk.Canvas):
         self.plus_hover_img = ImageTk.PhotoImage(resized_image)
         self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
         self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
-        self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(2))
-        self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.5))
+        self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(1.25))
+        self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.8))
         self.tag_bind(self.minus, '<Enter>', lambda e: self.itemconfig(self.minus,image=self.minus_hover_img))
         self.tag_bind(self.plus, '<Enter>', lambda e: self.itemconfig(self.plus,image=self.plus_hover_img))
         self.tag_bind(self.minus, '<Leave>', lambda e: self.itemconfig(self.minus,image=self.minus_img))
@@ -688,15 +688,14 @@ class shapeBuilder(tk.Canvas):
         return I1, I2, alfa
     def rescale(self,scale): #!? Could be better
         self.scale *= scale
-        self.alap_negyzet.refresh(40,10,40+self.width*scale,10+self.height*scale)
-        self.coords(self.alap_circle, 40,10,40+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
+        self.alap_negyzet.refresh(30,10,30+self.width*scale,10+self.height*scale)
+        self.coords(self.alap_circle, 30,10,30+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
         self.width *= scale
         self.height *= scale
         self.r1 *= scale
         self.r2 *= scale
-        self.coords(self.width_label,50+self.width,10+ self.height/2)
-        self.coords(self.height_label,30+self.width/2,self.height+ 25)
-        self.coords(self.r_label,45+self.width/2,15+ self.height) #! sugár ???
+        self.width_entry.place(x = 22 + self.width/2, y = 12 + self.height)
+        self.height_entry.place(x = 32 + self.width, y = 2 + self.height/2)
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
         for i in self.arcs:
