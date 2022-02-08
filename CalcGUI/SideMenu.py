@@ -74,7 +74,7 @@ class SideMenu(tk.Frame):
         self.combo_isosceles.bind('<Button-1>', func=lambda e:self.isosceles_click())
         self.combo_isosceles["border"] = "0"
 
-        self.combo_right_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles.png")
+        self.combo_right_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_right.png")
         self.combo_right = tk.Label(self.canvas, image=self.combo_right_img, bg=self["background"], activebackground=self["background"])
         self.combo_right.bind('<Button-1>', func=lambda e:self.right_click())
         self.combo_right["border"] = "0"
@@ -95,7 +95,7 @@ class SideMenu(tk.Frame):
         self.combo_isosceles.bind("<Enter>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_hover_img))
         self.combo_isosceles.bind("<Leave>", func=lambda e: self.combo_isosceles.config(image=self.combo_isosceles_img))
 
-        self.combo_right_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_isosceles_hover.png")
+        self.combo_right_hover_img = tk.PhotoImage(file=f"{root.colors['path']}combobox/combo_right_hover.png")
         self.combo_right.bind("<Enter>", func=lambda e: self.combo_right.config(image=self.combo_right_hover_img))
         self.combo_right.bind("<Leave>", func=lambda e: self.combo_right.config(image=self.combo_right_img))
 
@@ -308,7 +308,7 @@ class SideMenu(tk.Frame):
             else:
                 self.combo_clear()
                 self.combo_right.grid(row=1, column=0, columnspan=5)
-                self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_isosceles_closed.png")
+                self.combo_default_img = tk.PhotoImage(file=f"{self.root.colors['path']}combobox/combo_right_closed.png")
                 self.combo_default = tk.Label(self.canvas, image=self.combo_default_img, bg=self["background"], activebackground=self["background"])
                 self.combo_default.bind('<Button-1>', func=lambda e:self.combo_click())
                 self.combo_default.grid(row=1, column=0, columnspan=5)

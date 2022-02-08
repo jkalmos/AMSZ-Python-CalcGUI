@@ -8,11 +8,8 @@ import numpy as np
 def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on, thickness_on, colors, a = 1.6, b = 0.8, d = 0.8):
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
-
-    # a = 1.6
-    # b = 0.8
-    # d = 0.8
     circ = False
+    right = False
 
     fig = Figure()
     parent.canvas = FigureCanvasTkAgg(fig, master = parent)
@@ -90,12 +87,14 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         coordinate_displacement = y/6
     elif shape == "Right_triangle":
         x, y, proportional = set_dimensions(a, b)
-        tri_x = [-x/2, x/2, -x/2, -x/2]
-        tri_y = [-y/3, -y/3, y/3*2, -y/3]
+        tri_x = [-x/3, 2*x/3, -x/3, -x/3]
+        tri_y = [-y/3, -y/3, 2*y/3, -y/3]
 
-        tri_x_th = [-x/2+0.1, x/2-0.4, -x/2+0.1, -x/2+0.1]
+        tri_x_th = [-x/3+0.1, 2*x/3-0.35, -x/3+0.1, -x/3+0.1]
         tri_y_th = [-y/3+0.1, -y/3+0.1, y/3*2-0.175, -y/3+0.1]
 
+        right = True
+        
         parent.ax.plot(tri_x, tri_y, colors["draw_main"], lw=2)
         parent.ax.fill(tri_x,tri_y,color=colors["draw_main"],alpha=0.9)
         if thickness_on == True:
@@ -108,7 +107,7 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     if coordinate_on == True:
         coordinate_system(x, y, parent.ax, coordinate_displacement, colors)
     if dimension_lines_on == True:
-        dimension_lines(x, y, parent.ax, r"$a$", r"$b$", coordinate_displacement, colors, circ)
+        dimension_lines(x, y, parent.ax, r"$a$", r"$b$", coordinate_displacement, colors, circ, right)
     if transformed_coordinate_on == True:
         transformed_coordinate_system(x, y, parent.ax, 15, colors)
         transformation_dimensions(x, y, parent.ax, colors)
@@ -135,12 +134,12 @@ def set_dimensions(a, b):
         proportional = True
     return x, y, proportional
 
-def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
+def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False, right = False):
     transparency = 1
     color = colors['draw_tertiary']
     hw = 0.015*max(x,y)
     hl = 2*hw
-    if circ == False:
+    if circ == False and right == False:
         line1_x = [-x/2-max(x,y)/4, 0]
         line1_y = [y/2+e, y/2+e]
         line2_x = [-x/2-max(x,y)/4, 0]
@@ -176,7 +175,7 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
             size='large',
             color = color,
             alpha=transparency)
-    elif circ == True:
+    elif circ == True and right == False:
         line1_x = [-1, 1]
         line1_y = [1.732, -1.732]
 
@@ -200,7 +199,50 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False):
             size='large',
             color = color,
             alpha=transparency)
-    
+    elif right == True and circ == False:
+        print('derekszog meretezes indul')
+        
+        line1_x = [-x/2-max(x,y)/4, -x/3]
+        line1_y = [y/2+e, y/2+e]
+        line2_x = [-x/2-max(x,y)/4, 0]
+        line2_y = [-y/2+e, -y/2+e]
+        line3_x = [-x/3, -x/3]
+        line3_y = [-y/2-max(x,y)/4+e, -2*e]
+        line4_x = [2*x/3, 2*x/3]
+        line4_y = [-y/2-max(x,y)/4+e, -2*e]
+
+        ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line1_x[0]+x/32, line2_y[0], 0, y, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line1_x[0]+x/32, line1_y[0], 0, -y, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line3_x[0], line3_y[0]+x/32, x, 0, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.arrow(line4_x[0], line3_y[0]+x/32, -x, 0, head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True)
+        ax.plot(line1_x, line1_y, color,zorder=0)
+        ax.plot(line2_x, line2_y, color,zorder=0)
+        ax.plot(line3_x, line3_y, color,zorder=0)
+        ax.plot(line4_x, line4_y, color,zorder=0)
+
+        ax.text(
+            x/8, -y/2-max(x,y)/16*5+e,
+            t1,
+            horizontalalignment='center',
+            verticalalignment='center',
+            size='large',
+            color = color,
+            alpha=transparency)
+        ax.text(
+            -x/2-max(x,y)/16*5, e,
+            t2,
+            horizontalalignment='center',
+            verticalalignment='center',
+            size='large',
+            color = color,
+            alpha=transparency)
+
+
+    elif right == True and circ == True:
+        print('NEM LEHET ILYEN')
+
+
 def coordinate_system(x, y, ax, e, colors):
     # if plot.shape == "Right_triangle":
     # color = colors['draw_secondary']
@@ -331,6 +373,7 @@ def transformation_dimensions(x, y, ax, colors):
     ax.text(x/2+x/4+x/8, y/4+y/12, r"$\varphi$", horizontalalignment='center', color = color,
                     verticalalignment='center', alpha=transparency)
 def sign_evaluation(alpha, angle_unit, beta = False):
+    print(alpha)
     if angle_unit == "deg":
         alpha = alpha/180*np.pi
         if beta == True:
@@ -412,6 +455,16 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
                 principal_x = False
             x_offset = 0
             y_offset = b_init/5
+        elif shape == "Right_triangle":
+            print(alpha)
+            x = (a_init+max(a_init,b_init)/4)/2
+            y = (b_init+max(a_init,b_init)/4)/2
+            if x>y:
+                principal_x = True
+            else:
+                principal_x = False
+            x_offset = 0
+            y_offset = 0
         hw = 0.03*max(x,y)
         hl = 2*hw
         arrow_length = (x**2+y**2)**0.5

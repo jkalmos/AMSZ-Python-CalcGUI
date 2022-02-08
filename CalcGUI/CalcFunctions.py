@@ -18,7 +18,7 @@ def transform(func):
             else:
                 phi = args[-1]
             ans["Ixi"], ans["Ieta"], ans["Ixieta"] = Iarbitraryaxis(**ans, x=args[-3],y=args[-2], phi=phi)
-            
+
         else:
             ans = func(*args)
         return ans
@@ -107,8 +107,6 @@ def RectangularHS(w2, h2, w1, h1):
 @transform
 def Ellipse(a, b, t = 0):
     if t == 0:
-        # a = a/2 # EZ KELL?????????????????????????
-        # b = b/2
         A = a * b * np.pi
         Ix = a * b ** 3 * np.pi / 4
         Iy = a ** 3 * b * np.pi / 4
@@ -175,7 +173,10 @@ def IsoscelesTriangle(w, h, t = 0):
         Ixy = 0
         Kx = 3 * Ix / 2 / h2
         Ky = 2 * Iy / w2
-        alpha = None #! CHECK!!!!
+        if Iy > Ix:
+            alpha = np.pi / 2
+        else:
+            alpha = 0
     properties = {
             "A": A,
             "Ix": Ix,
@@ -196,10 +197,12 @@ def RightTriangle(w, h, t = 0):
         Ixy = w**2 * h**2 / 72
         Kx = Ix / (2/3 * h)
         Ky = Ix / (2/3 * w)
-        if Iy > Ix:
-            alpha = np.pi / 2
+        I1 = (Ix+Iy)/2 + 0.5*np.sqrt((Ix-Iy)**2 + 4* Ixy**2)
+        I2 = (Ix+Iy)/2 - 0.5*np.sqrt((Ix-Iy)**2 + 4* Ixy**2)
+        if Ix != Iy and Ixy !=0:
+            alpha = np.arctan((Ix-I1)/Ixy)
         else:
-            alpha = 0
+            alpha = np.pi/4
     else:
         w2 = w
         h2 = h
@@ -216,7 +219,15 @@ def RightTriangle(w, h, t = 0):
         Ixy = 0
         Kx = 3 * Ix / 2 / h2
         Ky = 2 * Iy / w2
-        alpha = None #! CHECK!!!!
+        
+        I1 = (Ix+Iy)/2 + 0.5*np.sqrt((Ix-Iy)**2 + 4* Ixy**2)
+        I2 = (Ix+Iy)/2 - 0.5*np.sqrt((Ix-Iy)**2 + 4* Ixy**2)
+
+        if Ix != Iy and Ixy !=0:
+            alpha = np.arctan((Ix-I1)/Ixy)
+        else:
+            alpha = np.pi/4
+
     properties = {
             "A": A,
             "Ix": Ix,
@@ -225,6 +236,8 @@ def RightTriangle(w, h, t = 0):
             "Kx": Kx,
             "Ky": Ky,
             "alpha": alpha,
+            "I1": I1,
+            "I2": I2
         }
     return properties
 

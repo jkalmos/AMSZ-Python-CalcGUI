@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import BooleanVar, Toplevel, ttk
 from tkinter.constants import BOTH
 from PIL import Image, ImageTk
-from numpy.core.fromnumeric import shape
 import CalcFunctions as Calc
 import json
 from SideMenu import SideMenu
@@ -141,8 +140,6 @@ class main_window(tk.Tk):
         # self.sm.pack(side=tk.LEFT, fill=tk.Y)
         # calculate on pressing enter
         self.bind('<Return>', self.calculate)
-
-        # canvas
         plot(self, None, False, False, False, False, self.colors)
         
     ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
@@ -152,9 +149,13 @@ class main_window(tk.Tk):
             if self.theme=="dark":
                 self.colors=DARK_THEME
                 self.sm.change_color(DARK_THEME)
+                # if self.plotted==True:
+                #     plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             elif self.theme == "light":
                 self.colors=LIGHT_THEME
                 self.sm.change_color(LIGHT_THEME)
+                # if self.plotted==True:
+                #     plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
             else:
                 print("ERROR: Unknown Theme")
                 return -1
@@ -162,7 +163,6 @@ class main_window(tk.Tk):
             settings['theme']=self.theme
             self.destroy()
             self.__init__()
-            # plot(self, None, False, False, False, False, self.colors)
             #TODO: canvas color???? + plot
             print(f"Theme set to {theme}")
 
@@ -224,7 +224,6 @@ class main_window(tk.Tk):
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
             self.menu_canvas.itemconfig (self.change_button, image=self.change_button_img)
 
-
     def choose_object(self, shape = None):
         self.dimensions = {
             "a": 2,
@@ -274,9 +273,10 @@ class main_window(tk.Tk):
                 vissza.append(None)
         if self.thickness_on.get():
             if self.sm.shape == "Circle":
+                print("Kor szamitas")
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                 d = float(self.sm.controls[0]["entry"].get().replace(',','.'))
-                if t <= d/2:
+                if 0 < t < d/2:
                     print("kor lehetseges")
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                     self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
@@ -288,66 +288,24 @@ class main_window(tk.Tk):
                     self.sm.result1.config(text="Hiba a falvastagságban!")
                     vissza.append(None)
                     t = None
-            elif self.sm.shape == "Isosceles_triangle" or "Right_triangle":
+            elif self.sm.shape == "Isosceles_triangle":
+                print("Egyenloszaru haromszog szamitas")
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                 a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
                 b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-                phi = np.arctan(a / (b / 2))
-                s1 = a * np.sin(phi)
-                s2 = b
-                if t < s1/2 and t < s2/2:
-                    print("haromszog lehetseges")
-                    try:
-                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                        self.sm.controls[-1]["entry"].config({"background": "#475C6F"})
-                    except:
-                        print("Hiba")
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                        vissza.append(None)
-                        t = None
-                else:
-                    if t >= s1/2 and s1 == s2:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                    if t >= s1/2 and t <= s2/2:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                        vissza.append(None)
-                    elif t >= s2/2 and t <= s1/2:
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                        vissza.append(None)
-                    elif t >= s2/2 and t >= s1/2:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                        vissza.append(None)
-            else:
-                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
-                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
-                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-                if t < a/2 and t < b/2:
-                    #print("lehetseges")
+                print(str(a))
+                print(str(b))
+                phi = np.arctan(b/(a/2))
+                print(str(phi))
+                c = np.sqrt((a/2)**2 + b**2)
+                print(str(c))
+                s1 = b
+                s2 = np.sqrt(a**2 + (c/2)**2 - 2*a*(c/2)*np.cos(phi))
+                print(str(s2))
+
+                print(str(s2/3))
+
+                if 0 < t < s1/3 and 0 < t < s2/3:
                     try:
                         t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                         self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
@@ -361,42 +319,100 @@ class main_window(tk.Tk):
                         vissza.append(None)
                         t = None
                 else:
-                    if t >= a/2 and a == b:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    if 0 < t >= s1/3 and s1 == s2:
+                        print("egyenlooldalu haromszog, hiba mindkettoben")
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
-                    if t >= a/2 and t <= b/2:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    if 0 < t <= s1/3 and 0 < t >= s2/3:
+                        print("hiba az -a- oldalban")
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
-                    elif t >= b/2 and t <= a/2:
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                    elif 0 < t >= s1/3 and t <= s2/3:
+                        print("hiba az -b- oldalban")
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif 0 < t >= s1/3 and t >= s2/3:
+                        print("hiba az -a- es -b- oldalban")
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        vissza.append(None)
+            else:
+                print("Teglalap szamitas (egyenlore minden mas is)")
+
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                if 0 < t < a/2 and 0 < t < b/2:
+                    
+                    try:
+                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
+                    except:
+                        print("Hiba")
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                        t = None
+                else:
+                    if 0 < t >= a/2 and a == b: 
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                    if 0 < t >= a/2 and 0 < t < b/2:
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
+                        for i in self.sm.indicators:
+                            i.config(text="")
+                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                        self.sm.result2.config(text="Hiba a falvastagságban!")
+                        vissza.append(None)
+                    elif 0 < t >= b/2 and 0 < t < a/2: 
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
                     elif t >= a/2 and t >= b/2:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
                     else:
-                        self.sm.controls[0]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[1]["entry"].config({"background": "#eb4034"})
-                        self.sm.controls[-1]["entry"].config({"background": "#eb4034"})
+                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -533,12 +549,12 @@ class main_window(tk.Tk):
                     self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
                 self.sm.result5.config(text="Főmásodrendű nyomatékok:")
-                if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
-                    self.sm.result6.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result7.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                if round(self.values["I1"], 4) >= round(self.values["I2"], 4):
+                    self.sm.result6.config(text="I₁ = " + str(round(self.values["I1"], 4)) + " " + self.unit + "\u2074")
+                    self.sm.result7.config(text="I₂ = " + str(round(self.values["I2"], 4)) + " " + self.unit + "\u2074")
                 else:
-                    self.sm.result6.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result7.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                    self.sm.result6.config(text="I₁ = " + str(round(self.values["I2"], 4)) + " " + self.unit + "\u2074")
+                    self.sm.result7.config(text="I₂ = " + str(round(self.values["I1"], 4)) + " " + self.unit + "\u2074")
                 self.sm.result8.config(text="Keresztmetszeti tényezők:")
                 self.sm.result9.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u2074")
                 self.sm.result10.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u2074")
@@ -553,8 +569,11 @@ class main_window(tk.Tk):
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
+
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
+        # 'main_color': '#2C394B',
+        # 'secondary_color': '#082032',
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',
