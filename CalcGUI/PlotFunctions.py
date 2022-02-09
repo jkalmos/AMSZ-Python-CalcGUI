@@ -87,11 +87,20 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
         coordinate_displacement = y/6
     elif shape == "Right_triangle":
         x, y, proportional = set_dimensions(a, b)
+        if x >= y:
+            th = y/10
+        else:
+            th = x/10
+
+        alpha = np.arctan(y/x)
+        z = th*(1/np.sin(alpha)+1/np.tan(alpha))
+        w = th/np.cos(alpha) + th*np.tan(alpha)
+
         tri_x = [-x/3, 2*x/3, -x/3, -x/3]
         tri_y = [-y/3, -y/3, 2*y/3, -y/3]
 
-        tri_x_th = [-x/3+0.1, 2*x/3-0.35, -x/3+0.1, -x/3+0.1]
-        tri_y_th = [-y/3+0.1, -y/3+0.1, y/3*2-0.175, -y/3+0.1]
+        tri_x_th = [-x/3+th, 2*x/3-z, -x/3+th, -x/3+th]
+        tri_y_th = [-y/3+th, -y/3+th, y/3*2-w, -y/3+th]
 
         right = True
         
@@ -191,14 +200,14 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False, right = False):
             size='large',
             color = color,
             alpha=transparency)
-        ax.text(
-            -x/2-x*y/16*5, e,
-            t2,
-            horizontalalignment='center',
-            verticalalignment='center',
-            size='large',
-            color = color,
-            alpha=transparency)
+        # ax.text(
+        #     -x/2-x*y/16*5, e,
+        #     t2,
+        #     horizontalalignment='center',
+        #     verticalalignment='center',
+        #     size='large',
+        #     color = color,
+        #     alpha=transparency)
     elif right == True and circ == False:
         print('derekszog meretezes indul')
         
@@ -244,44 +253,6 @@ def dimension_lines(x, y, ax, t1, t2, e, colors, circ = False, right = False):
 
 
 def coordinate_system(x, y, ax, e, colors):
-    # if plot.shape == "Right_triangle":
-    # color = colors['draw_secondary']
-    # transparency = 1
-    # hw = 0.015*max(x,y)
-    # hl = 2*hw
-    # ax.arrow(
-    #     -x/2-x*y/8, 0, x+x*y/3, 0,
-    #     head_width=hw,
-    #     head_length=hl,
-    #     fc=color, ec=color,
-    #     length_includes_head = True,
-    #     alpha=transparency,
-    #     zorder=3)
-    # ax.arrow(
-    #     -x/3/2, -y/2-x*y/8+e, 0, y+x*y/3,
-    #     head_width=hw,
-    #     head_length=hl,
-    #     fc=color, ec=color,
-    #     length_includes_head = True,
-    #     alpha=transparency,
-    #     zorder=3)
-    # ax.text(
-    #     x/2+x*y/5, -x*y/20,
-    #     r"$x$",
-    #     horizontalalignment='center',
-    #     verticalalignment='center',
-    #     size='large',
-    #     color = color,
-    #     alpha=transparency)
-    # ax.text(
-    #     -x*y/20, y/2+x*y/5+e,
-    #     r"$y$",
-    #     horizontalalignment='center',
-    #     verticalalignment='center',
-    #     size='large',
-    #     color = color,
-    #     alpha=transparency)
-    # else:
     color = colors['draw_secondary']
     transparency = 1
     hw = 0.015*max(x,y)
@@ -372,51 +343,10 @@ def transformation_dimensions(x, y, ax, colors):
     ax.add_patch(a3)
     ax.text(x/2+x/4+x/8, y/4+y/12, r"$\varphi$", horizontalalignment='center', color = color,
                     verticalalignment='center', alpha=transparency)
-def sign_evaluation(alpha, angle_unit, beta = False):
-    print(alpha)
-    if angle_unit == "deg":
-        alpha = alpha/180*np.pi
-        if beta == True:
-            alpha = alpha+np.pi/2
-            print('deg')
-    else:
-        if beta == True:
-            alpha = alpha+np.pi/2
-            print('rad')
-    if alpha >= 0 and alpha < np.pi/2:
-        signx = 1
-        signy = 1
-        if beta == True:
-            signx = -1
-            signy = 1
-    elif alpha >= np.pi/2 and alpha < np.pi:
-        signx = -1
-        signy = 1
-        if beta == True:
-            signx = 1
-            signy = 1
-    elif alpha >= np.pi and alpha < np.pi*3/2:
-        signx = -1
-        signy = -1
-        if beta == True:
-            signx = -1
-            signy = 1
-    elif alpha >= np.pi*3/2 and alpha < np.pi*2:
-        signx = 1
-        signy = -1
-        if beta == True:
-            signx = -1
-            signy = -1
-    else:
-        signx = 1
-        signy = 1
-        if beta == True:
-            signx = -1
-            signy = 1
-    return signx, signy, alpha
+    
 def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coordinate_on,shape, a = 1.6, b = 0.8, d = 0.8):
     principal_x = True
-    a_init, b_init, proportional = set_dimensions(a, b)
+    x, y, proportional = set_dimensions(a, b)
     try:
         parent.principal_axis1.remove()
         parent.principal_axis2.remove()
@@ -426,101 +356,32 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
         None
     if transformed_coordinate_on == False:
         color = colors['draw_principal']
-        
-        # evaluate orientation signs of the principal axis
-        signx1, signy1, beta1 = sign_evaluation(alpha, angle_unit)
-        signx2, signy2, beta2 = sign_evaluation(alpha, angle_unit, True)
+    hw = 0.015*max(x,y)
+    hl = 2*hw
 
-        if shape == "Rectangle":
-            x = (a_init+max(a_init,b_init)/4)/2 
-            y = (b_init+max(a_init,b_init)/4)/2
-            x_offset = 0
-            y_offset = 0
-        elif shape == "Circle":
-            x = 2*d*3/4
-            y = 2*d*3/4
-            x_offset = 0
-            y_offset = 0
-        elif shape == "Ellipse":
-            x = (a_init+max(a_init,b_init)/4)/2
-            y = (b_init+max(a_init,b_init)/4)/2
-            x_offset = 0
-            y_offset = 0
-        elif shape == "Isosceles_triangle":
-            x = (a_init+max(a_init,b_init)/4)/2
-            y = (b_init+max(a_init,b_init)/4)/2
-            if x>y:
-                principal_x = True
-            else:
-                principal_x = False
-            x_offset = 0
-            y_offset = b_init/5
-        elif shape == "Right_triangle":
-            print(alpha)
-            x = (a_init+max(a_init,b_init)/4)/2
-            y = (b_init+max(a_init,b_init)/4)/2
-            if x>y:
-                principal_x = True
-            else:
-                principal_x = False
-            x_offset = 0
-            y_offset = 0
-        hw = 0.03*max(x,y)
-        hl = 2*hw
-        arrow_length = (x**2+y**2)**0.5
-        # first principal axis
-        x_val1 = arrow_length*np.cos(beta1)
-        y_val1 = arrow_length*np.sin(beta1)
-        sign_x1 = np.sign(x_val1)
-        sign_y1 = np.sign(y_val1)
-        if abs(x_val1) >= x:
-            x_val1 = sign_x1*x
-            y_val1 = x_val1*np.tan(beta1)
-        elif abs(y_val1) >= y:
-            y_val1 = sign_y1*y
-            x_val1 = y_val1/np.tan(beta1)
+    if angle_unit == "deg":
+        phi = alpha/180*np.pi
+    else:
+        phi = alpha
 
-        ar1_x1 = -signx1*x_val1
-        ar1_y1 = -signy1*y_val1
-        ar1_x2 = signx1*x_val1
-        ar1_y2 = signy1*y_val1
-        ar1_dx = ar1_x2-ar1_x1
-        ar1_dy = ar1_y2-ar1_y1
-        # second principal axis
-        x_val2 = arrow_length*np.cos(beta2)
-        y_val2 = arrow_length*np.sin(beta2)
-        sign_x2 = np.sign(x_val2)
-        sign_y2 = np.sign(y_val2)
-        if abs(x_val2) >= x:
-            x_val2 = sign_x2*x
-            y_val2 = x_val2*np.tan(beta2)
-        elif abs(y_val2) >= y:
-            y_val2 = sign_y2*y
-            x_val2 = y_val2/np.tan(beta2)
+    z = max(x, y)
 
-        ar2_x1 = -signx2*x_val2
-        ar2_y1 = -signy2*y_val2
-        ar2_x2 = signx2*x_val2
-        ar2_y2 = signy2*y_val2
-        ar2_dx = ar2_x2-ar2_x1
-        ar2_dy = ar2_y2-ar2_y1
+    ar1_x = -z/1.4*np.cos(phi)
+    ar1_y = -z/1.4*np.sin(phi)
+    ar1_dx = 1.4*z*np.cos(phi)
+    ar1_dy = 1.4*z*np.sin(phi)
+    ar2_x = z/1.4*np.sin(phi)
+    ar2_y = -z/1.4*np.cos(phi)
+    ar2_dx = -1.4*z*np.sin(phi)
+    ar2_dy = 1.4*z*np.cos(phi)
 
-        if principal_x == False:
-            parent.principal_axis1 = ax.arrow(ar1_x1+x_offset, ar1_y1, ar1_dx, ar1_dy,
-                                head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
-            parent.principal_axis2 = ax.arrow(ar2_x1, ar2_y1+y_offset, ar2_dx, ar2_dy,
-                                head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
-            parent.principal_axis1_text = ax.text(ar1_dx/2+0.06*max(ar1_dx,ar1_dy)+x_offset, ar1_dy/2+0.06*max(ar1_dx,ar1_dy), r"$I_1$", horizontalalignment='center', color = color,
-                        verticalalignment='center')
-            parent.principal_axis2_text = ax.text(ar2_dx/2+0.06*max(ar1_dx,ar1_dy), ar2_dy/2+0.06*max(ar1_dx,ar1_dy)+y_offset, r"$I_2$", horizontalalignment='center', color = color,
-                        verticalalignment='center')
-        else:
-            parent.principal_axis1 = ax.arrow(ar1_x1, ar1_y1+y_offset, ar1_dx, ar1_dy,
-                                head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
-            parent.principal_axis2 = ax.arrow(ar2_x1+x_offset, ar2_y1, ar2_dx, ar2_dy,
-                                head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=5)
-            parent.principal_axis1_text = ax.text(ar1_dx/2+0.06*max(ar1_dx,ar1_dy), ar1_dy/2+0.06*max(ar1_dx,ar1_dy)+y_offset, r"$I_1$", horizontalalignment='center', color = color,
-                        verticalalignment='center')
-            parent.principal_axis2_text = ax.text(ar2_dx/2+0.06*max(ar1_dx,ar1_dy)+x_offset, ar2_dy/2+0.06*max(ar1_dx,ar1_dy), r"$I_2$", horizontalalignment='center', color = color,
-                        verticalalignment='center')
-        parent.canvas.draw()
+    ax.arrow(ar1_x, ar1_y, ar1_dx, ar1_dy,
+                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
+    ax.arrow(ar2_x, ar2_y, ar2_dx, ar2_dy,
+                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
+    ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$I_1$", horizontalalignment='center', color = color,
+                        verticalalignment='center', size='large')
+    ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$I_2$", horizontalalignment='center', color = color,
+                        verticalalignment='center', size='large')
+
+    parent.canvas.draw()

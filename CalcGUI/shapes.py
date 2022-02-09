@@ -335,7 +335,6 @@ class Arc():
     def get_info(self):
         text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
-
 class RightTriangle():
     def __init__(self,canvas,root,center_x,center_y,w,h, orientation=0, Negative=False):
         #   h ◣

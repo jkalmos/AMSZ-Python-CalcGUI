@@ -288,24 +288,41 @@ class main_window(tk.Tk):
                     self.sm.result1.config(text="Hiba a falvastagságban!")
                     vissza.append(None)
                     t = None
-            elif self.sm.shape == "Isosceles_triangle":
-                print("Egyenloszaru haromszog szamitas")
+            elif self.sm.shape == "Right_triangle":
+                print("Derekszogu haromszog szamitas")
                 t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                 a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
                 b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
-                print(str(a))
-                print(str(b))
-                phi = np.arctan(b/(a/2))
-                print(str(phi))
-                c = np.sqrt((a/2)**2 + b**2)
-                print(str(c))
-                s1 = b
+                phi = np.arctan(b/a)
+                c = np.sqrt(a**2 + b**2)
+                print('phi: ' + str(phi*180/np.pi))
+                print('c: ' + str(c))
+                s1 = np.sqrt(b**2 + (a/2)**2)
                 s2 = np.sqrt(a**2 + (c/2)**2 - 2*a*(c/2)*np.cos(phi))
-                print(str(s2))
+                s3 = np.sqrt(a**2 + (b/2)**2)
 
-                print(str(s2/3))
+                print('s2: ' + str(s2))
+                print('s3: ' + str(s3))
 
-                if 0 < t < s1/3 and 0 < t < s2/3:
+                t1 = a/3
+                t2 = b/3
+
+                beta = np.arccos( ( (s2/3)**2 - (2*s3/3)**2 - (c/2)**2 ) / ( -2 * (2*s3/3) * (c/2) ) )
+                print('beta: ' + str(beta))
+
+                t3 = (2*s3/3)*np.sin(beta)
+                
+
+                print('t1: ' + str(t1))
+                print('t2: ' + str(t2)) 
+                print('t3: ' + str(t3))
+
+                # selecting the smallest
+
+                t_min = min(t1, t2, t3)
+                print('legkisebb: ' + str(t_min))
+
+                if 0 < t:
                     try:
                         t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
                         self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
@@ -318,44 +335,77 @@ class main_window(tk.Tk):
                         self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
                         t = None
-                else:
-                    if 0 < t >= s1/3 and s1 == s2:
-                        print("egyenlooldalu haromszog, hiba mindkettoben")
-                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
-                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                
+                if 0 < t >= t_min:
+                    self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                    self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
+                    for i in self.sm.indicators:
+                        i.config(text="")
+                    self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                    self.sm.result2.config(text="Hiba a falvastagságban!")
+                    vissza.append(None)
+
+            elif self.sm.shape == "Isosceles_triangle":
+                print("Egyenloszaru haromszog szamitas")
+                t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
+                b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                phi = np.arctan(b/ (a/2))
+                c = np.sqrt((a/2)**2 + b**2)
+
+                print('phi: ' + str(phi*180/np.pi))
+                print('c: ' + str(c))
+
+                s1 = b
+                s2 = np.sqrt(a**2 + (c/2)**2 - 2*a*(c/2)*np.cos(phi))
+                s3 = s2
+
+                print('s2: ' + str(s2))
+                print('s3: ' + str(s3))
+
+                t1 = a/3
+                
+
+                beta = np.arccos( ( (s2/3)**2 - (2*s3/3)**2 - (c/2)**2 ) / ( -2 * (2*s3/3) * (c/2) ) )
+                print('beta: ' + str(beta))
+
+                t2 = (2*s2/3)*np.sin(beta)
+                t3 =t2
+                
+
+                print('t1: ' + str(t1))
+                print('t2: ' + str(t2)) 
+                print('t3: ' + str(t3))
+
+                # selecting the smallest
+
+                t_min = min(t1, t2, t3)
+                print('legkisebb: ' + str(t_min))
+
+                if 0 < t:
+                    try:
+                        t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['entry_color']})
+                    except:
+                        print("Hiba")
                         self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
                         self.sm.result2.config(text="Hiba a falvastagságban!")
-                    if 0 < t <= s1/3 and 0 < t >= s2/3:
-                        print("hiba az -a- oldalban")
-                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
-                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
                         vissza.append(None)
-                    elif 0 < t >= s1/3 and t <= s2/3:
-                        print("hiba az -b- oldalban")
-                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
-                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                        vissza.append(None)
-                    elif 0 < t >= s1/3 and t >= s2/3:
-                        print("hiba az -a- es -b- oldalban")
-                        self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
-                        self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
-                        for i in self.sm.indicators:
-                            i.config(text="")
-                        self.sm.result1.config(text="Hiba a bemeneti adatokban!")
-                        self.sm.result2.config(text="Hiba a falvastagságban!")
-                        vissza.append(None)
-                        vissza.append(None)
+                        t = None
+                
+                if 0 < t >= t_min:
+                    self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
+                    self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                    self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
+                    for i in self.sm.indicators:
+                        i.config(text="")
+                    self.sm.result1.config(text="Hiba a bemeneti adatokban!")
+                    self.sm.result2.config(text="Hiba a falvastagságban!")
+                    vissza.append(None)
             else:
                 print("Teglalap szamitas (egyenlore minden mas is)")
 
@@ -420,7 +470,7 @@ class main_window(tk.Tk):
                         vissza.append(None)
         else:
             t = 0
-        #self.sm.e2.config({"background": "#475C6F"})
+        #self.sm.e2.config({"background": self.colors['entry_color']})
         return vissza,t
 
     def calculate(self, event=None):
@@ -572,8 +622,6 @@ class main_window(tk.Tk):
 
 # VARIABLES ---------------------------------------------------------------------------------------------------------------------------------------------
 DARK_THEME = {
-        # 'main_color': '#2C394B',
-        # 'secondary_color': '#082032',
         'main_color': '#1a1a1a',
         'secondary_color': '#333333',
         'text_color': '#cccccc',
