@@ -216,7 +216,7 @@ def RightTriangle(w, h, t = 0):
         A = (w2 * h2 - w1 * h1) / 2
         Ix = (w2 * h2 ** 3 - w1 * h1 ** 3) / 36
         Iy = (w2 ** 3 * h2 - w1 ** 3 * h1) / 48
-        Ixy = 0
+        Ixy = (w2**2 * h2**2 / 72) - (w1**2 * h1**2 / 72)
         Kx = 3 * Ix / 2 / h2
         Ky = 2 * Iy / w2
         

@@ -1,5 +1,8 @@
+from re import A
+import re
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
+import numpy as np
 EPSILON = 10
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
@@ -332,14 +335,172 @@ class Arc():
     def get_info(self):
         text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
+class RightTriangle():
+    def __init__(self,canvas,root,center_x,center_y,w,h, orientation=0, Negative=False):
+        #   h ◣
+        #     w
+        self.canvas = canvas
+        self.root = root
+        self.center = np.array([center_x,center_y])
+        self.negative = Negative
+        self.w = w
+        self.h = h
+        self.orietation = min (360,orientation)
+        self.type = "rightTriangle"
+        self.area = w*h/2
+        self.rotation_matrix =np.matrix([[cos(radians(orientation)),-sin(radians(orientation))] , [sin(radians(orientation)),cos(radians(orientation))]])
+        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-h]))[0]] 
+        self.s_center = sum(self.points)/3
+        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("arc","shape"))
+        if self.negative: self.canvas.negatives.append(self)
+        #print(self.canvas.coords(self.canvas_repr))
+    def refresh(self, center_x, center_y,w,h):
+        self.center = np.array([center_x,center_y])
+        self.w = w
+        self.h = h
+        self.area = w*h/2
+        #print(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1])
+        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-h]))[0]] 
+        self.s_center = sum(self.points)/3
+        l,r = center_x, center_x
+        t,b = center_y,center_y
+        for i in self.points: l = min(l,i[0])
+        for i in self.points: r = max(r,i[0]) 
+        for i in self.points: t = min(t,i[1]) 
+        for i in self.points: b = max(b,i[1])  
+        #print(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1])
+        self.canvas.coords(self.canvas_repr, self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1])
+
+    def align(self):
+        print("Warning: align is not implemented!!")
+        return 0
+        self.align_to_axis()
+        self.align_to_rect()
+        self.align_to_arc()
+    def align_to_axis(self):
+        raise NotImplementedError
+        if self.canvas.root.show_orig_axis:
+            #* Sticking with the center of the rectangle to the coordinate system
+            if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
+                self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
+            if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
+                self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
+    def align_to_arc(self):
+        raise NotImplementedError
+        own = self.get_charachteristic_points()
+        for i in self.canvas.arcs:
+            aling_score = 0 # if at least two points are near eachother, then it alignes them
+            other = i.get_charachteristic_points()
+            for k in own:
+                for j in other:
+                    if dist(k,j) <= EPSILON: 
+                        aling_score+=1
+                        displacement = (j[0]-k[0], j[1]-k[1])
+            if aling_score >= 2:
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.r, self.angle,self.start)
+                break
+    def align_to_rect(self):
+        raise NotImplementedError
+        own = self.get_charachteristic_points()
+        x = [p[0] for p in own]
+        y = [p[1] for p in own]
+        arc_x = max(set(x), key=x.count)
+        arc_y = max(set(y), key=y.count)
+        dx = 0
+        dy = 0
+        for i in self.canvas.rectangles:
+            # align by x
+            for j in [i.x1,i.x2,i.center[0]]:
+                if abs(j-arc_x) < EPSILON:
+                    dx = j- arc_x
+                    break
+            #align by y
+            for j in [i.y1,i.y2,i.center[1]]:
+                if abs(j-arc_y) < EPSILON:
+                    dy = j- arc_y
+                    break
+            if dx != 0 or dy != 0:
+                self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                own = self.get_charachteristic_points()
+                x = [p[0] for p in own]
+                y = [p[1] for p in own]
+                arc_x = max(set(x), key=x.count)
+                arc_y = max(set(y), key=y.count)
+                dx = 0
+                dy = 0
+                for k in own:
+                    for l in [(i.x1,i.y1),(i.x1,i.y2),(i.x2,i.y1),(i.x2,i.y2)]:
+                        if dist(k,l)<EPSILON:
+                            dx = l[0]-k[0]
+                            dy = l[1]-k[1]
+                            self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                            own = self.get_charachteristic_points()
+                            x = [p[0] for p in own]
+                            y = [p[1] for p in own]
+                            arc_x = max(set(x), key=x.count)
+                            arc_y = max(set(y), key=y.count)
+                            dx = 0
+                            dy = 0
+    def is_overlapping(self):
+        if self.negative: 
+            self.canvas.itemconfig(self.canvas_repr, fill='gray')
+            return 0
+        self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
+        print("Warning: overlapping detection is not implemented")
+        return -1
+        l,r,t,b = self.get_bounding_box()
+        orig=list(self.canvas.find_overlapping(l,t,r,b))
+        ############# with another Arc ##################
+        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        a.remove(self.canvas_repr)
+        in_overlapping = False
+        for i in self.canvas.arcs:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                l2,r2,t2,b2 = i.get_bounding_box()
+                if check_overlapping_of_boundig_box(l,r,t,b,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,t,b):
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############### with Rectangle ###################
+        a = [p for p in orig if "rect" in self.canvas.gettags(p)]
+        for i in self.canvas.rectangles:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        if not in_overlapping and self not in self.canvas.selected:
+            self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
+    def is_inside(self,point):
+        #print("Warning: Is_inside not i,plemented")
+        #return False
+        # creating local coord system with the two orthogonal side of the triangle 
+        xsi = (self.points[1] -self.center)/ self.w
+        eta = (self.points[1]-self.center) / self.h
+        p = ([point[0],point[1]]- self.center)
+
+        p_transformed = [np.dot(p,xsi),np.dot(p,eta)]
+        if p_transformed[0] < 0 or p_transformed[1]< 0:
+            return False
+        elif p[1] < -(self.h/self.w)*p[1] + self.h:
+            return True 
+            
+        return False
+    def translate(self,dx,dy):
+        self.refresh(self.center[0]+dx,self.center[1]+dy, self.w,self.h)
+    def get_info(self):
+        text=f"Befogó 1 = {self.w/self.canvas.scale}\nBefogó 2 = {self.h/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale} Irányultság = {self.orietation})"
+        return text
 class Shapes():
-    def __init__(self, canvas, rectangles, arcs):
+    def __init__(self, canvas, rectangles, arcs,rightTriangles):
         self.canvas = canvas
         self.container = []
         self.rectangles = rectangles
         self.arcs = arcs
+        self.rightTriangles = rightTriangles
         self.container.append(self.rectangles)
         self.container.append(self.arcs)
+        self.container.append(self.rightTriangles)
     def __iter__(self):
         self.n = 0
         self.max =0 
@@ -367,14 +528,18 @@ class Shapes():
     def append(self, obj):
         if type(obj)==Rectangle:
             self.rectangles.append(obj)
-        elif type(obj==Arc):
+        elif type(obj)==Arc:
             self.arcs.append(obj)
+        elif type(obj==RightTriangle):
+            self.rightTriangles.append(obj)
         else:
             print("Hiba: A formatum nem megfelelo!")
     def remove(self, obj):
         if type(obj)==Rectangle:
             self.rectangles.remove(obj)
-        elif type(obj==Arc):
+        elif type(obj)==Arc:
             self.arcs.remove(obj)
+        elif type(obj)==RightTriangle:
+            self.rightTriangles.remove(obj)
         else:
             print("Hiba: A formatum nem megfelelo!")
