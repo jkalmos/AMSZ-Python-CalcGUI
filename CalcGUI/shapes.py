@@ -543,3 +543,81 @@ class Shapes():
             self.rightTriangles.remove(obj)
         else:
             print("Hiba: A formatum nem megfelelo!")
+class visual_grid():
+    def __init__(self, canvas, root, scale, Xcenter, Ycenter):
+        self.scale = scale
+        self.canvas = canvas
+        self.root = root
+        self.Xcenter = Xcenter
+        self.Ycenter = Ycenter
+        g1 = np.linspace(-100,100,21)
+        g2 = np.linspace(-50,50,21)
+        g3 = np.linspace(-10,10,21)
+        g4 = np.linspace(-5,5,21)
+        g5 = np.linspace(-1,1,21)
+        s4 = np.linspace(-500,500,21)
+        s3 = np.linspace(-1000,1000,21)
+        s2 = np.linspace(-5000,5000,21)
+        s1 = np.linspace(-10000,10000,21)
+        lines = [s1, s2, s3, s4, g1, g2, g3, g4, g5]
+        num = [2]
+
+        base = np.linspace(-1000,1000,21)
+
+        rate = int(self.scale/10)
+        mod1 = self.scale%10
+        rec = int(1/rate)
+        mod2 = 1%rate
+        if rate > 0:
+            if mod1/5>1:
+                grid1 = base/rate/5
+            elif mod1/2>1:
+                grid1 = base/rate/2
+            else:
+                grid1 = base/rate
+        elif rate == 0:
+            if mod1/5>1:
+                grid1 = base/5
+            elif mod1/2>1:
+                grid1 = base/2
+            else:
+                grid1 = base
+        # else:
+        #     if 
+
+        print(self.scale)
+        for j in num:    
+            for i in range(21):
+                hx1 = -10000 + self.Xcenter
+                hx2 = 10000 + self.Xcenter
+                hy1 = lines[j][i] + self.Ycenter
+                hy2 = lines[j][i] + self.Ycenter
+                vx1 = lines[j][i] + self.Xcenter
+                vx2 = lines[j][i] + self.Xcenter
+                vy1 = -10000 + self.Ycenter
+                vy2 = 10000 + self.Ycenter
+                vline = self.canvas.create_line(vx1, vy1, vx2, vy2, width = 2)
+                hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = 2)
+                self.canvas.tag_lower(vline)
+                self.canvas.tag_lower(hline)
+        # def 
+        # self.negative = Negative
+        # self.start = start
+        # self.angle = min (360,angle)
+    #     if self.angle == 180:
+    #         self.type = "Semicircle"
+    #     elif self.angle == 90:
+    #         self.type = "quarter_circle"
+    #     self.area = r**2*pi*(self.angle/360)
+    #     self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
+    #     self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill=self.root.colors["sb_draw"], tags=("arc","shape"))
+    #     if self.negative: self.canvas.negatives.append(self)
+    # def refresh(self, center_x, center_y,r,angle=180, start=0):
+    #     self.center = (center_x,center_y)
+    #     self.r = r
+    #     self.d = 2*r
+    #     self.start = start
+    #     self.angle = min(360,angle)
+    #     self.area = r**2*pi*(self.angle/360)
+    #     self.s_center = (center_x + (4/3*r*sin(radians(angle/2))/radians(angle))*cos(radians(start+angle/2)),center_y - (4/3*r*sin(radians(angle/2))/radians(angle))*sin(radians(start+angle/2)))
+    #     self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
