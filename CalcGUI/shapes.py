@@ -379,19 +379,17 @@ class RightTriangle():
         self.canvas.coords(self.canvas_repr, self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1])
 
     def align(self):
-        print("Warning: align is not implemented!!")
-        return 0
+        print("Warning: align is not fully implemented!!")
         self.align_to_axis()
-        self.align_to_rect()
-        self.align_to_arc()
+        #self.align_to_rect()
+        #self.align_to_arc()
     def align_to_axis(self):
-        raise NotImplementedError
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
             if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
-                self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
+                self.refresh(self.canvas.Xcenter,self.center[1],self.w,self.h)
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
-                self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
+                self.refresh(self.center[0],self.canvas.Ycenter,self.w,self.h)
     def align_to_arc(self):
         raise NotImplementedError
         own = self.get_charachteristic_points()

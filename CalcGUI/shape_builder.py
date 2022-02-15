@@ -457,7 +457,7 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "rightTriangle":
                 if(self.alap_triangle.is_inside([e.x,e.y])):
                     print("Triangle")
-                    self.current = RightTriangle(self, self.root, e.x,e.y,self.width,self.height,orientation=0) #! W + H nem az kéne
+                    self.current = RightTriangle(self, self.root, e.x,e.y,self.width,self.height,orientation=self.alap_triangle.orientation) #! W + H nem az kéne
                     self.itemconfig(self.current.canvas_repr, fill="light blue")
                     print(type(self.current))
         if not self.current:
@@ -867,7 +867,7 @@ class shapeBuilder(tk.Canvas):
                 #self.alap_triangle.canvas_repr = self.create_polygon())
                 self.alap_triangle.rotate(direction)
                 self.delete(self.alap_triangle.canvas_repr)
-                self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw"], tags=("alap_triangle"))
+                self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw_2nd"], tags=("alap_triangle"))
             else: raise TypeError
         else:
             for i in self.selected:
