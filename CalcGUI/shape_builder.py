@@ -193,9 +193,8 @@ class shapeBuilder(tk.Canvas):
         
         ##########* Creating basic green triangle #############
         self.alap_triangle = RightTriangle(self,self.root,40,40,self.width,self.height) #! width+heigth ??? 
-        for tag in self.gettags(self.alap_triangle.canvas_repr):
-            self.dtag(tag,self.alap_triangle.canvas_repr)
-        self.addtag_withtag("alap_triangle",self.alap_triangle.canvas_repr)
+        self.delete(self.alap_triangle.canvas_repr)
+        self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw"], tags=("alap_triangle"))
         self.itemconfigure("alap_triangle",state="hidden")
         self.itemconfigure("alap_triangle",fill=root.colors["sb_draw_2nd"])
         ##########* Creating axis #############
@@ -583,7 +582,14 @@ class shapeBuilder(tk.Canvas):
             Iy += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start)) + i.area*(Sy-i.center[1])**2
             Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(i.start))*cos(radians(i.start)) + Ixyc*((cos(radians(i.start))**2-sin(radians(i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         for i in self.rightTriangles:
-            print("Warning: Calculate for riht Triangles is not implemented")
+            Ixc = (i.h**3 *i.w)/12 
+            Iyc = (i.w**3 *i.h)/12 
+            Ixyc = i.w**2 * i.h**2 *1/24
+
+            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(i.orientation)))**2 + Iyc*(sin(radians(i.orientation)))**2 + 2*Ixyc*cos(radians(i.orientation))*sin(radians(i.orientation))  + i.area*(Sy-i.center[1])**2
+            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(i.orientation)))**2 + Iyc*(sin(radians(i.orientation)))**2 + 2*Ixyc*cos(radians(i.orientation))*sin(radians(i.orientation)) + i.area*(Sy-i.center[1])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(i.orientation))*cos(radians(i.orientation)) + Ixyc*((cos(radians(i.orientation))**2-sin(radians(i.orientation))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            print("Warning: Calculate for riht Triangles is not checked")
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
@@ -856,7 +862,12 @@ class shapeBuilder(tk.Canvas):
                 self.start = (self.start+direction)%360
                 self.alap_circle = self.create_arc(50-self.r2,25-self.r2,50+self.r2,25+self.r2,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
             elif self.active_shape == "rightTriangle":
-                print("Warning: Rotation for triangels is not implemented")
+                #self.delete(self.alap_triangle.canvas_repr)
+                self.orientation = (self.start+direction)%360
+                #self.alap_triangle.canvas_repr = self.create_polygon())
+                self.alap_triangle.rotate(direction)
+                self.delete(self.alap_triangle.canvas_repr)
+                self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw"], tags=("alap_triangle"))
             else: raise TypeError
         else:
             for i in self.selected:
@@ -866,9 +877,17 @@ class shapeBuilder(tk.Canvas):
                 elif i.type == "Semicircle" or i.type == "quarter_circle":
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
-                    i.start = i.start+direction
+                    i.start = i.start+direction 
                     rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start)
                     self.shapes.append(rotate_semicircle)
+                elif i.type == "rightTriangle":
+                    self.delete(i.canvas_repr)
+                    self.shapes.remove(i)
+                    i.orientation = i.orientation-direction#! itt ez a - jel ez nem biztos, de így működik jól...
+                    rotate_rt = RightTriangle(self,self.root,i.center[0],i.center[1],i.w,i.h, orientation= i.orientation)
+                    self.shapes.append(rotate_rt)
+                else:
+                    raise TypeError
 
 
 
