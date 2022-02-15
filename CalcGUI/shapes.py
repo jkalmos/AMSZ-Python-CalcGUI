@@ -351,7 +351,7 @@ class RightTriangle():
         self.rotation_matrix =np.matrix([[cos(radians(orientation)),-sin(radians(orientation))] , [sin(radians(orientation)),cos(radians(orientation))]])
         self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-h]))[0]] 
         self.s_center = sum(self.points)/3
-        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("right_triangle","shape"))
+        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"],outline="#000000", tags=("right_triangle","shape"))
         if self.negative: self.canvas.negatives.append(self)
         #print(self.canvas.coords(self.canvas_repr))
     def rotate(self, angle):
@@ -381,8 +381,8 @@ class RightTriangle():
     def align(self):
         print("Warning: align is not fully implemented!!")
         self.align_to_axis()
-        #self.align_to_rect()
-        #self.align_to_arc()
+        self.align_to_rect()
+        self.align_to_arc()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
@@ -391,7 +391,6 @@ class RightTriangle():
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
                 self.refresh(self.center[0],self.canvas.Ycenter,self.w,self.h)
     def align_to_arc(self):
-        raise NotImplementedError
         own = self.get_charachteristic_points()
         for i in self.canvas.arcs:
             aling_score = 0 # if at least two points are near eachother, then it alignes them
@@ -402,10 +401,9 @@ class RightTriangle():
                         aling_score+=1
                         displacement = (j[0]-k[0], j[1]-k[1])
             if aling_score >= 2:
-                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.r, self.angle,self.start)
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.w, self.h)
                 break
     def align_to_rect(self):
-        raise NotImplementedError
         own = self.get_charachteristic_points()
         x = [p[0] for p in own]
         y = [p[1] for p in own]
@@ -425,7 +423,7 @@ class RightTriangle():
                     dy = j- arc_y
                     break
             if dx != 0 or dy != 0:
-                self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                self.refresh(self.center[0]+dx,self.center[1]+dy,self.w,self.h)
                 own = self.get_charachteristic_points()
                 x = [p[0] for p in own]
                 y = [p[1] for p in own]
@@ -438,7 +436,7 @@ class RightTriangle():
                         if dist(k,l)<EPSILON:
                             dx = l[0]-k[0]
                             dy = l[1]-k[1]
-                            self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                            self.refresh(self.center[0]+dx,self.center[1]+dy,self.w,self.h)
                             own = self.get_charachteristic_points()
                             x = [p[0] for p in own]
                             y = [p[1] for p in own]
@@ -496,6 +494,8 @@ class RightTriangle():
     def get_info(self):
         text=f"Befogó 1 = {self.w/self.canvas.scale}\nBefogó 2 = {self.h/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale} Irányultság = {self.orientation})"
         return text
+    def get_charachteristic_points(self):
+        return self.points[1], self.points[0], self.points[2]
 class Shapes():
     def __init__(self, canvas, rectangles, arcs,rightTriangles):
         self.canvas = canvas

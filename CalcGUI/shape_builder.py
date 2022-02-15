@@ -194,7 +194,7 @@ class shapeBuilder(tk.Canvas):
         ##########* Creating basic green triangle #############
         self.alap_triangle = RightTriangle(self,self.root,40,40,self.width,self.height) #! width+heigth ??? 
         self.delete(self.alap_triangle.canvas_repr)
-        self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw"], tags=("alap_triangle"))
+        self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw"], outline="#000000",tags=("alap_triangle"))
         self.itemconfigure("alap_triangle",state="hidden")
         self.itemconfigure("alap_triangle",fill=root.colors["sb_draw_2nd"])
         ##########* Creating axis #############
@@ -867,7 +867,7 @@ class shapeBuilder(tk.Canvas):
                 #self.alap_triangle.canvas_repr = self.create_polygon())
                 self.alap_triangle.rotate(direction)
                 self.delete(self.alap_triangle.canvas_repr)
-                self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw_2nd"], tags=("alap_triangle"))
+                self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw_2nd"],outline="#000000", tags=("alap_triangle"))
             else: raise TypeError
         else:
             for i in self.selected:
