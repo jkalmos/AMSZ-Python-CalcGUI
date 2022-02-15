@@ -76,6 +76,7 @@ class Rectangle():
         self.align_by_center()
         self.align_to_axis()#sicking to the coordinate system
         self.align_to_arc()
+        self.align_to_triangle()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             pos=[self.x1,self.y1,self.x2,self.y2]
@@ -172,7 +173,33 @@ class Rectangle():
                             dx = l[0]-k[0]
                             dy = l[1]-k[1]
                             self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
-                            
+    def align_to_triangle(self):
+        for i in self.canvas.rightTriangles:
+            own = i.get_charachteristic_points()
+            x = [p[0] for p in own]
+            y = [p[1] for p in own]
+            arc_x = max(set(x), key=x.count)
+            arc_y = max(set(y), key=y.count)
+            dx = 0
+            dy = 0
+            # align by x
+            for j in [self.x1,self.x2,self.center[0]]:
+                if abs(j-arc_x) < EPSILON:
+                    dx = j- arc_x
+                    break
+            #align by y
+            for j in [self.y1,self.y2,self.center[1]]:
+                if abs(j-arc_y) < EPSILON:
+                    dy = j- arc_y
+                    break
+            if dx != 0 or dy != 0:
+                self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
+                for k in own:
+                    for l in [(self.x1,self.y1),(self.x1,self.y2),(self.x2,self.y1),(self.x2,self.y2)]:
+                        if dist(k,l)<EPSILON:
+                            dx = l[0]-k[0]
+                            dy = l[1]-k[1]
+                            self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
     def translate(self, dx,dy):
         self.refresh(self.x1+dx,self.y1+dy,self.x2+dx,self.y2+dy)
     def is_inside(self,point):
@@ -214,6 +241,7 @@ class Arc():
         self.align_to_axis()
         self.align_to_rect()
         self.align_to_arc()
+        self.align_to_triangle()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
@@ -275,7 +303,19 @@ class Arc():
                             arc_y = max(set(y), key=y.count)
                             dx = 0
                             dy = 0
-           
+    def align_to_triangle(self):
+        own = self.get_charachteristic_points()
+        for i in self.canvas.rightTriangles:
+            aling_score = 0 # if at least two points are near eachother, then it alignes them
+            other = i.get_charachteristic_points()
+            for k in own:
+                for j in other:
+                    if dist(k,j) <= EPSILON: 
+                        aling_score+=1
+                        displacement = (j[0]-k[0], j[1]-k[1])
+            if aling_score >= 2:
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.r, self.angle,self.start)
+                break
     def get_bounding_box(self):
         # Karnaugh - tábla alapján
         C = bool(self.start == 90) or (self.start == 270)
@@ -382,6 +422,7 @@ class RightTriangle():
         print("Warning: align is not fully implemented!!")
         self.align_to_axis()
         self.align_to_rect()
+        self.align_to_triangle()
         self.align_to_arc()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
@@ -393,6 +434,19 @@ class RightTriangle():
     def align_to_arc(self):
         own = self.get_charachteristic_points()
         for i in self.canvas.arcs:
+            aling_score = 0 # if at least two points are near eachother, then it alignes them
+            other = i.get_charachteristic_points()
+            for k in own:
+                for j in other:
+                    if dist(k,j) <= EPSILON: 
+                        aling_score+=1
+                        displacement = (j[0]-k[0], j[1]-k[1])
+            if aling_score >= 2:
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.w, self.h)
+                break
+    def align_to_triangle(self):
+        own = self.get_charachteristic_points()
+        for i in self.canvas.rightTriangles:
             aling_score = 0 # if at least two points are near eachother, then it alignes them
             other = i.get_charachteristic_points()
             for k in own:
