@@ -578,17 +578,17 @@ class shapeBuilder(tk.Canvas):
             Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
             print(Ixc, Iyc)
             # rotation + translation
-            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start))  + i.area*(Sy-i.center[1])**2
-            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start)) + i.area*(Sy-i.center[1])**2
-            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(i.start))*cos(radians(i.start)) + Ixyc*((cos(radians(i.start))**2-sin(radians(i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 - 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start))  + i.area*(Sy-i.center[1])**2
+            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 + 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start)) + i.area*(Sx-i.center[0])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.start))*cos(radians(-i.start)) + Ixyc*((cos(radians(-i.start))**2-sin(radians(-i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         for i in self.rightTriangles:
             Ixc = (i.h**3 *i.w)/12 
             Iyc = (i.w**3 *i.h)/12 
-            Ixyc = i.w**2 * i.h**2 *1/24
+            Ixyc = (i.w**2 * i.h**2 )/24
 
-            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(i.orientation)))**2 + Iyc*(sin(radians(i.orientation)))**2 + 2*Ixyc*cos(radians(i.orientation))*sin(radians(i.orientation))  + i.area*(Sy-i.center[1])**2
-            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(i.orientation)))**2 + Iyc*(sin(radians(i.orientation)))**2 + 2*Ixyc*cos(radians(i.orientation))*sin(radians(i.orientation)) + i.area*(Sy-i.center[1])**2
-            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(i.orientation))*cos(radians(i.orientation)) + Ixyc*((cos(radians(i.orientation))**2-sin(radians(i.orientation))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 - 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation))  + i.area*(Sy-i.center[1])**2
+            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 + 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation)) + i.area*(Sx-i.center[0])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.orientation))*cos(radians(-i.orientation)) + Ixyc*((cos(radians(-i.orientation))**2-sin(radians(-i.orientation))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
             print("Warning: Calculate for riht Triangles is not checked")
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.hauptachsen(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
