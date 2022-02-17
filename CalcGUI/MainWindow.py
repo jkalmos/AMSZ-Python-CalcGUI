@@ -636,6 +636,7 @@ DARK_THEME = {
         'sb_draw_2nd':'#008080',
         'sb_selected':'',
         'sb_negative':'',
+        'sb_grid':'#3f3f3f',
         'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
@@ -653,6 +654,7 @@ LIGHT_THEME = {
         'sb_draw_2nd':'#5d93d1',
         'sb_selected':'',
         'sb_negative':'',
+        'sb_grid':'',
         'path': 'figures/light_theme/'
         }
 

@@ -1,5 +1,6 @@
 from re import A
 import re
+from textwrap import fill
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 import numpy as np
@@ -550,56 +551,82 @@ class visual_grid():
         self.root = root
         self.Xcenter = Xcenter
         self.Ycenter = Ycenter
-        g1 = np.linspace(-100,100,21)
-        g2 = np.linspace(-50,50,21)
-        g3 = np.linspace(-10,10,21)
-        g4 = np.linspace(-5,5,21)
-        g5 = np.linspace(-1,1,21)
-        s4 = np.linspace(-500,500,21)
-        s3 = np.linspace(-1000,1000,21)
-        s2 = np.linspace(-5000,5000,21)
-        s1 = np.linspace(-10000,10000,21)
-        lines = [s1, s2, s3, s4, g1, g2, g3, g4, g5]
-        num = [2]
-
+        self.create_grid(self.scale, self.Xcenter, self.Ycenter)
+    def delete_grid(self):
+        try:
+            self.canvas.delete("grid")
+        except:
+            None
+        # g1 = np.linspace(-100,100,21)
+        # g2 = np.linspace(-50,50,21)
+        # g3 = np.linspace(-10,10,21)
+        # g4 = np.linspace(-5,5,21)
+        # g5 = np.linspace(-1,1,21)
+        # s4 = np.linspace(-500,500,21)
+        # s3 = np.linspace(-1000,1000,21)
+        # s2 = np.linspace(-5000,5000,21)
+        # s1 = np.linspace(-10000,10000,21)
+        # lines = [s1, s2, s3, s4, g1, g2, g3, g4, g5]
+        # num = [2]
+    def create_grid(self, scale, Xcenter, Ycenter):
+        self.delete_grid()
         base = np.linspace(-1000,1000,21)
 
-        rate = int(self.scale/10)
-        mod1 = self.scale%10
-        rec = int(1/rate)
-        mod2 = 1%rate
+        log = np.log10(scale)
+        rate = int(log)
+        mod1 = log-rate
+        # rate = int(scale/10)
+        # mod1 = scale%10
+        rec = int(1/log)
+        mod2 = rec%10
+        print(scale,log,rec)
         if rate > 0:
             if mod1/5>1:
                 grid1 = base/rate/5
+                grid2 = grid1*2
             elif mod1/2>1:
                 grid1 = base/rate/2
+                grid2 = grid1*5
             else:
                 grid1 = base/rate
+                grid2 = grid1*2
         elif rate == 0:
             if mod1/5>1:
                 grid1 = base/5
+                grid2 = grid1*2
             elif mod1/2>1:
                 grid1 = base/2
+                grid2 = grid1*5
             else:
                 grid1 = base
-        # else:
-        #     if 
-
-        print(self.scale)
-        for j in num:    
-            for i in range(21):
-                hx1 = -10000 + self.Xcenter
-                hx2 = 10000 + self.Xcenter
-                hy1 = lines[j][i] + self.Ycenter
-                hy2 = lines[j][i] + self.Ycenter
-                vx1 = lines[j][i] + self.Xcenter
-                vx2 = lines[j][i] + self.Xcenter
-                vy1 = -10000 + self.Ycenter
-                vy2 = 10000 + self.Ycenter
-                vline = self.canvas.create_line(vx1, vy1, vx2, vy2, width = 2)
-                hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = 2)
-                self.canvas.tag_lower(vline)
-                self.canvas.tag_lower(hline)
+                grid2 = grid1*2
+        else:
+            if mod2/5>1:
+                grid1 = base*rec*5
+                grid2 = grid1*2
+            elif mod2/2>1:
+                grid1 = base*rec*2
+                grid2 = grid1*5
+            else:
+                grid1 = base*rec
+                grid2 = grid1*2
+        limit = grid2[-1]
+        grid = [grid1, grid2]
+        width = [1,1]
+        for j in range(2):    
+            for i in range(len(base)):
+                hx1 = -limit + Xcenter
+                hx2 = limit + Xcenter
+                hy1 = grid[j][i] + Ycenter
+                hy2 = grid[j][i] + Ycenter
+                vx1 = grid[j][i] + Xcenter
+                vx2 = grid[j][i] + Xcenter
+                vy1 = -limit + Ycenter
+                vy2 = limit + Ycenter
+                self.vline = self.canvas.create_line(vx1, vy1, vx2, vy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
+                self.hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
+                self.canvas.tag_lower(self.vline)
+                self.canvas.tag_lower(self.hline)
         # def 
         # self.negative = Negative
         # self.start = start
