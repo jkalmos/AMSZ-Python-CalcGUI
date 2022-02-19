@@ -77,6 +77,7 @@ class Rectangle():
         self.align_by_center()
         self.align_to_axis()#sicking to the coordinate system
         self.align_to_arc()
+        self.align_to_triangle()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             pos=[self.x1,self.y1,self.x2,self.y2]
@@ -173,7 +174,33 @@ class Rectangle():
                             dx = l[0]-k[0]
                             dy = l[1]-k[1]
                             self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
-                            
+    def align_to_triangle(self):
+        for i in self.canvas.rightTriangles:
+            own = i.get_charachteristic_points()
+            x = [p[0] for p in own]
+            y = [p[1] for p in own]
+            arc_x = max(set(x), key=x.count)
+            arc_y = max(set(y), key=y.count)
+            dx = 0
+            dy = 0
+            # align by x
+            for j in [self.x1,self.x2,self.center[0]]:
+                if abs(j-arc_x) < EPSILON:
+                    dx = j- arc_x
+                    break
+            #align by y
+            for j in [self.y1,self.y2,self.center[1]]:
+                if abs(j-arc_y) < EPSILON:
+                    dy = j- arc_y
+                    break
+            if dx != 0 or dy != 0:
+                self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
+                for k in own:
+                    for l in [(self.x1,self.y1),(self.x1,self.y2),(self.x2,self.y1),(self.x2,self.y2)]:
+                        if dist(k,l)<EPSILON:
+                            dx = l[0]-k[0]
+                            dy = l[1]-k[1]
+                            self.refresh(self.x1-dx,self.y1-dy,self.x2-dx,self.y2-dy)
     def translate(self, dx,dy):
         self.refresh(self.x1+dx,self.y1+dy,self.x2+dx,self.y2+dy)
     def is_inside(self,point):
@@ -215,6 +242,7 @@ class Arc():
         self.align_to_axis()
         self.align_to_rect()
         self.align_to_arc()
+        self.align_to_triangle()
     def align_to_axis(self):
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
@@ -276,7 +304,19 @@ class Arc():
                             arc_y = max(set(y), key=y.count)
                             dx = 0
                             dy = 0
-           
+    def align_to_triangle(self):
+        own = self.get_charachteristic_points()
+        for i in self.canvas.rightTriangles:
+            aling_score = 0 # if at least two points are near eachother, then it alignes them
+            other = i.get_charachteristic_points()
+            for k in own:
+                for j in other:
+                    if dist(k,j) <= EPSILON: 
+                        aling_score+=1
+                        displacement = (j[0]-k[0], j[1]-k[1])
+            if aling_score >= 2:
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.r, self.angle,self.start)
+                break
     def get_bounding_box(self):
         # Karnaugh - tábla alapján
         C = bool(self.start == 90) or (self.start == 270)
@@ -337,31 +377,38 @@ class Arc():
         text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
 class RightTriangle():
-    def __init__(self,canvas,root,center_x,center_y,w,h, orientation=0, Negative=False):
+    def __init__(self,canvas,root,center_x,center_y,width,height, orientation=0, Negative=False):
         #   h ◣
         #     w
         self.canvas = canvas
         self.root = root
         self.center = np.array([center_x,center_y])
         self.negative = Negative
-        self.w = w
-        self.h = h
-        self.orietation = min (360,orientation)
+        self.width = width
+        self.height = height
+        self.orientation = min (360,orientation)
         self.type = "rightTriangle"
-        self.area = w*h/2
+        self.area = width*height/2
         self.rotation_matrix =np.matrix([[cos(radians(orientation)),-sin(radians(orientation))] , [sin(radians(orientation)),cos(radians(orientation))]])
-        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-h]))[0]] 
+        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([width,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-height]))[0]] 
         self.s_center = sum(self.points)/3
-        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("arc","shape"))
+        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"],outline="#000000", tags=("right_triangle","shape"))
         if self.negative: self.canvas.negatives.append(self)
         #print(self.canvas.coords(self.canvas_repr))
-    def refresh(self, center_x, center_y,w,h):
+    def rotate(self, angle):
+        if angle % 90 != 0: print("A forgatasnak 90 fok valahanyszorosanak kell lennie")
+        self.orientation -= angle #! itt ez a - jel ez nem biztos, de így működik jól...
+        self.rotation_matrix = np.matrix([[cos(radians(self.orientation)),-sin(radians(self.orientation))] , [sin(radians(self.orientation)),cos(radians(self.orientation))]])
+        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([self.width,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-self.height]))[0]]
+        self.canvas.delete(self.canvas_repr)
+        self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("arc","shape"))
+    def refresh(self, center_x, center_y,width,height):
         self.center = np.array([center_x,center_y])
-        self.w = w
-        self.h = h
-        self.area = w*h/2
+        self.width = width
+        self.height = height
+        self.area = width*height/2
         #print(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1])
-        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-h]))[0]] 
+        self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([width,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-height]))[0]] 
         self.s_center = sum(self.points)/3
         l,r = center_x, center_x
         t,b = center_y,center_y
@@ -373,21 +420,19 @@ class RightTriangle():
         self.canvas.coords(self.canvas_repr, self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1])
 
     def align(self):
-        print("Warning: align is not implemented!!")
-        return 0
+        print("Warning: align is not fully implemented!!")
         self.align_to_axis()
         self.align_to_rect()
+        self.align_to_triangle()
         self.align_to_arc()
     def align_to_axis(self):
-        raise NotImplementedError
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
             if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
-                self.refresh(self.canvas.Xcenter,self.center[1],self.r,self.angle,self.start)
+                self.refresh(self.canvas.Xcenter,self.center[1],self.width,self.height)
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
-                self.refresh(self.center[0],self.canvas.Ycenter,self.r,self.angle,self.start)
+                self.refresh(self.center[0],self.canvas.Ycenter,self.width,self.height)
     def align_to_arc(self):
-        raise NotImplementedError
         own = self.get_charachteristic_points()
         for i in self.canvas.arcs:
             aling_score = 0 # if at least two points are near eachother, then it alignes them
@@ -398,10 +443,22 @@ class RightTriangle():
                         aling_score+=1
                         displacement = (j[0]-k[0], j[1]-k[1])
             if aling_score >= 2:
-                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.r, self.angle,self.start)
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.width, self.height)
+                break
+    def align_to_triangle(self):
+        own = self.get_charachteristic_points()
+        for i in self.canvas.rightTriangles:
+            aling_score = 0 # if at least two points are near eachother, then it alignes them
+            other = i.get_charachteristic_points()
+            for k in own:
+                for j in other:
+                    if dist(k,j) <= EPSILON: 
+                        aling_score+=1
+                        displacement = (j[0]-k[0], j[1]-k[1])
+            if aling_score >= 2:
+                self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.width, self.height)
                 break
     def align_to_rect(self):
-        raise NotImplementedError
         own = self.get_charachteristic_points()
         x = [p[0] for p in own]
         y = [p[1] for p in own]
@@ -421,7 +478,7 @@ class RightTriangle():
                     dy = j- arc_y
                     break
             if dx != 0 or dy != 0:
-                self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                self.refresh(self.center[0]+dx,self.center[1]+dy,self.width,self.height)
                 own = self.get_charachteristic_points()
                 x = [p[0] for p in own]
                 y = [p[1] for p in own]
@@ -434,7 +491,7 @@ class RightTriangle():
                         if dist(k,l)<EPSILON:
                             dx = l[0]-k[0]
                             dy = l[1]-k[1]
-                            self.refresh(self.center[0]+dx,self.center[1]+dy,self.r,self.angle,self.start)
+                            self.refresh(self.center[0]+dx,self.center[1]+dy,self.width,self.height)
                             own = self.get_charachteristic_points()
                             x = [p[0] for p in own]
                             y = [p[1] for p in own]
@@ -447,7 +504,7 @@ class RightTriangle():
             self.canvas.itemconfig(self.canvas_repr, fill='gray')
             return 0
         self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
-        print("Warning: overlapping detection is not implemented")
+        #print("Warning: overlapping detection is not implemented")
         return -1
         l,r,t,b = self.get_bounding_box()
         orig=list(self.canvas.find_overlapping(l,t,r,b))
@@ -476,22 +533,24 @@ class RightTriangle():
         #print("Warning: Is_inside not i,plemented")
         #return False
         # creating local coord system with the two orthogonal side of the triangle 
-        xsi = (self.points[1] -self.center)/ self.w
-        eta = (self.points[1]-self.center) / self.h
+        xsi = (self.points[1] -self.center)/ self.width
+        eta = (self.points[2]- self.center) / self.height
         p = ([point[0],point[1]]- self.center)
 
-        p_transformed = [np.dot(p,xsi),np.dot(p,eta)]
+        p_transformed = [np.dot(p,xsi) , np.dot(p,eta)]
         if p_transformed[0] < 0 or p_transformed[1]< 0:
             return False
-        elif p[1] < -(self.h/self.w)*p[1] + self.h:
+        elif p_transformed[1] < -(self.height/self.width)*p_transformed[0] + self.height:
             return True 
             
         return False
     def translate(self,dx,dy):
-        self.refresh(self.center[0]+dx,self.center[1]+dy, self.w,self.h)
+        self.refresh(self.center[0]+dx,self.center[1]+dy, self.width,self.height)
     def get_info(self):
-        text=f"Befogó 1 = {self.w/self.canvas.scale}\nBefogó 2 = {self.h/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale} Irányultság = {self.orietation})"
+        text=f"Befogó 1 = {self.width/self.canvas.scale}\nBefogó 2 = {self.height/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale} Irányultság = {self.orientation})"
         return text
+    def get_charachteristic_points(self):
+        return self.points[1], self.points[0], self.points[2]
 class Shapes():
     def __init__(self, canvas, rectangles, arcs,rightTriangles):
         self.canvas = canvas
@@ -531,7 +590,7 @@ class Shapes():
             self.rectangles.append(obj)
         elif type(obj)==Arc:
             self.arcs.append(obj)
-        elif type(obj==RightTriangle):
+        elif type(obj)==RightTriangle:
             self.rightTriangles.append(obj)
         else:
             print("Hiba: A formatum nem megfelelo!")
@@ -545,88 +604,159 @@ class Shapes():
         else:
             print("Hiba: A formatum nem megfelelo!")
 class visual_grid():
-    def __init__(self, canvas, root, scale, Xcenter, Ycenter):
+    def __init__(self, canvas, root, scale, Xcenter, Ycenter, scale_factor):
         self.scale = scale
         self.canvas = canvas
         self.root = root
         self.Xcenter = Xcenter
         self.Ycenter = Ycenter
-        self.create_grid(self.scale, self.Xcenter, self.Ycenter)
+        self.scale_factor = scale_factor
+        self.plus = 0
+        self.minus = 0
+        self.change = 2
+        self.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
     def delete_grid(self):
         try:
             self.canvas.delete("grid")
         except:
             None
-        # g1 = np.linspace(-100,100,21)
-        # g2 = np.linspace(-50,50,21)
-        # g3 = np.linspace(-10,10,21)
-        # g4 = np.linspace(-5,5,21)
-        # g5 = np.linspace(-1,1,21)
-        # s4 = np.linspace(-500,500,21)
-        # s3 = np.linspace(-1000,1000,21)
-        # s2 = np.linspace(-5000,5000,21)
-        # s1 = np.linspace(-10000,10000,21)
-        # lines = [s1, s2, s3, s4, g1, g2, g3, g4, g5]
-        # num = [2]
-    def create_grid(self, scale, Xcenter, Ycenter):
+    def create_grid(self, scale, Xcenter, Ycenter, scale_factor):
         self.delete_grid()
+        # define default grid, for default scaling
         base = np.linspace(-1000,1000,21)
-
-        log = np.log10(scale)
-        rate = int(log)
-        mod1 = log-rate
-        # rate = int(scale/10)
-        # mod1 = scale%10
-        rec = int(1/log)
-        mod2 = rec%10
-        print(scale,log,rec)
-        if rate > 0:
-            if mod1/5>1:
-                grid1 = base/rate/5
-                grid2 = grid1*2
-            elif mod1/2>1:
-                grid1 = base/rate/2
-                grid2 = grid1*5
-            else:
-                grid1 = base/rate
-                grid2 = grid1*2
-        elif rate == 0:
-            if mod1/5>1:
-                grid1 = base/5
-                grid2 = grid1*2
-            elif mod1/2>1:
-                grid1 = base/2
-                grid2 = grid1*5
-            else:
-                grid1 = base
-                grid2 = grid1*2
+        # define multiplication factor based on scaling
+        log = int(np.log(scale/10)/np.log(scale_factor))
+        rate = int(log/10)
+        mod1 = log%10
+        if log == 0:
+            nlog = 1
         else:
-            if mod2/5>1:
-                grid1 = base*rec*5
-                grid2 = grid1*2
-            elif mod2/2>1:
-                grid1 = base*rec*2
-                grid2 = grid1*5
+            nlog = int(-1/log)
+        rec = int(nlog/10)
+        mod2 = nlog%10
+        if rate > 0:
+            if mod1/5>=1:
+                self.plus = mod1-5
+                self.change = 2
+                self.grid1 = base/rate/5
+            elif mod1/2>=1:
+                self.plus = mod1-2
+                self.change = 5
+                self.grid1 = base/rate/2
             else:
-                grid1 = base*rec
-                grid2 = grid1*2
-        limit = grid2[-1]
-        grid = [grid1, grid2]
+                self.plus = mod1
+                self.change = 2
+                self.grid1 = base/rate
+            self.minus = 0
+        elif rate == 0:
+            if mod1/5>=1:
+                self.plus = mod1-5
+                self.change = 2
+                self.grid1 = base/5
+            elif mod1/2>=1:
+                self.plus = mod1-2
+                self.change = 5
+                self.grid1 = base/2
+            else:
+                self.plus = mod1
+                self.change = 2
+                self.grid1 = base
+            self.minus = 0
+        else:
+            if mod2/5>=1:
+                self.minus = mod2-5
+                self.change = 2
+                self.grid1 = base*rec*5
+            elif mod2/2>=1:
+                self.minus = mod2-2
+                self.change = 5
+                self.grid1 = base*rec*2
+            else:
+                self.minus = mod2
+                self.change = 2
+                self.grid1 = base*rec
+            self.plus = 0
+        limit = self.grid1[-1]
+        print(self.scale, log, rate, mod1, mod2, self.plus, self.minus)
+        self.grid = [self.grid1]
         width = [1,1]
-        for j in range(2):    
+        for j in range(len(self.grid)):    
             for i in range(len(base)):
                 hx1 = -limit + Xcenter
                 hx2 = limit + Xcenter
-                hy1 = grid[j][i] + Ycenter
-                hy2 = grid[j][i] + Ycenter
-                vx1 = grid[j][i] + Xcenter
-                vx2 = grid[j][i] + Xcenter
+                hy1 = self.grid[j][i] + Ycenter
+                hy2 = self.grid[j][i] + Ycenter
+                vx1 = self.grid[j][i] + Xcenter
+                vx2 = self.grid[j][i] + Xcenter
                 vy1 = -limit + Ycenter
                 vy2 = limit + Ycenter
                 self.vline = self.canvas.create_line(vx1, vy1, vx2, vy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
                 self.hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
                 self.canvas.tag_lower(self.vline)
                 self.canvas.tag_lower(self.hline)
+        if log >=0:
+            # self.plus = max(self.plus,1)
+            for j in range(self.plus):
+                self.rescale_grid(Xcenter, Ycenter, scale_factor)
+        else:
+            # self.minus = max(self.minus,1)
+            for j in range(self.minus):
+                self.rescale_grid(Xcenter, Ycenter, round(1/scale_factor,4))
+    def rescale_grid(self, Xcenter, Ycenter, scale):
+        self.delete_grid()
+        self.grid1 *= scale
+        # if scale > 1:
+        #     if self.minus != 0:
+        #         self.minus -= 1
+        #     elif self.plus == 0:
+        #         if self.change == 2:
+        #             self.grid1 = self.grid1/5
+        #         else:
+        #             self.grid1 = self.grid1/2
+        #     else:
+        #         self.plus += 1
+        #         if self.plus == self.change:
+        #             self.grid1 = self.grid1/self.change
+        #             self.plus = 0
+        #             if self.change == 2:
+        #                 self.change = 5
+        #             else:
+        #                 self.change = 2
+        # else:
+        #     if self.plus != 0:
+        #         self.plus -= 1
+        #     elif self.minus == 0:
+        #         if self.change == 2:
+        #             self.grid1 = self.grid1*5
+        #         else:
+        #             self.grid1 = self.grid1*2
+        #     else:
+        #         self.minus +=1
+        #         if self.minus == self.change:
+        #             self.grid1 = self.grid1*self.change
+        #             self.minus = 0
+        #             if self.change == 2:
+        #                 self.change = 5
+        #             else:
+        #                 self.change = 2
+        self.grid = [self.grid1]
+        limit = self.grid1[-1]
+        width = [1,1]
+        for j in range(len(self.grid)):    
+            for i in range(len(self.grid1)):
+                hx1 = -limit + Xcenter
+                hx2 = limit + Xcenter
+                hy1 = self.grid[j][i] + Ycenter
+                hy2 = self.grid[j][i] + Ycenter
+                vx1 = self.grid[j][i] + Xcenter
+                vx2 = self.grid[j][i] + Xcenter
+                vy1 = -limit + Ycenter
+                vy2 = limit + Ycenter
+                self.vline = self.canvas.create_line(vx1, vy1, vx2, vy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
+                self.hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
+                self.canvas.tag_lower(self.vline)
+                self.canvas.tag_lower(self.hline)
+
         # def 
         # self.negative = Negative
         # self.start = start

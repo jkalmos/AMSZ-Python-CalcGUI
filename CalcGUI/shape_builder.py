@@ -9,6 +9,7 @@ R1 = 15 # radius of semicircle (represenatation)
 R2 = 15 # radius of quarter_circle (represenatation)
 EPSILON = 10
 STICKY = True
+SCALE = 1.25
 from shapes import Rectangle, Arc, Shapes, dist, RightTriangle, visual_grid
 
 #TODO: Overlapping not recognized while alignig rects
@@ -30,14 +31,17 @@ class shapeBuilder(tk.Canvas):
         self.Ycenter = 300
         self.canvas_width = 800
         self.canvas_height = 600
+        self.scale_factor = SCALE
 
         #########* Basic constants #########
         self.current = None
         self.isMoving=False
-        self.width = WIDTH
-        self.height = WIDTH
-        self.r1 = R1
-        self.r2 = R2
+        self.width1 = WIDTH # rectangle
+        self.height1 = WIDTH # rectangle
+        self.width2 = WIDTH # triangle
+        self.height2 = WIDTH # triangle
+        self.r1 = R1 # quarter_circle
+        self.r2 = R2 # semi_cricle
         self.last_click_pos = None
         self.starting_pos = None #selecting multiple objects
         self.selecting_area = self.create_rectangle(0,0,0,0)
@@ -114,8 +118,8 @@ class shapeBuilder(tk.Canvas):
         self.plus_hover_img = ImageTk.PhotoImage(resized_image)
         self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
         self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
-        self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(1.25))
-        self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(0.8))
+        self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(self.scale_factor))
+        self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(self.scale_factor**(-1)))
         self.tag_bind(self.minus, '<Enter>', lambda e: self.itemconfig(self.minus,image=self.minus_hover_img))
         self.tag_bind(self.plus, '<Enter>', lambda e: self.itemconfig(self.plus,image=self.plus_hover_img))
         self.tag_bind(self.minus, '<Leave>', lambda e: self.itemconfig(self.minus,image=self.minus_img))
@@ -163,10 +167,10 @@ class shapeBuilder(tk.Canvas):
         self.alap = self.create_rectangle(30,10,30+WIDTH,10+WIDTH,fill=root.colors["sb_draw_2nd"], tags=("alap_rectangle"))
         self.alap_negyzet = Rectangle(self,self.root,30,10,30+WIDTH,10+WIDTH, self.alap)
         self.width_entry = tk.Entry(self, width = 4,bg=root.colors["secondary_color"], fg=root.colors["text_color"],insertbackground=root.colors['text_color'],borderwidth = 0, highlightthickness = 0)
-        self.width_entry.insert(tk.END, str(round(self.width/self.scale,4)))
+        self.width_entry.insert(tk.END, str(round(self.width1/self.scale,4)))
         # self.width_entry.place(x = 22 + self.width/2, y = 12 + self.height)
         self.height_entry = tk.Entry(self, width = 4,bg=root.colors["secondary_color"], fg=root.colors["text_color"],insertbackground=root.colors['text_color'],borderwidth = 0, highlightthickness = 0)
-        self.height_entry.insert(tk.END, str(round(self.width/self.scale,4)))
+        self.height_entry.insert(tk.END, str(round(self.height1/self.scale,4)))
         # self.height_entry.place(x = 32 + self.width, y = 2 + self.height/2)
         self.move_entry()
         # self.height_entry.bind('<FocusOut>', func=lambda e: self.overwrite())
@@ -188,10 +192,9 @@ class shapeBuilder(tk.Canvas):
         self.itemconfigure("alap_circle",state="hidden")
         
         ##########* Creating basic green triangle #############
-        self.alap_triangle = RightTriangle(self,self.root,40,40,self.width,self.height) #! width+heigth ??? 
-        for tag in self.gettags(self.alap_triangle.canvas_repr):
-            self.dtag(tag,self.alap_triangle.canvas_repr)
-        self.addtag_withtag("alap_triangle",self.alap_triangle.canvas_repr)
+        self.alap_triangle = RightTriangle(self,self.root,40,40,self.width2,self.height2) #! width+heigth ??? 
+        self.delete(self.alap_triangle.canvas_repr)
+        self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw"], outline="#000000",tags=("alap_triangle"))
         self.itemconfigure("alap_triangle",state="hidden")
         self.itemconfigure("alap_triangle",fill=root.colors["sb_draw_2nd"])
         ##########* Creating axis #############
@@ -248,7 +251,7 @@ class shapeBuilder(tk.Canvas):
         # self.cls.grid(row=6, column=1,columnspan=3)
 
         ####################### Draw grid #######################
-        self.visual_grid = visual_grid(self,self.root, self.scale, self.Xcenter, self.Ycenter)
+        self.visual_grid = visual_grid(self,self.root, self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
 
     def popup(self, e): #right cklick menu shows up
         if not self.isMoving:
@@ -272,9 +275,9 @@ class shapeBuilder(tk.Canvas):
     def resize_rectangle(self,e=None): #! Something is wrong...
         for i in self.selected:
             if type(i)==Rectangle:
-                i.refresh(i.x1, i.y1, i.x1 + self.width, i.y1 + self.height)
+                i.refresh(i.x1, i.y1, i.x1 + self.width1, i.y1 + self.height1)
             elif type(i)==Arc:
-                i.refresh(i.center[0],i.center[1],self.width/2,i.angle, i.start) ##### TODO EZ nEM LESZ JÓ KÖRNÉL
+                i.refresh(i.center[0],i.center[1],self.width1/2,i.angle, i.start) ##### TODO EZ nEM LESZ JÓ KÖRNÉL
             elif type(i)==RightTriangle:
                 print("Warning: resize is not implemented for Right Triangles")
             else:
@@ -360,7 +363,7 @@ class shapeBuilder(tk.Canvas):
         else:
             pos = self.coords(self.alap_negyzet.canvas_repr)
             if self.current is None and e.x>=pos[0] and e.x<=pos[2] and e.y>=pos[1] and e.y <=pos[3] and self.starting_pos is None and self.active_shape == "Rectangle":
-                self.current = Rectangle(self,self.root,pos[0],pos[1],pos[0]+self.width,pos[1]+self.height,self.create_rectangle(pos[0],pos[1],pos[0]+self.width,pos[1]+self.height,fill=self.root.colors["sb_draw"], tags=("rect","shape")))
+                self.current = Rectangle(self,self.root,pos[0],pos[1],pos[0]+self.width1,pos[1]+self.height1,self.create_rectangle(pos[0],pos[1],pos[0]+self.width1,pos[1]+self.height1,fill=self.root.colors["sb_draw"], tags=("rect","shape")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current: # Circle
             pos = self.coords(self.alap_circle)
@@ -382,7 +385,7 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "rightTriangle":
                 if(self.alap_triangle.is_inside([e.x,e.y])):
                     print("Triangle")
-                    self.current = RightTriangle(self, self.root, e.x,e.y,self.width,self.height,orientation=0) #! W + H nem az kéne
+                    self.current = RightTriangle(self, self.root, e.x,e.y,self.width2,self.height2,orientation=self.alap_triangle.orientation) #! W + H nem az kéne
                     self.itemconfig(self.current.canvas_repr, fill="light blue")
                     print(type(self.current))
         if not self.current:
@@ -403,7 +406,7 @@ class shapeBuilder(tk.Canvas):
             return 0
         elif self.isMoving or type(self.current)==Arc or type(self.current) == RightTriangle: #! Itt valami furán van meírva de úgy néz ki működik
             if type(self.current) == Arc: self.current.refresh(e.x,e.y,self.current.r,self.current.angle,self.current.start)
-            elif type(self.current) == RightTriangle: self.current.refresh(e.x,e.y,self.current.w,self.current.h)
+            elif type(self.current) == RightTriangle: self.current.refresh(e.x,e.y,self.current.width,self.current.height)
             self.isMoving = True
             return 0
     def release(self,e):
@@ -499,11 +502,18 @@ class shapeBuilder(tk.Canvas):
             Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
             print(Ixc, Iyc)
             # rotation + translation
-            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start))  + i.area*(Sy-i.center[1])**2
-            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(i.start)))**2 + Iyc*(sin(radians(i.start)))**2 + 2*Ixyc*cos(radians(i.start))*sin(radians(i.start)) + i.area*(Sy-i.center[1])**2
-            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(i.start))*cos(radians(i.start)) + Ixyc*((cos(radians(i.start))**2-sin(radians(i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 - 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start))  + i.area*(Sy-i.center[1])**2
+            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 + 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start)) + i.area*(Sx-i.center[0])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.start))*cos(radians(-i.start)) + Ixyc*((cos(radians(-i.start))**2-sin(radians(-i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         for i in self.rightTriangles:
-            print("Warning: Calculate for riht Triangles is not implemented")
+            Ixc = (i.h**3 *i.w)/12 
+            Iyc = (i.w**3 *i.h)/12 
+            Ixyc = (i.w**2 * i.h**2 )/24
+
+            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 - 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation))  + i.area*(Sy-i.center[1])**2
+            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 + 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation)) + i.area*(Sx-i.center[0])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.orientation))*cos(radians(-i.orientation)) + Ixyc*((cos(radians(-i.orientation))**2-sin(radians(-i.orientation))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            print("Warning: Calculate for riht Triangles is not checked")
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.plot_principal_axis(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
@@ -542,6 +552,18 @@ class shapeBuilder(tk.Canvas):
                     ok = False
                 if not ok: return -1
                 object.refresh(object.x1,object.y1,object.x1+w,object.y1+h)
+            elif object.type == "rightTriangle":
+                try:
+                    w=float(self.width_entry.get().replace(',','.'))*self.scale
+                    if w <=0:
+                        raise ValueError
+                    self.width_entry.config({"background": self.root.colors['secondary_color']})
+                except:
+                    print("Hiba, az egyik mező nem olvashó be")
+                    self.width_entry.config({"background": self.root.colors['error_color']})
+                    ok = False
+                if not ok: return -1
+                object.refresh(object.center[0],object.center[1],w,h)
             elif object.type == "Semicircle":
                 if not ok: return -1
                 object.refresh(object.center[0],object.center[1],h,angle=180)
@@ -558,23 +580,34 @@ class shapeBuilder(tk.Canvas):
                 print("Hiba, az egyik mező nem olvashó be")
                 self.height_entry.config({"background": self.root.colors['error_color']})
                 ok=False
-            if self.active_shape == "Rectangle" or self.active_shape == "rightTriangle":
+            if self.active_shape == "Rectangle":
                 try:
                     w=float(self.width_entry.get().replace(',','.'))*self.scale
                     if w <=0:
                         raise ValueError
-                    self.width = w
-                    self.height = h
+                    self.width1 = w
+                    self.height1 = h
                     self.width_entry.config({"background": self.root.colors['secondary_color']})
                 except:
                     print("Hiba, az egyik mező nem olvashó be")
                     self.width_entry.config({"background": self.root.colors['error_color']})
                     ok = False
                 if not ok: return -1
-                if self.active_shape == "Rectangle":
-                    self.coords(self.alap_negyzet.canvas_repr, 30,10,30+self.width,10+self.height)
-                elif self.active_shape == "rightTriangle":
-                    self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width,10+self.height, 30, 10+self.height)
+                self.coords(self.alap_negyzet.canvas_repr, 30,10,30+self.width1,10+self.height1)
+            elif self.active_shape == "rightTriangle":
+                try:
+                    w=float(self.width_entry.get().replace(',','.'))*self.scale
+                    if w <=0:
+                        raise ValueError
+                    self.width2 = w
+                    self.height2 = h
+                    self.width_entry.config({"background": self.root.colors['secondary_color']})
+                except:
+                    print("Hiba, az egyik mező nem olvashó be")
+                    self.width_entry.config({"background": self.root.colors['error_color']})
+                    ok = False
+                if not ok: return -1
+                self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
             elif self.active_shape == "Semicircle":
                 if not ok: return -1
                 self.r1 = h
@@ -608,10 +641,12 @@ class shapeBuilder(tk.Canvas):
         return I1, I2, alfa
     def rescale(self,scale): #!? Could be better
         self.scale *= scale
-        self.alap_negyzet.refresh(30,10,30+self.width*scale,10+self.height*scale)
-        self.coords(self.alap_circle, 30,10,30+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
-        self.width *= scale
-        self.height *= scale
+        self.alap_negyzet.refresh(30,10,30+self.width1*scale,10+self.height1*scale)
+        self.coords(self.alap_circle, 30,10,30+self.r1*scale,10+self.r1*scale) #? Esetleg külön sugár változó TODO: ez mi ??? ITT valami nem stimmel
+        self.width1 *= scale
+        self.height1 *= scale
+        self.width2 *= scale
+        self.height2 *= scale
         self.r1 *= scale
         self.r2 *= scale
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
@@ -621,7 +656,8 @@ class shapeBuilder(tk.Canvas):
         for i in self.rightTriangles:
             print("Warning: Rescaling for Right triangles is not implemented")
         self.move_entry()
-        self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter)
+        # self.visual_grid.rescale_grid(self.Xcenter, self.Ycenter, scale)
+        self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
     def resize_canvas(self,e):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
@@ -646,7 +682,7 @@ class shapeBuilder(tk.Canvas):
         #Rectangles
         for i in self.shapes:
             i.translate(dx,dy)
-        self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter)
+        self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
     def place_object(self): #? Not implemented
         print('good')
         ok = True
@@ -671,12 +707,17 @@ class shapeBuilder(tk.Canvas):
             object = self.selected[0]
             if object.type == "Rectangle":
                 object.refresh(x_coord,y_coord,x_coord+object.width,y_coord+object.height)
+            elif object.type == "rightTriangle":
+                object.refresh(x_coord,y_coord,object.width,object.height)
             else:
                 object.refresh(x_coord,y_coord,object.r,angle=object.angle, start = object.start)
         elif len(self.selected)==0:
             if self.active_shape == "Rectangle":
-                place_rect = Rectangle(self,self.root,x_coord,y_coord,x_coord+self.width,y_coord+self.height,self.create_rectangle(x_coord,y_coord,x_coord+self.width,y_coord+self.height,fill=self.root.colors["sb_draw"], tags=("rect","shape")))#self.create_rectangle(x_coord,y_coord,x_coord+self.width,y_coord+self.height,fill=self.root.colors["sb_draw"], tags=("rect","shape"))
+                place_rect = Rectangle(self,self.root,x_coord,y_coord,x_coord+self.width1,y_coord+self.height1,self.create_rectangle(x_coord,y_coord,x_coord+self.width1,y_coord+self.height1,fill=self.root.colors["sb_draw"], tags=("rect","shape")))#self.create_rectangle(x_coord,y_coord,x_coord+self.width,y_coord+self.height,fill=self.root.colors["sb_draw"], tags=("rect","shape"))
                 self.shapes.append(place_rect)
+            elif self.active_shape == "rightTriangle":
+                place_triang = RightTriangle(self, self.root, x_coord,y_coord,self.width2,self.height2,orientation=self.alap_triangle.orientation)
+                self.shapes.append(place_triang)
             elif self.active_shape == "Semicircle":
                 place_semicircle = Arc(self,self.root,x_coord,y_coord,self.r1,angle=180, start = self.start)
                 self.shapes.append(place_semicircle)
@@ -685,6 +726,7 @@ class shapeBuilder(tk.Canvas):
                 self.shapes.append(place_quarter_circle)
         else:
             None
+        self.move_entry()
     def add_to_clp(self,e=None):
         self.clipboard = self.selected #! deepcopy???
     def insert_from_clp(self,e=None):
@@ -739,8 +781,8 @@ class shapeBuilder(tk.Canvas):
     def rotate(self, direction = 90, object = None):
         if len(self.selected)==0:
             if self.active_shape == "Rectangle":
-                self.width, self.height = self.height, self.width
-                self.alap_negyzet.refresh(self.alap_negyzet.x1, self.alap_negyzet.y1, self.alap_negyzet.x1 + self.width, self.alap_negyzet.y1 + self.height)
+                # self.width, self.height = self.height, self.width TODO EZ mi a franc itt, ez biztos kell?
+                self.alap_negyzet.refresh(self.alap_negyzet.x1, self.alap_negyzet.y1, self.alap_negyzet.x1 + self.width1, self.alap_negyzet.y1 + self.height1)
             elif self.active_shape == "Semicircle":
                 self.delete(self.alap_circle)
                 self.start = (self.start+direction)%360
@@ -750,7 +792,12 @@ class shapeBuilder(tk.Canvas):
                 self.start = (self.start+direction)%360
                 self.alap_circle = self.create_arc(30,10,30+2*self.r2,10+2*self.r2,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
             elif self.active_shape == "rightTriangle":
-                print("Warning: Rotation for triangels is not implemented")
+                #self.delete(self.alap_triangle.canvas_repr)
+                self.orientation = (self.start+direction)%360
+                #self.alap_triangle.canvas_repr = self.create_polygon())
+                self.alap_triangle.rotate(direction)
+                self.delete(self.alap_triangle.canvas_repr)
+                self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw_2nd"],outline="#000000", tags=("alap_triangle"))
             else: raise TypeError
         else:
             for i in self.selected:
@@ -763,6 +810,14 @@ class shapeBuilder(tk.Canvas):
                     i.start = i.start+direction
                     rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start)
                     self.shapes.append(rotate_semicircle)
+                elif i.type == "rightTriangle":
+                    self.delete(i.canvas_repr)
+                    self.shapes.remove(i)
+                    i.orientation = i.orientation-direction#! itt ez a - jel ez nem biztos, de így működik jól...
+                    rotate_rt = RightTriangle(self,self.root,i.center[0],i.center[1],i.width,i.height, orientation= i.orientation)
+                    self.shapes.append(rotate_rt)
+                else:
+                    raise TypeError
     def move_entry(self):
         if len(self.selected) == 1:
             object = self.selected[0]
@@ -778,8 +833,8 @@ class shapeBuilder(tk.Canvas):
             elif object.type == "rightTriangle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.width_entry.place(x = object.center[0]-6, y = object.points[1] + 2 + object.h)
-                self.height_entry.place(x = object.points[1] + 2 + object.w , y = object.center[1] -8)
+                self.width_entry.place(x = object.center[0] + object.width/2 - 6, y = object.center[1]+4)
+                self.height_entry.place(x = object.center[0] + 6 + object.width , y = object.center[1]-object.height/2-4)
                 self.width_entry.delete(0, tk.END)
                 self.height_entry.delete(0, tk.END)
                 self.width_entry.insert(tk.END, str(round(object.width/self.scale,4)))
@@ -801,21 +856,21 @@ class shapeBuilder(tk.Canvas):
             if self.active_shape == "Rectangle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.width_entry.place(x = 24 + self.width/2, y = 12 + self.height)
-                self.height_entry.place(x = 32 + self.width, y = 2 + self.height/2)
+                self.width_entry.place(x = 24 + self.width1/2, y = 12 + self.height1)
+                self.height_entry.place(x = 32 + self.width1, y = 2 + self.height1/2)
                 self.width_entry.delete(0, tk.END)
                 self.height_entry.delete(0, tk.END)
-                self.width_entry.insert(tk.END, str(round(self.width/self.scale,4)))
-                self.height_entry.insert(tk.END, str(round(self.height/self.scale,4)))
+                self.width_entry.insert(tk.END, str(round(self.width1/self.scale,4)))
+                self.height_entry.insert(tk.END, str(round(self.height1/self.scale,4)))
             elif self.active_shape == "rightTriangle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.width_entry.place(x = 24 + self.width/2, y = 12 + self.height)
-                self.height_entry.place(x = 32 + self.width, y = 2 + self.height/2)
+                self.width_entry.place(x = 24 + self.width2/2, y = 12 + self.height2)
+                self.height_entry.place(x = 32 + self.width2, y = 2 + self.height2/2)
                 self.width_entry.delete(0, tk.END)
                 self.height_entry.delete(0, tk.END)
-                self.width_entry.insert(tk.END, str(round(self.width/self.scale,4)))
-                self.height_entry.insert(tk.END, str(round(self.height/self.scale,4)))
+                self.width_entry.insert(tk.END, str(round(self.width2/self.scale,4)))
+                self.height_entry.insert(tk.END, str(round(self.height2/self.scale,4)))
             elif self.active_shape == "Semicircle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
