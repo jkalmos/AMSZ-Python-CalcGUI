@@ -396,11 +396,14 @@ class RightTriangle():
         #print(self.canvas.coords(self.canvas_repr))
     def rotate(self, angle):
         if angle % 90 != 0: print("A forgatasnak 90 fok valahanyszorosanak kell lennie")
+        l,r,t,b = self.get_bounding_box()
         self.orientation -= angle #! itt ez a - jel ez nem biztos, de így működik jól...
         self.rotation_matrix = np.matrix([[cos(radians(self.orientation)),-sin(radians(self.orientation))] , [sin(radians(self.orientation)),cos(radians(self.orientation))]])
         self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([self.w,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-self.h]))[0]]
         self.canvas.delete(self.canvas_repr)
         self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("arc","shape"))
+        l2,r2,t2,b2 = self.get_bounding_box()
+        self.translate(l-l2,t-t2)
     def refresh(self, center_x, center_y,w,h):
         self.center = np.array([center_x,center_y])
         self.w = w
@@ -550,6 +553,12 @@ class RightTriangle():
         return text
     def get_charachteristic_points(self):
         return self.points[1], self.points[0], self.points[2]
+    def get_bounding_box(self):
+        l = min([i[0] for i in self.points])
+        r = max([i[0] for i in self.points])
+        t = min([i[1] for i in self.points])
+        b = max([i[1] for i in self.points])
+        return l,r,t,b
 class Shapes():
     def __init__(self, canvas, rectangles, arcs,rightTriangles):
         self.canvas = canvas

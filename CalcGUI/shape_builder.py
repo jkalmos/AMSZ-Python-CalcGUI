@@ -38,6 +38,8 @@ class shapeBuilder(tk.Canvas):
         self.height = WIDTH
         self.r1 = R1
         self.r2 = R2
+        self.trg_w = WIDTH
+        self.trg_h = WIDTH
         self.last_click_pos = None
         self.starting_pos = None #selecting multiple objects
         self.selecting_area = self.create_rectangle(0,0,0,0)
@@ -714,10 +716,16 @@ class shapeBuilder(tk.Canvas):
         self.scale *= scale
         self.alap_negyzet.refresh(30,10,30+self.width*scale,10+self.height*scale)
         self.coords(self.alap_circle, 30,10,30+self.width*scale,10+self.width*scale) #? Esetleg külön sugár változó
+        l,r,t,b = self.alap_triangle.get_bounding_box()
+        self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.alap_triangle.w*scale, self.alap_triangle.h*scale)
+        l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
+        self.alap_triangle.translate(l-l2,t-t2)
         self.width *= scale
         self.height *= scale
         self.r1 *= scale
         self.r2 *= scale
+        self.trg_h*=scale
+        self.trg_w *= scale
         self.width_entry.place(x = 22 + self.width/2, y = 12 + self.height)
         self.height_entry.place(x = 32 + self.width, y = 2 + self.height/2)
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
@@ -725,7 +733,7 @@ class shapeBuilder(tk.Canvas):
         for i in self.arcs:
             i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.r*scale, i.angle, i.start)
         for i in self.rightTriangles:
-            print("Warning: Rescaling for Right triangles is not implemented")
+            i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.w*scale, i.h*scale)
     def resize_canvas(self,e):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
