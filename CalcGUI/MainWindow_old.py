@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import BooleanVar, Toplevel, ttk
 from tkinter.constants import BOTH
 from PIL import Image, ImageTk
-from PIL import ImageGrab
 import CalcFunctions as Calc
 import json
 from SideMenu import SideMenu
@@ -119,27 +118,7 @@ class main_window(tk.Tk):
         self.tk.call('wm', 'iconphoto', self._w, tk.PhotoImage(file='logo_A.png'))
         # self.iconbitmap("AMSZ.ico")
 
-        self.menu_is_on = False
-        self.create_menubar(self.shape_builder_mode, self.menu_is_on)
-
-        # Canvas for drawing
-        self.canvas = None
-
-        # Side Menu
-        self.sm = SideMenu(self)
-        self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
-        # self.sm.pack(side=tk.LEFT, fill=tk.Y)
-        # calculate on pressing enter
-        self.bind('<Return>', self.calculate)
-        plot(self, None, False, False, False, False, self.colors)
         
-    ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
-    
-    def create_menubar(self, shape_builder_mode, menu_is_on):
-        if menu_is_on == True:
-            self.menu_canvas.pack_forget()
-        else:
-            self.menu_is_on = True
         ## custom menubar -----------------------------------------------------------------------------------------------------------------------------------------------------------
         self.menu_canvas = tk.Canvas(self, bg=self.colors['secondary_color'], highlightthickness=0, height=26)
         self.menu_canvas.pack(fill = tk.X)
@@ -176,7 +155,7 @@ class main_window(tk.Tk):
         self.menu_canvas.tag_bind(self.change_button, '<Leave>', lambda e:self.menu_canvas.itemconfig(self.change_button,
         image=self.change_button_img))
 
-        if shape_builder_mode == False:
+        if self.shape_builder_mode == False:
             forms_posx = 167 + 94 + 104
             help_posx = 167 + 94 + 104 + 97 
         else:
@@ -202,6 +181,18 @@ class main_window(tk.Tk):
         self.menu_canvas.tag_bind(self.help_button, '<Leave>', lambda e:self.menu_canvas.itemconfig(self.help_button,
         image=self.help_button_img))
 
+        # Canvas for drawing
+        self.canvas = None
+
+        # Side Menu
+        self.sm = SideMenu(self)
+        self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
+        # self.sm.pack(side=tk.LEFT, fill=tk.Y)
+        # calculate on pressing enter
+        self.bind('<Return>', self.calculate)
+        plot(self, None, False, False, False, False, self.colors)
+        
+    ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     def theme_change(self, theme):
         if self.theme != theme:
             self.theme=theme
@@ -243,7 +234,6 @@ class main_window(tk.Tk):
         if not self.shape_builder_mode:
             print("opening sb")
             self.shape_builder_mode = True
-            self.create_menubar(self.shape_builder_mode, self.menu_is_on)
             self.sm.pack_forget()
             self.sb_sm = shape_builder.sb_side_menu(self)
             self.sb_sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
@@ -259,8 +249,6 @@ class main_window(tk.Tk):
             print("closing sb")
             self.sb.pack_forget()
             self.sb_sm.pack_forget()
-            self.shape_builder_mode = False
-            self.create_menubar(self.shape_builder_mode, self.menu_is_on)
             self.sm.pack(side=tk.LEFT, fill=tk.Y, padx = (20,10), pady = 20)
             # calling = eval(f'self.sm.{self.sm.shape.lower()}_click')
             # calling()
@@ -278,7 +266,7 @@ class main_window(tk.Tk):
             # self.sm.combo_default.grid(row=1, column=0, columnspan=5)
             # self.sm.calling
             self.plotted = False
-            
+            self.shape_builder_mode = False
             self.sm.shape = None
             plot(self, None, False, False, False, False, self.colors)
 
@@ -777,19 +765,17 @@ class main_window(tk.Tk):
 
             else:
                 print('Mentes shapebuilder')
-                self.getter(self.sb)
-
+                print(shape_builder.shapeBuilder)
+                self.sb_canvas = shape_builder.self.sb_sm
+                # save postscipt image 
+                self.sb_canvas.postscript(self, file = "teszt" + '.eps') 
+                # use PIL to convert to PNG 
+                img = Image.open(self, "teszt" + '.eps') 
+                img.save(self, "teszt" + '.png', 'png') 
 
         else:
             messagebox.showerror("Hiba a mentés közben", "Nincs kiszámolt adat, amit menteni lehetne!")
 
-    def getter(self, widget):
-        print("inside getter")
-        x=root.winfo_rootx()+widget.winfo_x()
-        y=root.winfo_rooty()+widget.winfo_y()
-        x1=x+widget.winfo_width()
-        y1=y+widget.winfo_height()
-        ImageGrab.grab().crop((x,y,x1,y1)).save("teszt.png")
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
@@ -811,7 +797,6 @@ DARK_THEME = {
         'sb_selected':'',
         'sb_error':'',
         'sb_negative':'',
-        'sb_grid':'#3f3f3f',
         'path': 'figures/dark_theme/'
         }
 LIGHT_THEME = {
@@ -830,7 +815,6 @@ LIGHT_THEME = {
         'sb_selected':'',
         'sb_error':'',
         'sb_negative':'',
-        'sb_grid':'#3f3f3f',
         'path': 'figures/light_theme/'
         }
 

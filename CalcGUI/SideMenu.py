@@ -13,33 +13,6 @@ class SideMenu(tk.Frame):
         # self.canvas.grid(row=0, column=0, sticky="NSEW")
         self.canvas.pack(fill=tk.BOTH, expand = True)
 
-        ### For further design improvemnets: rounded card edges with canvas polygon object
-        # def round_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):
-        #     points = [x1+radius, y1,
-        #                 x1+radius, y1,
-        #                 x2-radius, y1,
-        #                 x2-radius, y1,
-        #                 x2, y1,
-        #                 x2, y1+radius,
-        #                 x2, y1+radius,
-        #                 x2, y2-radius,
-        #                 x2, y2-radius,
-        #                 x2, y2,
-        #                 x2-radius, y2,
-        #                 x2-radius, y2,
-        #                 x1+radius, y2,
-        #                 x1+radius, y2,
-        #                 x1, y2,
-        #                 x1, y2-radius,
-        #                 x1, y2-radius,
-        #                 x1, y1+radius,
-        #                 x1, y1+radius,
-        #                 x1, y1]
-        #     canvas.create_polygon(points, **kwargs, smooth=True)
-        
-        # # self.entry_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill=root.colors['main_color'])
-        # self.result_rect = round_rectangle(self.canvas, 0, 0, self.width, self.height, radius=20, fill='blue')
-
         # result label font
         result_font = "Roboto", 11
         # input labels font
@@ -154,16 +127,18 @@ class SideMenu(tk.Frame):
         self.result8 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result9 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result10 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result11 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result1.grid(row=12, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
         self.result2.grid(row=13, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
         self.result3.grid(row=14, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
         self.result4.grid(row=15, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result5.grid(row=16, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
-        self.result6.grid(row=17, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result5.grid(row=16, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W) # Ip
+        self.result6.grid(row=17, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
         self.result7.grid(row=18, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result8.grid(row=19, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
-        self.result9.grid(row=20, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result8.grid(row=19, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result9.grid(row=20, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
         self.result10.grid(row=21, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result11.grid(row=22, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
 
         # Checkbox: set thickness
         self.thickness = tk.Checkbutton(
@@ -204,6 +179,7 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result8)
         self.indicators.append(self.result9)
         self.indicators.append(self.result10)
+        self.indicators.append(self.result11)
         self.indicators.append(self.lbl)
         self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)
