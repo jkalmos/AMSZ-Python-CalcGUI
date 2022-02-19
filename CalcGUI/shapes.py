@@ -1,5 +1,7 @@
 from re import A
 import re
+
+from sympy import pprint
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 import numpy as np
@@ -376,6 +378,14 @@ class Arc():
                 if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
+        ############### with Trg ###################
+        a = [p for p in orig if "right_triangle" in self.canvas.gettags(p)]
+        for i in self.canvas.rightTriangles:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if PolyOverlaps(self.simplify(), i.points):
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
             self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
     def is_inside(self,point):
@@ -390,6 +400,13 @@ class Arc():
     def get_info(self):
         text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
+    def simplify(self): #reduceing to polygon
+        res = int(3*(self.angle/90)) #resolution
+        curve = np.linspace(self.start,self.start+self.angle,res)
+        points = [[self.center[0] + self.r*cos(radians(i)),self.center[1] - self.r*sin(radians(i))] for i in curve]
+        points.append(self.center)
+        print(points)
+        return points
 class RightTriangle():
     def __init__(self,canvas,root,center_x,center_y,w,h, orientation=0, Negative=False):
         #   h ◣
@@ -543,6 +560,14 @@ class RightTriangle():
             if i.negative: continue
             if i.canvas_repr in a:
                 if PolyOverlaps(self.points, i.get_charachteristic_points()):
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############### with Arc ###################
+        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        for i in self.canvas.arcs:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if PolyOverlaps(self.points, i.simplify()):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
