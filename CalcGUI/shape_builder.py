@@ -4,6 +4,8 @@ from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
 from itertools import cycle
+from shapely.ops import unary_union 
+from shapely.geometry import Polygon
 WIDTH = 30
 R1 = 20 # radius of semicircle (represenatation)
 R2 = 20 # radius of quarter_circle (represenatation)
@@ -228,7 +230,7 @@ class shapeBuilder(tk.Canvas):
 
         self.root.bind("<Control-c>", self.add_to_clp)
         self.root.bind("<Control-v>", self.insert_from_clp)
-        #self.root.bind("<Control-t>", lambda e: print(self.selected))
+        self.root.bind("<Control-t>", self.check_for_negatives)
         #self.root.bind("<Control-n>", lambda e: self.hc.refresh(self.Xcenter-20,self.Ycenter-100, self.hc.r))
 
         ##############* Packing objects ###############
@@ -305,6 +307,7 @@ class shapeBuilder(tk.Canvas):
                 self.negatives.append(object)
             else: self.negatives.remove(object)
         for k in self.shapes: k.is_overlapping()
+        self.check_for_negatives()
     def select(self,e, object=None):
         #self.deselect()
         if e is None and object is not None:
@@ -510,6 +513,7 @@ class shapeBuilder(tk.Canvas):
             self.starting_pos = None
         self.itemconfigure(self.selecting_area,state="hidden")
         for i in self.negatives: self.tag_raise(i.canvas_repr)
+        self.check_for_negatives()
             
             
         self.isMoving = False
@@ -896,7 +900,32 @@ class shapeBuilder(tk.Canvas):
                     self.shapes.append(rotate_rt)
                 else:
                     raise TypeError
-
+    def check_for_negatives(self):
+        if len(self.negatives)== 0: return 0
+        positives = [i for i in self.shapes if i.negative == False]
+        geom = []
+        for i in positives:
+            if type(i) == Rectangle:
+                geom.append(Polygon(i.get_charachteristic_points()))
+            elif type(i) == RightTriangle:
+                geom.append(Polygon(i.points))
+            elif type(i) == Arc:
+                geom.append(Polygon(i.simplify()))
+            else: raise TypeError    
+        union = unary_union(geom)
+        for i in self.negatives:
+            if type(i) == Rectangle:
+                a = (Polygon(i.get_charachteristic_points()))
+            elif type(i) == RightTriangle:
+                a = (Polygon(i.points))
+            elif type(i) == Arc:
+                a = (Polygon(i.simplify()))
+            else: raise TypeError
+            if union.contains(a):
+                self.itemconfig(i.canvas_repr,fill="grey")
+            else:
+                print("Nem jo")
+                self.itemconfig(i.canvas_repr,fill="orange")
 
 
 

@@ -1,7 +1,3 @@
-from re import A
-import re
-
-from sympy import pprint
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 import numpy as np
