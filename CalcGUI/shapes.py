@@ -72,8 +72,7 @@ class Rectangle():
         for i in self.canvas.arcs:
             if i.negative: continue
             if i.canvas_repr in a:
-                l,r,t,b=i.get_bounding_box()
-                if check_overlapping_of_boundig_box(self.x1,self.x2,self.y1,self.y2, l,r,t,b ) or check_overlapping_of_boundig_box(l,r,t,b, self.x1,self.x2,self.y1,self.y2): #!Ez szintén nem jó így de kezdetnek megteszi...
+                if PolyOverlaps(self.get_charachteristic_points(),i.simplify()): 
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############ with TRG #################
@@ -366,8 +365,7 @@ class Arc():
         for i in self.canvas.arcs:
             if i.negative: continue
             if i.canvas_repr in a:
-                l2,r2,t2,b2 = i.get_bounding_box()
-                if check_overlapping_of_boundig_box(l,r,t,b,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,t,b):
+                if PolyOverlaps(self.simplify(),i.simplify()):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Rectangle ###################
@@ -375,7 +373,7 @@ class Arc():
         for i in self.canvas.rectangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
+                if PolyOverlaps(self.simplify(),i.get_charachteristic_points()):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Trg ###################
