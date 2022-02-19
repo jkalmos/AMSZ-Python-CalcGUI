@@ -3,6 +3,7 @@ import re
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 import numpy as np
+from shapely.geometry import Polygon
 EPSILON = 10
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
@@ -16,6 +17,10 @@ def check_overlapping_of_boundig_box(ax1,ax2,ay1,ay2, x1,x2,y1,y2):
     for point in [p1,p2,p3,p4]: tmp = tmp or (point[0]>ax1 and point[0]<ax2 and point[1]>ay1 and point[1]<ay2)
     
     return tmp
+def PolyOverlaps(poly1, poly2):
+	poly1s = Polygon(poly1)
+	poly2s = Polygon(poly2)
+	return poly1s.intersects(poly2s) and not poly1s.touches(poly2s)
 class Rectangle():  
     def __init__(self,canvas,root,x1,y1,x2,y2, canvas_repr, Negative = False):
         self.canvas = canvas
@@ -67,6 +72,14 @@ class Rectangle():
             if i.canvas_repr in a:
                 l,r,t,b=i.get_bounding_box()
                 if check_overlapping_of_boundig_box(self.x1,self.x2,self.y1,self.y2, l,r,t,b ) or check_overlapping_of_boundig_box(l,r,t,b, self.x1,self.x2,self.y1,self.y2): #!Ez szintén nem jó így de kezdetnek megteszi...
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############ with TRG #################
+        a = [p for p in orig if "right_triangle" in self.canvas.gettags(p)]
+        for i in self.canvas.rightTriangles:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if PolyOverlaps(self.get_charachteristic_points(),i.points): 
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
@@ -210,6 +223,8 @@ class Rectangle():
     def get_info(self):
         text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.height/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
+    def get_charachteristic_points(self):
+        return [self.x1,self.y1],[self.x1,self.y2],[self.x2,self.y2],[self.x2,self.y1]
 class Arc():
     def __init__(self,canvas,root, center_x, center_y, r, angle=180, start=0, Negative=False):
         self.canvas = canvas
@@ -507,18 +522,19 @@ class RightTriangle():
             return 0
         self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
         #print("Warning: overlapping detection is not implemented")
-        return -1
+        #return -1
         l,r,t,b = self.get_bounding_box()
         orig=list(self.canvas.find_overlapping(l,t,r,b))
-        ############# with another Arc ##################
-        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        ############# with another Trg ##################
+        a = [p for p in orig if "right_triangle" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
         in_overlapping = False
-        for i in self.canvas.arcs:
+        for i in self.canvas.rightTriangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                l2,r2,t2,b2 = i.get_bounding_box()
-                if check_overlapping_of_boundig_box(l,r,t,b,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,t,b):
+                #l2,r2,t2,b2 = i.get_bounding_box()
+                if PolyOverlaps(self.points, i.points):
+                    print("F")
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Rectangle ###################
@@ -526,7 +542,7 @@ class RightTriangle():
         for i in self.canvas.rectangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
+                if PolyOverlaps(self.points, i.get_charachteristic_points()):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
