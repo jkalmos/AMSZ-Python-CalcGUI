@@ -4,6 +4,7 @@ from textwrap import fill
 from shape_builder import EPSILON
 from math import atan, atan2, degrees, sin, cos, radians,pi, sqrt
 import numpy as np
+from shapely.geometry import Polygon
 EPSILON = 10
 def dist(p1,p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
@@ -17,6 +18,10 @@ def check_overlapping_of_boundig_box(ax1,ax2,ay1,ay2, x1,x2,y1,y2):
     for point in [p1,p2,p3,p4]: tmp = tmp or (point[0]>ax1 and point[0]<ax2 and point[1]>ay1 and point[1]<ay2)
     
     return tmp
+def PolyOverlaps(poly1, poly2):
+	poly1s = Polygon(poly1)
+	poly2s = Polygon(poly2)
+	return poly1s.intersects(poly2s) and not poly1s.touches(poly2s)
 class Rectangle():  
     def __init__(self,canvas,root,x1,y1,x2,y2, canvas_repr, Negative = False):
         self.canvas = canvas
@@ -66,8 +71,15 @@ class Rectangle():
         for i in self.canvas.arcs:
             if i.negative: continue
             if i.canvas_repr in a:
-                l,r,t,b=i.get_bounding_box()
-                if check_overlapping_of_boundig_box(self.x1,self.x2,self.y1,self.y2, l,r,t,b ) or check_overlapping_of_boundig_box(l,r,t,b, self.x1,self.x2,self.y1,self.y2): #!Ez szintén nem jó így de kezdetnek megteszi...
+                if PolyOverlaps(self.get_charachteristic_points(),i.simplify()): 
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############ with TRG #################
+        a = [p for p in orig if "right_triangle" in self.canvas.gettags(p)]
+        for i in self.canvas.rightTriangles:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if PolyOverlaps(self.get_charachteristic_points(),i.points): 
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
@@ -211,6 +223,8 @@ class Rectangle():
     def get_info(self):
         text=f"Szélesség = {self.width/self.canvas.scale}\nMagasság = {self.height/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
+    def get_charachteristic_points(self):
+        return [self.x1,self.y1],[self.x1,self.y2],[self.x2,self.y2],[self.x2,self.y1]
 class Arc():
     def __init__(self,canvas,root, center_x, center_y, r, angle=180, start=0, Negative=False):
         self.canvas = canvas
@@ -350,8 +364,7 @@ class Arc():
         for i in self.canvas.arcs:
             if i.negative: continue
             if i.canvas_repr in a:
-                l2,r2,t2,b2 = i.get_bounding_box()
-                if check_overlapping_of_boundig_box(l,r,t,b,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,t,b):
+                if PolyOverlaps(self.simplify(),i.simplify()):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Rectangle ###################
@@ -359,7 +372,15 @@ class Arc():
         for i in self.canvas.rectangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
+                if PolyOverlaps(self.simplify(),i.get_charachteristic_points()):
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############### with Trg ###################
+        a = [p for p in orig if "right_triangle" in self.canvas.gettags(p)]
+        for i in self.canvas.rightTriangles:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if PolyOverlaps(self.simplify(), i.points):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
@@ -376,6 +397,13 @@ class Arc():
     def get_info(self):
         text=f"Sugár = {self.r/self.canvas.scale}\nKözéppont = ({(self.center[0]-self.canvas.Xcenter)/self.canvas.scale},{(self.canvas.Ycenter-self.center[1])/self.canvas.scale})"
         return text
+    def simplify(self): #reduceing to polygon
+        res = int(3*(self.angle/90)) #resolution
+        curve = np.linspace(self.start,self.start+self.angle,res)
+        points = [[self.center[0] + self.r*cos(radians(i)),self.center[1] - self.r*sin(radians(i))] for i in curve]
+        points.append(self.center)
+        print(points)
+        return points
 class RightTriangle():
     def __init__(self,canvas,root,center_x,center_y,width,height, orientation=0, Negative=False):
         #   h ◣
@@ -397,11 +425,14 @@ class RightTriangle():
         #print(self.canvas.coords(self.canvas_repr))
     def rotate(self, angle):
         if angle % 90 != 0: print("A forgatasnak 90 fok valahanyszorosanak kell lennie")
+        l,r,t,b = self.get_bounding_box()
         self.orientation -= angle #! itt ez a - jel ez nem biztos, de így működik jól...
         self.rotation_matrix = np.matrix([[cos(radians(self.orientation)),-sin(radians(self.orientation))] , [sin(radians(self.orientation)),cos(radians(self.orientation))]])
         self.points = [self.center, np.array(self.center+self.rotation_matrix.dot([self.width,0]))[0], np.array(self.center+self.rotation_matrix.dot([0,-self.height]))[0]]
         self.canvas.delete(self.canvas_repr)
         self.canvas_repr = self.canvas.create_polygon(self.points[0][0],self.points[0][1],self.points[1][0],self.points[1][1],self.points[2][0],self.points[2][1], fill=self.root.colors["sb_draw"], tags=("arc","shape"))
+        l2,r2,t2,b2 = self.get_bounding_box()
+        self.translate(l-l2,t-t2)
     def refresh(self, center_x, center_y,width,height):
         self.center = np.array([center_x,center_y])
         self.width = width
@@ -426,6 +457,7 @@ class RightTriangle():
         self.align_to_triangle()
         self.align_to_arc()
     def align_to_axis(self):
+
         if self.canvas.root.show_orig_axis:
             #* Sticking with the center of the rectangle to the coordinate system
             if abs(self.center[0]-self.canvas.Xcenter)<EPSILON:
@@ -433,6 +465,7 @@ class RightTriangle():
             if abs(self.center[1]-self.canvas.Ycenter)<EPSILON:
                 self.refresh(self.center[0],self.canvas.Ycenter,self.width,self.height)
     def align_to_arc(self):
+
         own = self.get_charachteristic_points()
         for i in self.canvas.arcs:
             aling_score = 0 # if at least two points are near eachother, then it alignes them
@@ -459,6 +492,7 @@ class RightTriangle():
                 self.refresh(self.center[0]+displacement[0], self.center[1]+displacement[1], self.width, self.height)
                 break
     def align_to_rect(self):
+
         own = self.get_charachteristic_points()
         x = [p[0] for p in own]
         y = [p[1] for p in own]
@@ -505,18 +539,19 @@ class RightTriangle():
             return 0
         self.canvas.itemconfig(self.canvas_repr, fill=self.root.colors["sb_draw"])
         #print("Warning: overlapping detection is not implemented")
-        return -1
+        #return -1
         l,r,t,b = self.get_bounding_box()
         orig=list(self.canvas.find_overlapping(l,t,r,b))
-        ############# with another Arc ##################
-        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        ############# with another Trg ##################
+        a = [p for p in orig if "right_triangle" in self.canvas.gettags(p)]
         a.remove(self.canvas_repr)
         in_overlapping = False
-        for i in self.canvas.arcs:
+        for i in self.canvas.rightTriangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                l2,r2,t2,b2 = i.get_bounding_box()
-                if check_overlapping_of_boundig_box(l,r,t,b,l2,r2,t2,b2) or check_overlapping_of_boundig_box(l2,r2,t2,b2,l,r,t,b):
+                #l2,r2,t2,b2 = i.get_bounding_box()
+                if PolyOverlaps(self.points, i.points):
+                    print("F")
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         ############### with Rectangle ###################
@@ -524,7 +559,15 @@ class RightTriangle():
         for i in self.canvas.rectangles:
             if i.negative: continue
             if i.canvas_repr in a:
-                if check_overlapping_of_boundig_box(l,r,b,t,i.x1,i.x2,i.y1,i.y2) or check_overlapping_of_boundig_box(i.x1,i.x2,i.y1,i.y2,l,r,t,b):
+                if PolyOverlaps(self.points, i.get_charachteristic_points()):
+                    self.canvas.itemconfig(self.canvas_repr, fill='red')
+                    in_overlapping = True
+        ############### with Arc ###################
+        a = [p for p in orig if "arc" in self.canvas.gettags(p)]
+        for i in self.canvas.arcs:
+            if i.negative: continue
+            if i.canvas_repr in a:
+                if PolyOverlaps(self.points, i.simplify()):
                     self.canvas.itemconfig(self.canvas_repr, fill='red')
                     in_overlapping = True
         if not in_overlapping and self not in self.canvas.selected:
@@ -551,6 +594,12 @@ class RightTriangle():
         return text
     def get_charachteristic_points(self):
         return self.points[1], self.points[0], self.points[2]
+    def get_bounding_box(self):
+        l = min([i[0] for i in self.points])
+        r = max([i[0] for i in self.points])
+        t = min([i[1] for i in self.points])
+        b = max([i[1] for i in self.points])
+        return l,r,t,b
 class Shapes():
     def __init__(self, canvas, rectangles, arcs,rightTriangles):
         self.canvas = canvas

@@ -4,9 +4,11 @@ from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
 from itertools import cycle
+from shapely.ops import unary_union 
+from shapely.geometry import Polygon
 WIDTH = 30
-R1 = 15 # radius of semicircle (represenatation)
-R2 = 15 # radius of quarter_circle (represenatation)
+R1 = 20 # radius of semicircle (represenatation)
+R2 = 20 # radius of quarter_circle (represenatation)
 EPSILON = 10
 STICKY = True
 SCALE = 1.25
@@ -52,6 +54,9 @@ class shapeBuilder(tk.Canvas):
         next(self.possible_shapes)
 
         #############* Creating objects for side menu ##############
+        # self.place_holder = tk.Label(self.sb_sm,text="",width=30, bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        #Gege megoldása az eredményekre: self.label = tk.Label(self.sb_sm,text="EMPTY LABEL", bg=self.sb_sm["background"], fg=root.colors["text_color"])
+        # self.results_label = tk.Label(self.sb_sm,text="results label", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_width = tk.Label(self.sb_sm,text="Szélesség:", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_height = tk.Label(self.sb_sm,text="Magasság:", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.l_unit1 = tk.Label(self.sb_sm,text=root.unit, bg=self.sb_sm["background"], fg=root.colors["text_color"])
@@ -94,9 +99,13 @@ class shapeBuilder(tk.Canvas):
         self.results_block.append(self.result11)
         self.results_block.append(self.result12)
 
+
+        # self.value_button = tk.Button(self.sb_sm, text="Értékadás", command=self.overwrite)
         self.value_buttonimage = tk.PhotoImage(file=f"{root.colors['path']}shape_builder/value_button.png")
         self.value_button = tk.Label(self.sb_sm, image=self.value_buttonimage, activebackground=self["background"], border = 0, bg =self["background"])
         self.value_button.bind('<Button-1>', func=lambda e: self.place_object())
+        # self.cls = tk.Button(self.sb_sm,text="Minden törlése", command=self.clear_all)
+        #self.pos_lbl = tk.Label(self,text="", bg=self.sb_sm["background"], fg=root.colors["text_color"])
         self.pos_lbl = self.create_text(15 ,15,text="",fill= root.colors['text_color']) # position label
 
         self.controls = []
@@ -249,7 +258,6 @@ class shapeBuilder(tk.Canvas):
         self.results_block[3].grid(padx=15)
         self.results_block[8].grid(padx=15)
         # self.cls.grid(row=6, column=1,columnspan=3)
-
         ####################### Draw grid #######################
         self.visual_grid = visual_grid(self,self.root, self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
 
@@ -307,6 +315,7 @@ class shapeBuilder(tk.Canvas):
                 self.negatives.append(object)
             else: self.negatives.remove(object)
         for k in self.shapes: k.is_overlapping()
+        self.check_for_negatives()
     def select(self,e, object=None):
         #self.deselect()
         if e is None and object is not None:
@@ -409,6 +418,7 @@ class shapeBuilder(tk.Canvas):
             elif type(self.current) == RightTriangle: self.current.refresh(e.x,e.y,self.current.width,self.current.height)
             self.isMoving = True
             return 0
+        
     def release(self,e):
         self.delete("principal_axis")
         self.delete("s_axis")
@@ -419,6 +429,7 @@ class shapeBuilder(tk.Canvas):
             self.current.align()
             #? prioritási sorrend???    
         if self.isMoving and self.current is not None:
+            #self.itemconfig(self.current.canvas_repr, fill=self.root.colors["sb_draw"])
             self.shapes.append(self.current)
             for k in self.shapes:
                 k.is_overlapping()
@@ -434,6 +445,7 @@ class shapeBuilder(tk.Canvas):
             self.starting_pos = None
         self.itemconfigure(self.selecting_area,state="hidden")
         for i in self.negatives: self.tag_raise(i.canvas_repr)
+        self.check_for_negatives()
             
             
         self.isMoving = False
@@ -469,9 +481,9 @@ class shapeBuilder(tk.Canvas):
             Sx += self.Xcenter
             Sy = self.Ycenter- Sy
             a_length = min(min(Sx,Sy),self.canvas_height-Sy,self.canvas_width-Sx)
-            self.sx_axis = self.create_line(Sx+10-a_length,Sy,Sx+a_length-10,Sy, arrow=tk.LAST, tags=("s_axis"),width = 2) #Drawing X-axis
+            self.sx_axis = self.create_line(Sx+10-a_length,Sy,Sx+a_length-10,Sy, arrow=tk.LAST, tags=("s_axis")) #Drawing X-axis
             self.sx_label = self.create_text(Sx+a_length-20,Sy+ 20,text="Xs",tags=("s_axis")) # X lavel
-            self.sy_axis = self.create_line(Sx,Sy-a_length+10,Sx,Sy+a_length-10, arrow=tk.FIRST,tags=("s_axis"),width = 2) #Drawing Y-axis
+            self.sy_axis = self.create_line(Sx,Sy-a_length+10,Sx,Sy+a_length-10, arrow=tk.FIRST,tags=("s_axis")) #Drawing Y-axis
             self.sy_label = self.create_text(Sx +20 ,Sy-a_length+20 ,text="Ys",tags=("s_axis")) # Y label
             if self.root.orig_axis_dissapier: self.itemconfigure("orig_axes",state="hidden")
             print(Sx/self.scale,Sy/self.scale)
@@ -497,6 +509,8 @@ class shapeBuilder(tk.Canvas):
         for i in self.shapes.arcs: #! Not sure if works for not semi or quarter circle, but any arc...
             A += (1-2* (i.negative))*i.area
             print(i.r/self.scale, i.angle)
+            #Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
+            #Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
             Ixc = (i.r**4 / 8)*(radians(i.angle)) 
             Iyc = (i.r**4 / 8)*(radians(i.angle))
             Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
@@ -506,9 +520,9 @@ class shapeBuilder(tk.Canvas):
             Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 + 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start)) + i.area*(Sx-i.center[0])**2
             Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.start))*cos(radians(-i.start)) + Ixyc*((cos(radians(-i.start))**2-sin(radians(-i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
         for i in self.rightTriangles:
-            Ixc = (i.h**3 *i.w)/12 
-            Iyc = (i.w**3 *i.h)/12 
-            Ixyc = (i.w**2 * i.h**2 )/24
+            Ixc = (i.height**3 *i.width)/12 
+            Iyc = (i.width**3 *i.height)/12 
+            Ixyc = (i.width**2 * i.height**2 )/24
 
             Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 - 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation))  + i.area*(Sy-i.center[1])**2
             Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 + 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation)) + i.area*(Sx-i.center[0])**2
@@ -527,6 +541,7 @@ class shapeBuilder(tk.Canvas):
         self.result10.config(text="I₁ = " + str(round(i1,4)) + " " + self.root.unit + "\u2074")
         self.result11.config(text="I₂ = " + str(round(i2,4)) + " " + self.root.unit + "\u2074")
         self.result12.config(text="\u03B1 = " + str(round(alpha,4)) + " " + self.root.angle_unit)
+        
     def overwrite(self):
         ok = True
         if len(self.selected)==1:
@@ -551,6 +566,7 @@ class shapeBuilder(tk.Canvas):
                     self.width_entry.config({"background": self.root.colors['error_color']})
                     ok = False
                 if not ok: return -1
+
                 object.refresh(object.x1,object.y1,object.x1+w,object.y1+h)
             elif object.type == "rightTriangle":
                 try:
@@ -566,9 +582,11 @@ class shapeBuilder(tk.Canvas):
                 object.refresh(object.center[0],object.center[1],w,h)
             elif object.type == "Semicircle":
                 if not ok: return -1
+
                 object.refresh(object.center[0],object.center[1],h,angle=180)
             elif object.type == "quarter_circle":
                 if not ok: return -1
+
                 object.refresh(object.center[0],object.center[1],h,angle=90) 
         else:
             try:
@@ -611,6 +629,7 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "Semicircle":
                 if not ok: return -1
                 self.r1 = h
+
                 self.coords(self.alap_circle, 40,10,40+self.r1*2,10+self.r1*2)
             elif self.active_shape == "quarter_circle":
                 if not ok: return -1
@@ -642,19 +661,25 @@ class shapeBuilder(tk.Canvas):
     def rescale(self,scale): #!? Could be better
         self.scale *= scale
         self.alap_negyzet.refresh(30,10,30+self.width1*scale,10+self.height1*scale)
+
         self.coords(self.alap_circle, 30,10,30+self.r1*scale,10+self.r1*scale) #? Esetleg külön sugár változó TODO: ez mi ??? ITT valami nem stimmel
+        l,r,t,b = self.alap_triangle.get_bounding_box()
+        self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.alap_triangle.width*scale, self.alap_triangle.height*scale)
+        l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
+        self.alap_triangle.translate(l-l2,t-t2)
         self.width1 *= scale
         self.height1 *= scale
         self.width2 *= scale
         self.height2 *= scale
         self.r1 *= scale
         self.r2 *= scale
+
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
         for i in self.arcs:
             i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.r*scale, i.angle, i.start)
         for i in self.rightTriangles:
-            print("Warning: Rescaling for Right triangles is not implemented")
+            i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.width*scale, i.height*scale)
         self.move_entry()
         # self.visual_grid.rescale_grid(self.Xcenter, self.Ycenter, scale)
         self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
@@ -683,7 +708,7 @@ class shapeBuilder(tk.Canvas):
         for i in self.shapes:
             i.translate(dx,dy)
         self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
-    def place_object(self): #? Not implemented
+    def place_object(self):
         print('good')
         ok = True
         try:
@@ -757,6 +782,7 @@ class shapeBuilder(tk.Canvas):
             self.itemconfigure("alap_rectangle",state="normal")
             self.itemconfigure("alap_circle",state="hidden")
             self.itemconfigure("alap_triangle",state="hidden")
+
         elif self.active_shape == "Semicircle":
             self.itemconfigure("alap_rectangle",state="hidden")
             self.start = 0
@@ -764,14 +790,17 @@ class shapeBuilder(tk.Canvas):
             a,b,c,d = self.coords(self.alap_circle)
             self.delete(self.alap_circle)
             self.alap_circle = self.create_arc(a,b,c,d,extent=180, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
+
         elif self.active_shape == "quarter_circle":
             self.start = 0
             self.itemconfigure("alap_rectangle",state="hidden")
             self.itemconfigure("alap_triangle",state="hidden")
+
             self.angle = 90
             a,b,c,d = self.coords(self.alap_circle)
             self.delete(self.alap_circle)
             self.alap_circle = self.create_arc(a,b,c,d,extent=90, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
+
         elif self.active_shape == "rightTriangle":
             self.itemconfigure("alap_rectangle", state="hidden")
             self.itemconfigure("alap_circle",state="hidden")
@@ -781,7 +810,7 @@ class shapeBuilder(tk.Canvas):
     def rotate(self, direction = 90, object = None):
         if len(self.selected)==0:
             if self.active_shape == "Rectangle":
-                # self.width, self.height = self.height, self.width TODO EZ mi a franc itt, ez biztos kell?
+                self.width1, self.height1 = self.height1, self.width1
                 self.alap_negyzet.refresh(self.alap_negyzet.x1, self.alap_negyzet.y1, self.alap_negyzet.x1 + self.width1, self.alap_negyzet.y1 + self.height1)
             elif self.active_shape == "Semicircle":
                 self.delete(self.alap_circle)
@@ -891,6 +920,32 @@ class shapeBuilder(tk.Canvas):
         print("focus_width")
         self.width_entry.focus_set()
         self.width_entry.select_range(0, 'end')
+    def check_for_negatives(self):
+        if len(self.negatives)== 0: return 0
+        positives = [i for i in self.shapes if i.negative == False]
+        geom = []
+        for i in positives:
+            if type(i) == Rectangle:
+                geom.append(Polygon(i.get_charachteristic_points()))
+            elif type(i) == RightTriangle:
+                geom.append(Polygon(i.points))
+            elif type(i) == Arc:
+                geom.append(Polygon(i.simplify()))
+            else: raise TypeError    
+        union = unary_union(geom)
+        for i in self.negatives:
+            if type(i) == Rectangle:
+                a = (Polygon(i.get_charachteristic_points()))
+            elif type(i) == RightTriangle:
+                a = (Polygon(i.points))
+            elif type(i) == Arc:
+                a = (Polygon(i.simplify()))
+            else: raise TypeError
+            if union.contains(a):
+                self.itemconfig(i.canvas_repr,fill="grey")
+            else:
+                print("Nem jo")
+                self.itemconfig(i.canvas_repr,fill="orange")
 
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
