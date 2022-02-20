@@ -218,10 +218,10 @@ class shapeBuilder(tk.Canvas):
         self.bind('<B1-Motion>',self.move) #"drag-and-drop" action
         self.bind('<ButtonRelease-1>',self.release) #when you relase the left mose button
         self.popup_menu = tk.Menu(self, tearoff=0) #right click menu
-        self.popup_menu.add_command(label="Delete",command=self.delete_shape)
-        self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
-        self.popup_menu.add_command(label="Info",command=self.rectangle_info)
-        self.popup_menu.add_command(label="Set to negative",command=self.set_to_negative)
+        self.popup_menu.add_command(label="Törlés",command=self.delete_shape)
+        #self.popup_menu.add_command(label="Resize",command=self.resize_rectangle)
+        self.popup_menu.add_command(label="Tulajdonságok",command=self.rectangle_info)
+        self.popup_menu.add_command(label="Negatív/Pozitív",command=self.set_to_negative)
         self.bind("<Button-3>", self.popup) # right-click event
         self.bind("<Configure>", self.resize_canvas)
         #self.tag_bind("rect",'<Double-Button-1>',self.select)
