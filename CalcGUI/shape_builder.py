@@ -4,7 +4,6 @@ from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
 from itertools import cycle
-from numpy import negative
 from shapely.ops import unary_union 
 from shapely.geometry import Polygon
 WIDTH = 30
@@ -48,6 +47,7 @@ class shapeBuilder(tk.Canvas):
         self.selecting_area = self.create_rectangle(0,0,0,0)
         self.selected = []
         self.rotation_happend = False #by rotation should release() not trigger
+        self.negativ_in_wrong_position = False
         self.active_shape = "Rectangle"
         self.possible_shape_list = ["Rectangle","Semicircle","quarter_circle", "rightTriangle"]
         self.possible_shapes = cycle(self.possible_shape_list)
@@ -464,6 +464,10 @@ class shapeBuilder(tk.Canvas):
             self.clear_results()
             self.result1.config(text=f"A: 0 mm\nIx: 0 mm\nIy: 0 mm\nIxy: 0") #! Formatting
             return -1
+        elif self.negativ_in_wrong_position:
+            self.clear_results()
+            self.result1.config(text="Hibásan lehelyezett negatív elem!") #! Formatting
+            return -1
         Ix = 0
         Iy = 0
         Ixy = 0
@@ -478,6 +482,7 @@ class shapeBuilder(tk.Canvas):
                 Sx += (i.s_center[0]-self.Xcenter)*i.area*(1-2* (i.negative))
                 Sy += (self.Ycenter-i.s_center[1])*i.area*(1-2* (i.negative))
             if A <= 0:
+                self.clear_results()
                 self.result1.config(text=f"Hiba: Az össz terület negatív vagy nulla")
                 return -1 
             Sx /= A
@@ -929,6 +934,7 @@ class shapeBuilder(tk.Canvas):
         if len(self.negatives)== 0: return 0
         positives = [i for i in self.shapes if i.negative == False]
         geom = []
+        self.negativ_in_wrong_position = False
         for i in positives:
             if type(i) == Rectangle:
                 geom.append(Polygon(i.get_charachteristic_points()))
@@ -950,6 +956,7 @@ class shapeBuilder(tk.Canvas):
                 self.itemconfig(i.canvas_repr,fill="grey")
             else:
                 self.itemconfig(i.canvas_repr,fill="#8B0000")
+                self.negativ_in_wrong_position = True
             if i in self.selected: self.itemconfig(i.canvas_repr,fill="#e75480")
 
 class sb_side_menu(tk.Frame):
