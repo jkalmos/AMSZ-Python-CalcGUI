@@ -14,8 +14,6 @@ STICKY = True
 SCALE = 1.25
 from shapes import Rectangle, Arc, Shapes, dist, RightTriangle, visual_grid
 
-#TODO: Overlapping not recognized while alignig rects
-#TODO: X-label elúszik a canvas mozgatásakor...
 
 class shapeBuilder(tk.Canvas):
     def __init__(self, root, sb_sm):
@@ -233,9 +231,9 @@ class shapeBuilder(tk.Canvas):
         self.root.bind("<Control-i>", self.rectangle_info)
         self.root.bind("<Control-r>", self.resize_rectangle)
 
-        self.root.bind("<Control-c>", self.add_to_clp)
-        self.root.bind("<Control-v>", self.insert_from_clp)
-        self.root.bind("<Control-t>", self.check_for_negatives)
+        #self.root.bind("<Control-c>", self.add_to_clp)
+        #self.root.bind("<Control-v>", self.insert_from_clp)
+        #self.root.bind("<Control-t>", self.check_for_negatives)
         #self.root.bind("<Control-n>", lambda e: self.hc.refresh(self.Xcenter-20,self.Ycenter-100, self.hc.r))
 
         ##############* Packing objects ###############
