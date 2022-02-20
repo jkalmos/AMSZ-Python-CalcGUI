@@ -47,6 +47,7 @@ class shapeBuilder(tk.Canvas):
         self.starting_pos = None #selecting multiple objects
         self.selecting_area = self.create_rectangle(0,0,0,0)
         self.selected = []
+        self.rotation_happend = False #by rotation should release() not trigger
         self.active_shape = "Rectangle"
         self.possible_shape_list = ["Rectangle","Semicircle","quarter_circle", "rightTriangle"]
         self.possible_shapes = cycle(self.possible_shape_list)
@@ -335,6 +336,10 @@ class shapeBuilder(tk.Canvas):
             self.itemconfig(i.canvas_repr, fill='pink')
         print("Selecting shape")
     def deselect(self,e=None):
+        if self.rotation_happend == True:
+            self.rotation_happend = False
+            print("Rotation happend")
+            return -1
         if e is not None:
             for i in self.shapes:
                 if i.is_inside((e.x,e.y)):
@@ -846,7 +851,7 @@ class shapeBuilder(tk.Canvas):
                     self.shapes.append(rotate_rt)
                 else:
                     raise TypeError
-        #self.check_for_negatives()
+        self.rotation_happend = True
     def move_entry(self):
         if len(self.selected) == 1:
             object = self.selected[0]
