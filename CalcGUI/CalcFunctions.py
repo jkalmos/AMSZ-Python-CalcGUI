@@ -6,6 +6,7 @@
 # (Plus in case of circularly symmetric cross-section:
 #   Polar moment of area: Ip
 #   Polar modulus: Kp)
+from telnetlib import IP
 import numpy as np
 import math
 def transform(func):
@@ -27,29 +28,54 @@ def transform(func):
 @transform
 def Circle(d, t = 0):
     if t == 0:
+        A = d ** 2 * np.pi / 4
+        Ix = d ** 4 * np.pi / 64
+        Iy = d ** 4 * np.pi / 64
+        Ixy = 0
+        Kx = d ** 3 * np.pi / 32
+        Ky = d ** 3 * np.pi / 32
+        Ip = d ** 4 * np.pi / 32
+        Kp = d ** 3 * np.pi / 16
+        I1 = Ix
+        I2 = I1
         properties = {
-            "A": d ** 2 * np.pi / 4,
-            "Ix": d ** 4 * np.pi / 64,
-            "Iy": d ** 4 * np.pi / 64,
-            "Ixy": 0,
-            "Kx": d ** 3 * np.pi / 32,
-            "Ky": d ** 3 * np.pi / 32,
-            "Ip": d ** 4 * np.pi / 32,
-            "Kp": d ** 3 * np.pi / 16,
+            "A": A,
+            "Ix": Ix,
+            "Iy": Iy,
+            "Ixy": Ixy,
+            "Kx": Kx,
+            "Ky": Ky,
+            "Ip": Ip,
+            "Kp": Kp,
             "alpha": 0,
+            "I1": I1,
+            "I2": I2
         }
     else:
         di = d - t
+        A = (d ** 2 - di ** 2) * np.pi / 4
+        Ix = (d ** 4 - di ** 4) * np.pi / 64
+        Iy = (d ** 4 - di ** 4) * np.pi / 64
+        Ixy = 0
+        Kx = (d ** 4 - di ** 4) * np.pi / (32 * d)
+        Ky = (d ** 4 - di ** 4) * np.pi / (32 * d)
+        Ip = (d ** 4 - di ** 4) * np.pi / 32
+        Kp = (d ** 4 - di ** 4) * np.pi / (16 * d)
+        I1 = Ix
+        I2 = I1
+        
         properties = {
-            "A": (d ** 2 - di ** 2) * np.pi / 4,
-            "Ix": (d ** 4 - di ** 4) * np.pi / 64,
-            "Iy": (d ** 4 - di ** 4) * np.pi / 64,
-            "Ixy": 0,
-            "Kx": (d ** 4 - di ** 4) * np.pi / (32 * d),
-            "Ky": (d ** 4 - di ** 4) * np.pi / (32 * d),
-            "Ip": (d ** 4 - di ** 4) * np.pi / 32,
-            "Kp": (d ** 4 - di ** 4) * np.pi / (16 * d),
+            "A": A,
+            "Ix": Ix,
+            "Iy": Iy,
+            "Ixy": Ixy,
+            "Kx": Kx,
+            "Ky": Ky,
+            "Ip": Ip,
+            "Kp": Kp,
             "alpha": 0,
+            "I1": I1,
+            "I2": I2
         }
     return properties
 
@@ -59,22 +85,30 @@ def Rectangle(w, h, t = 0):
         A = w * h
         Ix = w * h ** 3 / 12
         Iy = w ** 3 * h / 12
+        Ip = Ix + Iy
         Ixy = 0
         Kx = 2 * Ix / h
         Ky = 2 * Iy / w
         if Iy > Ix:
             alpha = np.pi / 2
+            I1 = Iy
+            I2 = Ix
         else:
             alpha = 0
+            I1 = Ix
+            I2 = Iy
 
         properties = {
             "A": A,
             "Ix": Ix,
             "Iy": Iy,
+            "Ip": Ip,
             "Ixy": Ixy,
             "Kx": Kx,
             "Ky": Ky,
             "alpha": alpha,
+            "I1": I1,
+            "I2": I2
         }
     else:
         properties = RectangularHS(w, h, w-2*t, h-2*t)
@@ -85,22 +119,30 @@ def RectangularHS(w2, h2, w1, h1):
     A = (w2 * h2) - (w1 * h1)
     Ix = (w2 * h2 ** 3 - w1 * h1 ** 3) / 12
     Iy = (w2 ** 3 * h2 - w1 ** 3 * h1) / 12
+    Ip = Ix + Iy
     Ixy = 0
     Kx = 2 * Ix / h2
     Ky = 2 * Iy / w2
     if Iy > Ix:
         alpha = np.pi / 2
+        I1 = Iy
+        I2 = Ix
     else:
         alpha = 0
+        I1 = Ix
+        I2 = Iy
 
     properties = {
         "A": A,
         "Ix": Ix,
         "Iy": Iy,
+        "Ip": Ip,
         "Ixy": Ixy,
         "Kx": Kx,
         "Ky": Ky,
         "alpha": alpha,
+        "I1": I1,
+        "I2": I2
     }
     return properties
 
@@ -110,13 +152,18 @@ def Ellipse(a, b, t = 0):
         A = a * b * np.pi
         Ix = a * b ** 3 * np.pi / 4
         Iy = a ** 3 * b * np.pi / 4
+        Ip = Ix + Iy
         Ixy = 0
         Kx = Ix / b
         Ky = Iy / a
         if Iy > Ix:
             alpha = np.pi / 2
+            I1 = Iy
+            I2 = Ix
         else:
             alpha = 0
+            I1 = Ix
+            I2 = Iy
     else:
         a2 = a
         b2 = b
@@ -125,22 +172,30 @@ def Ellipse(a, b, t = 0):
         A = (a2 * b2 - a1 * b1) * np.pi
         Ix = (a2 * b2 ** 3 - a1 * b1 ** 3) * np.pi / 4
         Iy = (a2 ** 3 * b2 - a1 ** 3 * b1) * np.pi / 4
+        Ip = Ix + Iy
         Ixy = 0
         Kx = Ix / b2
         Ky = Iy / a2
         if Iy > Ix:
             alpha = np.pi / 2
+            I1 = Iy
+            I2 = Ix
         else:
             alpha = 0
+            I1 = Ix
+            I2 = Iy
 
     properties = {
         "A": A,
         "Ix": Ix,
         "Iy": Iy,
         "Ixy": Ixy,
+        "Ip": Ip,
         "Kx": Kx,
         "Ky": Ky,
         "alpha": alpha,
+        "I1": I1,
+        "I2": I2
     }
     return properties
 
@@ -150,18 +205,22 @@ def IsoscelesTriangle(w, h, t = 0):
         A = w * h / 2
         Ix = w * h ** 3 / 36
         Iy = w ** 3 * h / 48
+        Ip = Ix + Iy
         Ixy = 0
         Kx = 3 * Ix / 2 / h
         Ky = 2 * Iy / w
         if Iy > Ix:
             alpha = np.pi / 2
+            I1 = Iy
+            I2 = Ix
         else:
             alpha = 0
+            I1 = Ix
+            I2 = Iy
     else:
         w2 = w
         h2 = h
-        # w1 = w - t # HIBA # itt a falvastagság értelmezése nem helyes, ezt javítva
-        # h1 = h - t
+
         phi = np.arctan(h / (w / 2))
         u = t / np.sin(phi)
         v = t / np.tan(phi)
@@ -170,21 +229,30 @@ def IsoscelesTriangle(w, h, t = 0):
         A = (w2 * h2 - w1 * h1) / 2
         Ix = (w2 * h2 ** 3 - w1 * h1 ** 3) / 36
         Iy = (w2 ** 3 * h2 - w1 ** 3 * h1) / 48
+        Ip = Ix + Iy
         Ixy = 0
         Kx = 3 * Ix / 2 / h2
         Ky = 2 * Iy / w2
         if Iy > Ix:
             alpha = np.pi / 2
+            I1 = Iy
+            I2 = Ix
         else:
             alpha = 0
+            I1 = Ix
+            I2 = Iy
+        
     properties = {
             "A": A,
             "Ix": Ix,
             "Iy": Iy,
+            "Ip": Ip,
             "Ixy": Ixy,
             "Kx": Kx,
             "Ky": Ky,
             "alpha": alpha,
+            "I1": I1,
+            "I2": I2
         }
     return properties
 
@@ -194,6 +262,7 @@ def RightTriangle(w, h, t = 0):
         A = w * h / 2
         Ix = w * h ** 3 / 36
         Iy = w ** 3 * h / 36
+        Ip = Ix + Iy
         Ixy = w**2 * h**2 / 72
         Kx = Ix / (2/3 * h)
         Ky = Ix / (2/3 * w)
@@ -206,8 +275,7 @@ def RightTriangle(w, h, t = 0):
     else:
         w2 = w
         h2 = h
-        # w1 = w - t # HIBA # itt a falvastagság értelmezése nem helyes, ezt javítva
-        # h1 = h - t
+
         phi = np.arctan(h / (w / 2))
         u = t / np.sin(phi)
         v = t / np.tan(phi)
@@ -216,6 +284,7 @@ def RightTriangle(w, h, t = 0):
         A = (w2 * h2 - w1 * h1) / 2
         Ix = (w2 * h2 ** 3 - w1 * h1 ** 3) / 36
         Iy = (w2 ** 3 * h2 - w1 ** 3 * h1) / 48
+        Ip = Ix + Iy
         Ixy = (w2**2 * h2**2 / 72) - (w1**2 * h1**2 / 72)
         Kx = 3 * Ix / 2 / h2
         Ky = 2 * Iy / w2
@@ -232,6 +301,7 @@ def RightTriangle(w, h, t = 0):
             "A": A,
             "Ix": Ix,
             "Iy": Iy,
+            "Ip": Ip,
             "Ixy": Ixy,
             "Kx": Kx,
             "Ky": Ky,
@@ -244,9 +314,9 @@ def RightTriangle(w, h, t = 0):
 def Iarbitraryaxis(A, Ix, Iy, Ixy, x, y, phi, *args, **kwargs):
     Ix2 = Ix + x ** 2 * A
     Iy2 = Iy + y ** 2 * A
+    Ip2 = Ix2 + Iy2
     Ix2y2 = Ixy + x * y * A
     Ixi = Ix2 * np.cos(phi) ** 2 + Iy2 * np.sin(phi) ** 2 - Ix2y2 * np.sin(2 * phi)
-    Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 + Ix2y2 * np.sin(2 * phi) # itt pedig az utolsó tagnak negatív volt az előjele, Kossa A. jegyzetében én pozitívan találtam
-    # így szerepelt eredetileg: Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 - Ix2y2 * np.sin(2 * phi)
+    Ieta = Ix2 * np.sin(phi) ** 2 + Iy2 * np.cos(phi) ** 2 + Ix2y2 * np.sin(2 * phi)
     Ixieta = (Ix2 - Iy2) / 2 * np.sin(2 * phi) + Ix2y2 * np.cos(2 * phi)
-    return Ixi, Ieta, Ixieta
+    return Ixi, Ieta, Ixieta, Ip2
