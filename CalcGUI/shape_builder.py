@@ -6,6 +6,7 @@ import keyboard
 from itertools import cycle
 from shapely.ops import unary_union 
 from shapely.geometry import Polygon
+import numpy as np
 WIDTH = 30
 R1 = 20 # radius of semicircle (represenatation)
 R2 = 20 # radius of quarter_circle (represenatation)
@@ -175,10 +176,10 @@ class shapeBuilder(tk.Canvas):
         """
         self.alap = self.create_rectangle(30,10,30+WIDTH,10+WIDTH,fill=root.colors["sb_draw_2nd"], tags=("alap_rectangle"))
         self.alap_negyzet = Rectangle(self,self.root,30,10,30+WIDTH,10+WIDTH, self.alap)
-        self.width_entry = tk.Entry(self, width = 4,bg=root.colors["secondary_color"], fg=root.colors["text_color"],insertbackground=root.colors['text_color'],borderwidth = 0, highlightthickness = 0)
+        self.width_entry = tk.Entry(self, width = 7,bg=root.colors["secondary_color"], fg=root.colors["text_color"],insertbackground=root.colors['text_color'],borderwidth = 0, highlightthickness = 0)
         self.width_entry.insert(tk.END, str(round(self.width1/self.scale,4)))
         # self.width_entry.place(x = 22 + self.width/2, y = 12 + self.height)
-        self.height_entry = tk.Entry(self, width = 4,bg=root.colors["secondary_color"], fg=root.colors["text_color"],insertbackground=root.colors['text_color'],borderwidth = 0, highlightthickness = 0)
+        self.height_entry = tk.Entry(self, width = 7,bg=root.colors["secondary_color"], fg=root.colors["text_color"],insertbackground=root.colors['text_color'],borderwidth = 0, highlightthickness = 0)
         self.height_entry.insert(tk.END, str(round(self.height1/self.scale,4)))
         # self.height_entry.place(x = 32 + self.width, y = 2 + self.height/2)
         self.move_entry()
@@ -530,6 +531,10 @@ class shapeBuilder(tk.Canvas):
             print("Warning: Calculate for riht Triangles is not checked")
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.plot_principal_axis(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
+        if self.root.angle_unit == '°':
+            alpha = -alpha/np.pi*180
+        else:
+            alpha = -alpha
         out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
         self.result4.config(text="Keresztmetszeti jellemzők:")
         self.result5.config(text="A = " + str(round(A/self.scale**2, 4)) + " " + self.root.unit + "²")
@@ -587,7 +592,8 @@ class shapeBuilder(tk.Canvas):
             elif object.type == "quarter_circle":
                 if not ok: return -1
 
-                object.refresh(object.center[0],object.center[1],h,angle=90) 
+                object.refresh(object.center[0],object.center[1],h,angle=90)
+            self.auto_scale()
         else:
             try:
                 h = float(self.height_entry.get().replace(',','.'))*self.scale
@@ -635,6 +641,7 @@ class shapeBuilder(tk.Canvas):
                 if not ok: return -1
                 self.r2 = h
                 self.coords(self.alap_circle, 40,10,40+self.r2*2,10+self.r2*2)
+            self.auto_scale_default(w,h)
         self.move_entry()
     def clear_all(self): #? Could be better
         self.rectangles = []
@@ -752,6 +759,7 @@ class shapeBuilder(tk.Canvas):
         else:
             None
         self.move_entry()
+        self.auto_scale()
     def add_to_clp(self,e=None):
         self.clipboard = self.selected #! deepcopy???
     def insert_from_clp(self,e=None):
@@ -836,7 +844,12 @@ class shapeBuilder(tk.Canvas):
                 elif i.type == "Semicircle" or i.type == "quarter_circle":
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
-                    i.start = i.start+direction
+                    if i.start == 0 and i.start+direction == -90:
+                        i.start = 270
+                    elif i.start == 270 and i.start+direction == 360:
+                        i.start = 0
+                    else:
+                        i.start = i.start+direction
                     rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start)
                     self.shapes.append(rotate_semicircle)
                 elif i.type == "rightTriangle":
@@ -946,6 +959,45 @@ class shapeBuilder(tk.Canvas):
             else:
                 print("Nem jo")
                 self.itemconfig(i.canvas_repr,fill="orange")
+    def auto_scale(self):
+        x_coords = [0]
+        y_coords = [0]
+        for i in self.shapes:
+            x_val = abs(i.center[0]-self.Xcenter)+i.width
+            x_coords.append(x_val)
+            y_val = abs(self.Ycenter-i.center[1])+i.height
+            y_coords.append(y_val)
+        max_x = max(x_coords)
+        max_y = max(y_coords)
+        if max_x > self.canvas_width/2 or max_y > self.canvas_height/2:
+            difference = max(max_x/self.canvas_width*2, max_y/self.canvas_height*2)
+            scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+            self.rescale(self.scale_factor**(-scale_factor))
+            # TODO: zoom in in case of too small object
+    def auto_scale_default(self, w=0, h=0):
+        if self.active_shape == "Rectangle" or self.active_shape == "rightTriangle":
+            if w*self.scale < self.canvas_width/40 or h*self.scale < self.canvas_height/40:
+                difference = max(w*self.scale/self.canvas_width*40, h*self.scale/self.canvas_height*40)
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                self.rescale(self.scale_factor**(-scale_factor))
+                print("zoom_in")
+            if w*self.scale > self.canvas_width/4 or h*self.scale > self.canvas_height/4:
+                difference = max(w*self.scale/self.canvas_width*4, h*self.scale/self.canvas_height*4)
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                self.rescale(self.scale_factor**(-scale_factor))
+                print("zoom_out")
+        else:
+            if h*self.scale < self.canvas_height/40:
+                difference = h*self.scale/self.canvas_height*40
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                self.rescale(self.scale_factor**(-scale_factor))
+                print("zoom_in")
+            if h*self.scale > self.canvas_height/4:
+                difference = h*self.scale/self.canvas_height*4
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                self.rescale(self.scale_factor**(-scale_factor))
+                print("zoom_out")
+        
 
 class sb_side_menu(tk.Frame):
     def __init__(self,root):

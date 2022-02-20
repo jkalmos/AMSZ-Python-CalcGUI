@@ -660,9 +660,6 @@ class visual_grid():
         self.Xcenter = Xcenter
         self.Ycenter = Ycenter
         self.scale_factor = scale_factor
-        self.plus = 0
-        self.minus = 0
-        self.change = 2
         self.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
     def delete_grid(self):
         try:
@@ -671,62 +668,35 @@ class visual_grid():
             None
     def create_grid(self, scale, Xcenter, Ycenter, scale_factor):
         self.delete_grid()
-        # define default grid, for default scaling
-        base = np.linspace(-1000,1000,21)
-        # define multiplication factor based on scaling
-        log = int(np.log(scale/10)/np.log(scale_factor))
-        rate = int(log/10)
-        mod1 = log%10
+        base = np.linspace(-2000,2000,41)
+        log = int(round(np.log(scale/10)/np.log(scale_factor)))
+        scale_rate = scale_factor**log
+        rate = int(np.log(scale_rate)/np.log(10))
+        mod1 = np.log(scale_rate)/np.log(10)-rate
         if log == 0:
             nlog = 1
+            n_scale_rate = scale_factor**nlog
         else:
-            nlog = int(-1/log)
-        rec = int(nlog/10)
-        mod2 = nlog%10
-        if rate > 0:
-            if mod1/5>=1:
-                self.plus = mod1-5
-                self.change = 2
-                self.grid1 = base/rate/5
-            elif mod1/2>=1:
-                self.plus = mod1-2
-                self.change = 5
-                self.grid1 = base/rate/2
+            nlog = int(round(-log))
+            n_scale_rate = scale_factor**nlog
+        rec = int(np.log(n_scale_rate)/np.log(10))
+        mod2 = np.log(n_scale_rate)/np.log(10)-rec
+        if log > 0:
+            if mod1>0.302:
+                self.grid1 = base/(10**rate)/5
             else:
-                self.plus = mod1
-                self.change = 2
-                self.grid1 = base/rate
-            self.minus = 0
-        elif rate == 0:
-            if mod1/5>=1:
-                self.plus = mod1-5
-                self.change = 2
-                self.grid1 = base/5
-            elif mod1/2>=1:
-                self.plus = mod1-2
-                self.change = 5
+                self.grid1 = base/(10**rate)
+        elif log == 0:
+            if mod1>0.302:
                 self.grid1 = base/2
             else:
-                self.plus = mod1
-                self.change = 2
                 self.grid1 = base
-            self.minus = 0
         else:
-            if mod2/5>=1:
-                self.minus = mod2-5
-                self.change = 2
-                self.grid1 = base*rec*5
-            elif mod2/2>=1:
-                self.minus = mod2-2
-                self.change = 5
-                self.grid1 = base*rec*2
+            if mod2>0.302:
+                self.grid1 = base*(10**rec)*5
             else:
-                self.minus = mod2
-                self.change = 2
-                self.grid1 = base*rec
-            self.plus = 0
+                self.grid1 = base*(10**rec)
         limit = self.grid1[-1]
-        print(self.scale, log, rate, mod1, mod2, self.plus, self.minus)
         self.grid = [self.grid1]
         width = [1,1]
         for j in range(len(self.grid)):    
@@ -743,51 +713,15 @@ class visual_grid():
                 self.hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
                 self.canvas.tag_lower(self.vline)
                 self.canvas.tag_lower(self.hline)
-        if log >=0:
-            # self.plus = max(self.plus,1)
-            for j in range(self.plus):
+        if log > 0:
+            for j in range(log):
                 self.rescale_grid(Xcenter, Ycenter, scale_factor)
-        else:
-            # self.minus = max(self.minus,1)
-            for j in range(self.minus):
+        elif log < 0:
+            for j in range(nlog):
                 self.rescale_grid(Xcenter, Ycenter, round(1/scale_factor,4))
     def rescale_grid(self, Xcenter, Ycenter, scale):
         self.delete_grid()
         self.grid1 *= scale
-        # if scale > 1:
-        #     if self.minus != 0:
-        #         self.minus -= 1
-        #     elif self.plus == 0:
-        #         if self.change == 2:
-        #             self.grid1 = self.grid1/5
-        #         else:
-        #             self.grid1 = self.grid1/2
-        #     else:
-        #         self.plus += 1
-        #         if self.plus == self.change:
-        #             self.grid1 = self.grid1/self.change
-        #             self.plus = 0
-        #             if self.change == 2:
-        #                 self.change = 5
-        #             else:
-        #                 self.change = 2
-        # else:
-        #     if self.plus != 0:
-        #         self.plus -= 1
-        #     elif self.minus == 0:
-        #         if self.change == 2:
-        #             self.grid1 = self.grid1*5
-        #         else:
-        #             self.grid1 = self.grid1*2
-        #     else:
-        #         self.minus +=1
-        #         if self.minus == self.change:
-        #             self.grid1 = self.grid1*self.change
-        #             self.minus = 0
-        #             if self.change == 2:
-        #                 self.change = 5
-        #             else:
-        #                 self.change = 2
         self.grid = [self.grid1]
         limit = self.grid1[-1]
         width = [1,1]
@@ -805,25 +739,3 @@ class visual_grid():
                 self.hline = self.canvas.create_line(hx1, hy1, hx2, hy2, width = width[j],tags=("grid"), fill = self.root.colors["sb_grid"])
                 self.canvas.tag_lower(self.vline)
                 self.canvas.tag_lower(self.hline)
-
-        # def 
-        # self.negative = Negative
-        # self.start = start
-        # self.angle = min (360,angle)
-    #     if self.angle == 180:
-    #         self.type = "Semicircle"
-    #     elif self.angle == 90:
-    #         self.type = "quarter_circle"
-    #     self.area = r**2*pi*(self.angle/360)
-    #     self.s_center = (center_x+ (2/3*r*sin(radians(angle))/radians(angle))*cos(radians(start)),center_y+ (2/3*r*sin(radians(angle))/radians(angle))*sin(radians(start)))
-    #     self.canvas_repr = self.canvas.create_arc(center_x-r,center_y-r,center_x+r,center_y+r,extent=self.angle, start = self.start, fill=self.root.colors["sb_draw"], tags=("arc","shape"))
-    #     if self.negative: self.canvas.negatives.append(self)
-    # def refresh(self, center_x, center_y,r,angle=180, start=0):
-    #     self.center = (center_x,center_y)
-    #     self.r = r
-    #     self.d = 2*r
-    #     self.start = start
-    #     self.angle = min(360,angle)
-    #     self.area = r**2*pi*(self.angle/360)
-    #     self.s_center = (center_x + (4/3*r*sin(radians(angle/2))/radians(angle))*cos(radians(start+angle/2)),center_y - (4/3*r*sin(radians(angle/2))/radians(angle))*sin(radians(start+angle/2)))
-    #     self.canvas.coords(self.canvas_repr,center_x-r,center_y-r,center_x+r,center_y+r)
