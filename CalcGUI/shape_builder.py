@@ -4,6 +4,7 @@ from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
 from PIL import ImageTk,Image
 import keyboard
 from itertools import cycle
+from numpy import negative
 from shapely.ops import unary_union 
 from shapely.geometry import Polygon
 WIDTH = 30
@@ -835,16 +836,17 @@ class shapeBuilder(tk.Canvas):
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
                     i.start = i.start+direction 
-                    rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start)
+                    rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start, Negative=i.negative)
                     self.shapes.append(rotate_semicircle)
                 elif i.type == "rightTriangle":
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
                     i.orientation = i.orientation-direction#! itt ez a - jel ez nem biztos, de így működik jól...
-                    rotate_rt = RightTriangle(self,self.root,i.center[0],i.center[1],i.width,i.height, orientation= i.orientation)
+                    rotate_rt = RightTriangle(self,self.root,i.center[0],i.center[1],i.width,i.height, orientation= i.orientation, Negative=i.negative)
                     self.shapes.append(rotate_rt)
                 else:
                     raise TypeError
+        #self.check_for_negatives()
     def move_entry(self):
         if len(self.selected) == 1:
             object = self.selected[0]
@@ -942,8 +944,8 @@ class shapeBuilder(tk.Canvas):
             if union.contains(a):
                 self.itemconfig(i.canvas_repr,fill="grey")
             else:
-                print("Nem jo")
-                self.itemconfig(i.canvas_repr,fill="orange")
+                self.itemconfig(i.canvas_repr,fill="#8B0000")
+            if i in self.selected: self.itemconfig(i.canvas_repr,fill="#e75480")
 
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
