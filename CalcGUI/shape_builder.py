@@ -516,26 +516,41 @@ class shapeBuilder(tk.Canvas):
               
             Ixy += (1-2* (i.negative)) * A_current*(pos[0]+(pos[2]-pos[0])/2-Sx)*(Sy-pos[1]-(pos[3]-pos[1])/2)
         for i in self.shapes.arcs: #! Not sure if works for not semi or quarter circle, but any arc...
-            A += (1-2* (i.negative))*i.area
-            print(i.r/self.scale, i.angle)
-            #Ixc = (i.r**4 / 8)*(radians(i.angle)-sin(radians(i.angle))) 
-            #Iyc = (i.r**4 / 8)*(radians(i.angle)+sin(radians(i.angle)))
-            Ixc = (i.r**4 / 8)*(radians(i.angle)) 
-            Iyc = (i.r**4 / 8)*(radians(i.angle))
-            Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
-            print(Ixc, Iyc)
+            if i.type=="quarter_circle":
+                A += (1-2* (i.negative))*i.area
+                #print(i.r/self.scale, i.angle)
+                #Iyc = (i.r**4 / 8)*(radians(i.angle))
+                #Ixc = (i.r**4 / 8)*(radians(i.angle)) 
+                #Ixyc = i.r**4 * (1-(cos(radians(i.angle)))**2) /8
+                Ixc = i.r**4 / (144*pi) *(9*pi**2 -64)
+                Iyc = Ixc
+                Ixyc = i.r**4 / (144*pi) *(-(18*pi -64))
+            elif i.type == "Semicircle":
+                A += (1-2* (i.negative))*i.area
+                Iyc = i.r**4 / (72*pi) * 9* pi**2
+                Ixc = i.r**4 / (72*pi) * (9*pi**2 - 64)
+                Ixyc = 0
+            else:
+                raise TypeError
             # rotation + translation
-            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 - 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start))  + i.area*(Sy-i.center[1])**2
-            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 + 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start)) + i.area*(Sx-i.center[0])**2
-            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.start))*cos(radians(-i.start)) + Ixyc*((cos(radians(-i.start))**2-sin(radians(-i.start))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            #Ix = Ixc
+            #Iy = Iyc
+            #Ix += (1-2* (i.negative)) *Ixc  + i.area*(Sy-i.s_center[1])**2
+            #Iy += (1-2* (i.negative)) *Iyc + i.area*(Sx-i.s_center[0])**2
+            Ix += (1-2* (i.negative)) *((Ixc+Iyc)/2 + (Ixc-Iyc)/2 * cos(2*radians(i.start))-Ixyc*sin(2*radians(i.start)))  + i.area*(Sy-i.s_center[1])**2
+            Iy += (1-2* (i.negative)) *((Ixc+Iyc)/2 - (Ixc-Iyc)/2 * cos(2*radians(i.start))+Ixyc*sin(2*radians(i.start))) + i.area*(Sx-i.s_center[0])**2
+            #Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 - 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start))  + i.area*(Sy-i.s_center[1])**2
+            #Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.start)))**2 + Iyc*(sin(radians(-i.start)))**2 + 2*Ixyc*cos(radians(-i.start))*sin(radians(-i.start)) + i.area*(Sx-i.s_center[0])**2
+            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)/2 * sin(2*radians(i.start)) + Ixyc*cos(2*radians(i.start))  + i.area*(Sx-i.s_center[0])*(Sy-i.s_center[1])
         for i in self.rightTriangles:
-            Ixc = (i.height**3 *i.width)/12 
-            Iyc = (i.width**3 *i.height)/12 
-            Ixyc = (i.width**2 * i.height**2 )/24
+            A += (1-2* (i.negative))*i.area
+            Ixc = (i.height**3 *i.width)/36
+            Iyc = (i.width**3 *i.height)/36
+            Ixyc = (i.width**2 * i.height**2 )/72
 
-            Ix += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 - 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation))  + i.area*(Sy-i.center[1])**2
-            Iy += (1-2* (i.negative)) * Ixc*(cos(radians(-i.orientation)))**2 + Iyc*(sin(radians(-i.orientation)))**2 + 2*Ixyc*cos(radians(-i.orientation))*sin(radians(-i.orientation)) + i.area*(Sx-i.center[0])**2
-            Ixy += (1-2* (i.negative)) * (Ixc-Iyc)*sin(radians(-i.orientation))*cos(radians(-i.orientation)) + Ixyc*((cos(radians(-i.orientation))**2-sin(radians(-i.orientation))**2)) + i.area*(i.center[0]-Sx)*(Sy-i.center[1])
+            Ix += (1-2* (i.negative)) * (((Ixc+Iyc)/2 + (Ixc-Iyc)/2 * cos(2*radians(i.orientation))-Ixyc*sin(2*radians(i.orientation))  + i.area*(Sy-i.s_center[1])**2))
+            Iy += (1-2* (i.negative)) * (((Ixc+Iyc)/2 + (Ixc-Iyc)/2 * cos(2*radians(i.orientation))-Ixyc*sin(2*radians(i.orientation)) + i.area*(Sx-i.s_center[0])**2))
+            Ixy += (1-2* (i.negative)) * ((Ixc-Iyc)/2 * sin(2*radians(i.orientation)) + Ixyc*cos(2*radians(i.orientation)) + i.area*(Sx-i.s_center[0])*(Sy-i.s_center[1]))
             print("Warning: Calculate for riht Triangles is not checked")
         out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
         i1, i2, alpha = self.plot_principal_axis(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
@@ -636,7 +651,10 @@ class shapeBuilder(tk.Canvas):
                     self.width_entry.config({"background": self.root.colors['error_color']})
                     ok = False
                 if not ok: return -1
-                self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+                l,r,t,b = self.alap_triangle.get_bounding_box()
+                self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.alap_triangle.width, self.alap_triangle.height)
+                l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
+                self.alap_triangle.translate(l-l2,t-t2)
             elif self.active_shape == "Semicircle":
                 if not ok: return -1
                 self.r1 = h
@@ -650,6 +668,7 @@ class shapeBuilder(tk.Canvas):
     def clear_all(self): #? Could be better
         self.rectangles = []
         self.arcs = []
+        self.rightTriangles = []
         self.delete("shape") 
         self.delete("principal_axis")
         self.delete("s_axis")
@@ -658,7 +677,7 @@ class shapeBuilder(tk.Canvas):
     def plot_principal_axis(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
-        if Ixy !=0:
+        if abs(Ixy) > 10**(-12):
             alfa = atan((Ix-I1)/Ixy)
         else:
             alfa = 0
@@ -847,15 +866,21 @@ class shapeBuilder(tk.Canvas):
                 elif i.type == "Semicircle" or i.type == "quarter_circle":
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
+                    #self.selected.remove(i)
                     i.start = i.start+direction 
                     rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start, Negative=i.negative)
                     self.shapes.append(rotate_semicircle)
+                    #self.selected.append(rotate_semicircle)
                 elif i.type == "rightTriangle":
+                    print(len(self.shapes.rightTriangles))
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
+                    #self.selected.remove(i)
                     i.orientation = i.orientation-direction#! itt ez a - jel ez nem biztos, de így működik jól...
                     rotate_rt = RightTriangle(self,self.root,i.center[0],i.center[1],i.width,i.height, orientation= i.orientation, Negative=i.negative)
                     self.shapes.append(rotate_rt)
+                    #self.selected.append(rotate_rt)
+                    print(len(self.shapes.rightTriangles))
                 else:
                     raise TypeError
         self.rotation_happend = True
