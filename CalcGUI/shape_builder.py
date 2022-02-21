@@ -628,6 +628,8 @@ class shapeBuilder(tk.Canvas):
                         raise ValueError
                     self.width2 = w
                     self.height2 = h
+                    self.alap_triangle.width = w
+                    self.alap_triangle.height = h
                     self.width_entry.config({"background": self.root.colors['secondary_color']})
                 except:
                     print("Hiba, az egyik mező nem olvashó be")
