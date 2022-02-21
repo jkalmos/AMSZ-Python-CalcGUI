@@ -110,10 +110,10 @@
      inkscape:guide-bbox="true"
      showguides="false"
      inkscape:window-maximized="1"
-     inkscape:window-y="-8"
-     inkscape:window-x="-8"
-     inkscape:window-height="1027"
-     inkscape:window-width="1920"
+     inkscape:window-y="570"
+     inkscape:window-x="1912"
+     inkscape:window-height="715"
+     inkscape:window-width="1366"
      inkscape:snap-page="true"
      inkscape:snap-text-baseline="true"
      inkscape:snap-center="true"
@@ -129,11 +129,11 @@
      inkscape:snap-bbox="true"
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer7"
      inkscape:document-units="mm"
-     inkscape:cy="1039.5795"
-     inkscape:cx="582.96533"
-     inkscape:zoom="11.313709"
+     inkscape:cy="1010.8091"
+     inkscape:cx="843.2248"
+     inkscape:zoom="1.4142136"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -199,7 +199,7 @@
      inkscape:label="shape_builder"
      id="layer7"
      inkscape:groupmode="layer"
-     style="display:none">
+     style="display:inline">
     <rect
        y="18.498102"
        x="0.26724243"
@@ -767,6 +767,52 @@
          x="372.23203"
          id="tspan1594-6-2"
          sodipodi:role="line">Mozgatás</tspan></text>
+    <g
+       inkscape:export-ydpi="223.92853"
+       inkscape:export-xdpi="223.92853"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\plus_hover.png"
+       id="g2132-0"
+       transform="translate(-138.85087,99.98938)"
+       style="display:inline">
+      <circle
+         r="7.2964578"
+         cy="153.44228"
+         cx="385.17004"
+         id="path2062-30-1"
+         style="fill:#e9e9e9;fill-opacity:0.603922;stroke:#000000;stroke-width:0.72;stroke-linecap:round" />
+    </g>
+    <g
+       inkscape:export-ydpi="223.92853"
+       inkscape:export-xdpi="223.92853"
+       inkscape:export-filename="D:\OneDrive - Kormányzati Informatikai Fejlesztési Ügynökség\Dokumentumok\GitHub\AMSZ-Python-CalcGUI\CalcGUI\figures\dark_theme\shape_builder\plus.png"
+       id="g2122-2"
+       transform="translate(-138.85087,99.98938)"
+       style="display:inline">
+      <circle
+         style="fill:#b0b0b0;fill-opacity:0.601626;stroke:#000000;stroke-width:0.72;stroke-linecap:round"
+         id="path2062-0"
+         cx="339.94009"
+         cy="152.29018"
+         r="7.2964578" />
+    </g>
+    <g
+       id="g2145"
+       transform="matrix(0.06433716,0,0,0.06433716,242.3663,249.4791)"
+       style="stroke-width:4.11245">
+      <path
+         d="m 122.88,77.63 v 41.12 c 0,2.28 -1.85,4.12 -4.12,4.12 H 77.33 v -9.62 h 35.95 c 0,-12.34 0,-23.27 0,-35.62 z M 77.39,9.53 V 0 h 41.37 c 2.28,0 4.12,1.85 4.12,4.12 V 45.3 h -9.63 V 9.53 Z M 9.63,45.24 H 0 V 4.12 C 0,1.85 1.85,0 4.12,0 h 41 V 9.64 H 9.63 Z m 35.44,68.03 v 9.6 H 4.12 C 1.84,122.87 0,121.02 0,118.74 V 77.57 h 9.63 v 35.71 h 35.44 z"
+         id="path2143"
+         style="stroke-width:4.11245" />
+    </g>
+    <g
+       id="g1892"
+       transform="matrix(0.06433716,0,0,0.06433716,197.13635,248.327)"
+       style="stroke-width:4.11245">
+      <path
+         d="m 122.88,77.63 v 41.12 c 0,2.28 -1.85,4.12 -4.12,4.12 H 77.33 v -9.62 h 35.95 c 0,-12.34 0,-23.27 0,-35.62 z M 77.39,9.53 V 0 h 41.37 c 2.28,0 4.12,1.85 4.12,4.12 V 45.3 h -9.63 V 9.53 Z M 9.63,45.24 H 0 V 4.12 C 0,1.85 1.85,0 4.12,0 h 41 V 9.64 H 9.63 Z m 35.44,68.03 v 9.6 H 4.12 C 1.84,122.87 0,121.02 0,118.74 V 77.57 h 9.63 v 35.71 h 35.44 z"
+         id="path1890"
+         style="stroke-width:4.11245" />
+    </g>
   </g>
   <g
      style="display:none"
@@ -1434,7 +1480,7 @@
        style="display:inline;opacity:0.997;fill:#5fd38d;stroke-width:1.22026;stroke-linecap:round" />
   </g>
   <g
-     style="display:inline"
+     style="display:none"
      inkscape:label="Alap alakaztok dark theme + settings menu"
      id="layer4"
      inkscape:groupmode="layer">

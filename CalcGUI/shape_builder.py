@@ -126,14 +126,25 @@ class shapeBuilder(tk.Canvas):
         self.img= (Image.open(f"{root.colors['path']}shape_builder/plus_hover.png"))
         resized_image= self.img.resize((30,30), Image.ANTIALIAS)
         self.plus_hover_img = ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open(f"{self.root.colors['path']}shape_builder/expand.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.expand_img= ImageTk.PhotoImage(resized_image)
+        self.img= (Image.open(f"{self.root.colors['path']}shape_builder/expand_hover.png"))
+        resized_image= self.img.resize((30,30), Image.ANTIALIAS)
+        self.expand_hover_img= ImageTk.PhotoImage(resized_image)
         self.minus= self.create_image(self.root.winfo_width()-310, self.root.winfo_height()-50, anchor=tk.NW,image=self.minus_img, tags=("plus_minus"))
         self.plus= self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-50, anchor=tk.NW,image=self.plus_img, tags=("plus_minus"))
+        self.expand = self.create_image(self.root.winfo_width()-275, self.root.winfo_height()-85, anchor=tk.NW,image=self.expand_img, tags=("plus_minus"))
         self.tag_bind(self.plus, '<Button-1>', lambda e: self.rescale(self.scale_factor))
         self.tag_bind(self.minus, '<Button-1>', lambda e: self.rescale(self.scale_factor**(-1)))
+        self.tag_bind(self.expand, '<Button-1>', lambda e: self.auto_scale())
         self.tag_bind(self.minus, '<Enter>', lambda e: self.itemconfig(self.minus,image=self.minus_hover_img))
         self.tag_bind(self.plus, '<Enter>', lambda e: self.itemconfig(self.plus,image=self.plus_hover_img))
+        self.tag_bind(self.expand, '<Enter>', lambda e: self.itemconfig(self.expand,image=self.expand_hover_img))
         self.tag_bind(self.minus, '<Leave>', lambda e: self.itemconfig(self.minus,image=self.minus_img))
         self.tag_bind(self.plus, '<Leave>', lambda e: self.itemconfig(self.plus,image=self.plus_img))
+        self.tag_bind(self.expand, '<Leave>', lambda e: self.itemconfig(self.expand,image=self.expand_img))
+ 
         
         #############* Creating up and down button #################
         self.img= (Image.open(f"{root.colors['path']}shape_builder/up.png"))
@@ -190,16 +201,27 @@ class shapeBuilder(tk.Canvas):
         self.width_entry.bind('<Tab>', func=lambda e: [self.overwrite(), self.focus_height()])
         self.height_entry.bind('<Tab>', func=lambda e: [self.overwrite(), self.focus_width()])
 
-        ###########* Creating basic, green circle #############
+        ###########* Creating basic, green semicircle #############
         self.angle=180
         self.start = 0
         """
         self.alap_circle = self.create_arc(10,60,40,90,extent=self.angle, start = self.start, fill=root.colors["sb_draw_2nd"])
         self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
         """
-        self.alap_circle = self.create_arc(30,10,30+2*self.r1,10+2*self.r1,extent=self.angle, start = self.start, fill=root.colors["sb_draw_2nd"], tags=("alap_circle"))
+        self.alap_semicircle = self.create_arc(30,10,30+2*self.r1,10+2*self.r1,extent=self.angle, start = self.start, fill=root.colors["sb_draw_2nd"], tags=("alap_semicircle"))
         # self.r_label = self.create_text(30+30/2,10+30,text=f"r={30/2}",tags=("alap_circle"))
-        self.itemconfigure("alap_circle",state="hidden")
+        self.itemconfigure("alap_semicircle",state="hidden")
+
+        ###########* Creating basic, green quarter_circle #############
+        self.angle=90
+        self.start = 0
+        """
+        self.alap_circle = self.create_arc(10,60,40,90,extent=self.angle, start = self.start, fill=root.colors["sb_draw_2nd"])
+        self.r_label = self.create_text(10+30/2,60+30,text=f"r={30/2}")
+        """
+        self.alap_quarter_circle = self.create_arc(30,10,30+2*self.r1,10+2*self.r1,extent=self.angle, start = self.start, fill=root.colors["sb_draw_2nd"], tags=("alap_quarter_circle"))
+        # self.r_label = self.create_text(30+30/2,10+30,text=f"r={30/2}",tags=("alap_circle"))
+        self.itemconfigure("alap_quarter_circle",state="hidden")
         
         ##########* Creating basic green triangle #############
         self.alap_triangle = RightTriangle(self,self.root,40,40,self.width2,self.height2) #! width+heigth ??? 
@@ -376,7 +398,7 @@ class shapeBuilder(tk.Canvas):
                 self.current = Rectangle(self,self.root,pos[0],pos[1],pos[0]+self.width1,pos[1]+self.height1,self.create_rectangle(pos[0],pos[1],pos[0]+self.width1,pos[1]+self.height1,fill=self.root.colors["sb_draw"], tags=("rect","shape")))
                 self.itemconfig(self.current.canvas_repr, fill='light blue')
         if not self.current: # Circle
-            pos = self.coords(self.alap_circle)
+            pos = self.coords(self.alap_semicircle)
             # cent = (pos[0]+self.r,pos[1]+self.r)
             if self.active_shape == "Semicircle":
                 if dist((e.x,e.y), (pos[0]+self.r1,pos[1]+self.r1))<self.r1 and degrees(asin(abs(e.y-(pos[1]+self.r1))/dist((e.x,e.y), (pos[0]+self.r1,pos[1]+self.r1))))<self.angle and self.starting_pos is None:
@@ -395,7 +417,7 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "rightTriangle":
                 if(self.alap_triangle.is_inside([e.x,e.y])):
                     print("Triangle")
-                    self.current = RightTriangle(self, self.root, e.x,e.y,self.width2,self.height2,orientation=self.alap_triangle.orientation) #! W + H nem az kéne
+                    self.current = RightTriangle(self, self.root, e.x,e.y,self.width2,self.height2,orientation=self.alap_triangle.orientation)
                     self.itemconfig(self.current.canvas_repr, fill="light blue")
                     print(type(self.current))
         if not self.current:
@@ -418,8 +440,7 @@ class shapeBuilder(tk.Canvas):
             if type(self.current) == Arc: self.current.refresh(e.x,e.y,self.current.r,self.current.angle,self.current.start)
             elif type(self.current) == RightTriangle: self.current.refresh(e.x,e.y,self.current.width,self.current.height)
             self.isMoving = True
-            return 0
-        
+            return 0      
     def release(self,e):
         self.delete("principal_axis")
         self.delete("s_axis")
@@ -545,8 +566,7 @@ class shapeBuilder(tk.Canvas):
         self.result9.config(text="Főmásodrendű nyomatékok:")
         self.result10.config(text="I₁ = " + str(round(i1,4)) + " " + self.root.unit + "\u2074")
         self.result11.config(text="I₂ = " + str(round(i2,4)) + " " + self.root.unit + "\u2074")
-        self.result12.config(text="\u03B1 = " + str(round(alpha,4)) + " " + self.root.angle_unit)
-        
+        self.result12.config(text="\u03B1 = " + str(round(alpha,4)) + " " + self.root.angle_unit)       
     def overwrite(self):
         ok = True
         if len(self.selected)==1:
@@ -631,17 +651,21 @@ class shapeBuilder(tk.Canvas):
                     self.width_entry.config({"background": self.root.colors['error_color']})
                     ok = False
                 if not ok: return -1
-                self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+                # self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+                l,r,t,b = self.alap_triangle.get_bounding_box()
+                self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.width2, self.height2)
+                l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
+                self.alap_triangle.translate(l-l2,t-t2)
             elif self.active_shape == "Semicircle":
                 if not ok: return -1
                 self.r1 = h
 
-                self.coords(self.alap_circle, 40,10,40+self.r1*2,10+self.r1*2)
+                self.coords(self.alap_semicircle, 40,10,40+self.r1*2,10+self.r1*2)
             elif self.active_shape == "quarter_circle":
                 if not ok: return -1
                 self.r2 = h
-                self.coords(self.alap_circle, 40,10,40+self.r2*2,10+self.r2*2)
-            self.auto_scale_default(w,h)
+                self.coords(self.alap_quarter_circle, 40,10,40+self.r2*2,10+self.r2*2)
+            self.auto_scale_default()
         self.move_entry()
     def clear_all(self): #? Could be better
         self.rectangles = []
@@ -665,13 +689,13 @@ class shapeBuilder(tk.Canvas):
             self.p1_label = self.create_text(Sx+a_length*cos(alfa)+10,Sy+a_length*sin(alfa)-10,text="I1",tags=("principal_axis"),fill=self.root.colors['draw_principal']) # p1 lavel
             self.p2_label = self.create_text(Sx-a_length*cos(alfa+pi/2)+10,Sy-a_length*sin(alfa+pi/2)-10,text="I2",tags=("principal_axis"),fill=self.root.colors['draw_principal']) # p2 lavel
         return I1, I2, alfa
-    def rescale(self,scale): #!? Could be better
+    def rescale(self,scale, button = False): #!? Could be better
         self.scale *= scale
         self.alap_negyzet.refresh(30,10,30+self.width1*scale,10+self.height1*scale)
-
-        self.coords(self.alap_circle, 30,10,30+self.r1*scale,10+self.r1*scale) #? Esetleg külön sugár változó TODO: ez mi ??? ITT valami nem stimmel
+        self.coords(self.alap_semicircle, 30,10,30+self.r1*scale,10+self.r1*scale)
+        self.coords(self.alap_quarter_circle, 30,10,30+self.r2*scale,10+self.r2*scale) 
         l,r,t,b = self.alap_triangle.get_bounding_box()
-        self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.alap_triangle.width*scale, self.alap_triangle.height*scale)
+        self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.width2*scale, self.height2*scale)
         l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
         self.alap_triangle.translate(l-l2,t-t2)
         self.width1 *= scale
@@ -680,19 +704,20 @@ class shapeBuilder(tk.Canvas):
         self.height2 *= scale
         self.r1 *= scale
         self.r2 *= scale
-
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
         for i in self.arcs:
             i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.r*scale, i.angle, i.start)
         for i in self.rightTriangles:
             i.refresh(self.Xcenter-(self.Xcenter-i.center[0])*scale,self.Ycenter-(self.Ycenter-i.center[1])*scale, i.width*scale, i.height*scale)
+        self.auto_scale_default_shape(button)
         self.move_entry()
         # self.visual_grid.rescale_grid(self.Xcenter, self.Ycenter, scale)
         self.visual_grid.create_grid(self.scale, self.Xcenter, self.Ycenter, self.scale_factor)
     def resize_canvas(self,e):
         self.coords(self.minus, e.width-45, e.height-50)
         self.coords(self.plus, e.width-80, e.height-50)
+        self.coords(self.expand, e.width-45, e.height-85)
         self.coords(self.pos_lbl, e.width-50, 30)
         self.canvas_width = e.width
         self.canvas_height = e.height
@@ -788,32 +813,37 @@ class shapeBuilder(tk.Canvas):
         # Set icon for active_shape:
         if self.active_shape == "Rectangle":
             self.itemconfigure("alap_rectangle",state="normal")
-            self.itemconfigure("alap_circle",state="hidden")
+            self.itemconfigure("alap_semicircle",state="hidden")
+            self.itemconfigure("alap_quarter_circle",state="hidden")
             self.itemconfigure("alap_triangle",state="hidden")
 
         elif self.active_shape == "Semicircle":
             self.itemconfigure("alap_rectangle",state="hidden")
+            self.itemconfigure("alap_triangle",state="hidden")
+            self.itemconfigure("alap_quarter_circle",state="hidden")
             self.start = 0
             self.angle = 180
-            a,b,c,d = self.coords(self.alap_circle)
-            self.delete(self.alap_circle)
-            self.alap_circle = self.create_arc(a,b,c,d,extent=180, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
+            a,b,c,d = self.coords(self.alap_semicircle)
+            self.delete(self.alap_semicircle)
+            self.alap_semicircle = self.create_arc(a,b,c,d,extent=180, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_semicircle"))
 
         elif self.active_shape == "quarter_circle":
             self.start = 0
             self.itemconfigure("alap_rectangle",state="hidden")
             self.itemconfigure("alap_triangle",state="hidden")
-
+            self.itemconfigure("alap_semicircle",state="hidden")
             self.angle = 90
-            a,b,c,d = self.coords(self.alap_circle)
-            self.delete(self.alap_circle)
-            self.alap_circle = self.create_arc(a,b,c,d,extent=90, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
+            a,b,c,d = self.coords(self.alap_quarter_circle)
+            self.delete(self.alap_quarter_circle)
+            self.alap_quarter_circle = self.create_arc(a,b,c,d,extent=90, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_quarter_circle"))
 
         elif self.active_shape == "rightTriangle":
             self.itemconfigure("alap_rectangle", state="hidden")
-            self.itemconfigure("alap_circle",state="hidden")
+            self.itemconfigure("alap_semicircle",state="hidden")
+            self.itemconfigure("alap_quarter_circle",state="hidden")
             self.itemconfigure("alap_triangle",state="normal")
         else: raise ValueError
+        self.auto_scale_default_shape()
         self.move_entry()
     def rotate(self, direction = 90, object = None):
         if len(self.selected)==0:
@@ -821,13 +851,13 @@ class shapeBuilder(tk.Canvas):
                 self.width1, self.height1 = self.height1, self.width1
                 self.alap_negyzet.refresh(self.alap_negyzet.x1, self.alap_negyzet.y1, self.alap_negyzet.x1 + self.width1, self.alap_negyzet.y1 + self.height1)
             elif self.active_shape == "Semicircle":
-                self.delete(self.alap_circle)
+                self.delete(self.alap_semicircle)
                 self.start = (self.start+direction)%360
-                self.alap_circle = self.create_arc(30,10,30+2*self.r1,10+2*self.r1,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
+                self.alap_semicircle = self.create_arc(30,10,30+2*self.r1,10+2*self.r1,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_semicircle"))
             elif self.active_shape == "quarter_circle":
-                self.delete(self.alap_circle)
+                self.delete(self.alap_quarter_circle)
                 self.start = (self.start+direction)%360
-                self.alap_circle = self.create_arc(30,10,30+2*self.r2,10+2*self.r2,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_circle"))
+                self.alap_quarter_circle = self.create_arc(30,10,30+2*self.r2,10+2*self.r2,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_quarter_circle"))
             elif self.active_shape == "rightTriangle":
                 #self.delete(self.alap_triangle.canvas_repr)
                 self.orientation = (self.start+direction)%360
@@ -926,11 +956,9 @@ class shapeBuilder(tk.Canvas):
                 self.height_entry.delete(0, tk.END)
                 self.height_entry.insert(tk.END, str(round(self.r2/self.scale,4)))
     def focus_height(self):
-        print("focus_height")
         self.height_entry.focus_set()
         self.height_entry.select_range(0, 'end')
     def focus_width(self):
-        print("focus_width")
         self.width_entry.focus_set()
         self.width_entry.select_range(0, 'end')
     def check_for_negatives(self):
@@ -962,42 +990,163 @@ class shapeBuilder(tk.Canvas):
     def auto_scale(self):
         x_coords = [0]
         y_coords = [0]
+        width = [0]
+        height = [0]
         for i in self.shapes:
-            x_val = abs(i.center[0]-self.Xcenter)+i.width
-            x_coords.append(x_val)
-            y_val = abs(self.Ycenter-i.center[1])+i.height
-            y_coords.append(y_val)
+            if i.type == "Rectangle" or i.type == "rightTriangle":
+                x_val = abs(i.center[0]-self.Xcenter)+i.width
+                x_coords.append(x_val)
+                y_val = abs(self.Ycenter-i.center[1])+i.height
+                y_coords.append(y_val)
+                w_val = i.width
+                width.append(w_val)
+                h_val = i.height
+                height.append(h_val)
+            else:
+                x_val = abs(i.center[0]-self.Xcenter)+i.r
+                x_coords.append(x_val)
+                y_val = abs(self.Ycenter-i.center[1])+i.r
+                y_coords.append(y_val)
+                h_val = i.r
+                height.append(h_val)
         max_x = max(x_coords)
         max_y = max(y_coords)
+        max_width = max(x_coords)
+        max_height = max(y_coords)
+        if max_width < self.canvas_width/80 or max_height < self.canvas_height/60:
+            difference = max(max_width/self.canvas_width*30, max_height/self.canvas_height*20)
+            scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+            self.rescale(self.scale_factor**(-scale_factor))
+            print("zoom_in", scale_factor)
         if max_x > self.canvas_width/2 or max_y > self.canvas_height/2:
             difference = max(max_x/self.canvas_width*2, max_y/self.canvas_height*2)
             scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
             self.rescale(self.scale_factor**(-scale_factor))
             # TODO: zoom in in case of too small object
-    def auto_scale_default(self, w=0, h=0):
-        if self.active_shape == "Rectangle" or self.active_shape == "rightTriangle":
-            if w*self.scale < self.canvas_width/40 or h*self.scale < self.canvas_height/40:
-                difference = max(w*self.scale/self.canvas_width*40, h*self.scale/self.canvas_height*40)
+        self.auto_scale_default_shape()
+    def auto_scale_default(self):
+        if self.active_shape == "Rectangle":
+            if self.width1 < self.canvas_width/80 or self.height1 < self.canvas_height/60:
+                difference = min(self.width1/self.canvas_width*26, self.height1/self.canvas_height*20)
                 scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
-                self.rescale(self.scale_factor**(-scale_factor))
-                print("zoom_in")
-            if w*self.scale > self.canvas_width/4 or h*self.scale > self.canvas_height/4:
-                difference = max(w*self.scale/self.canvas_width*4, h*self.scale/self.canvas_height*4)
+                self.rescale(self.scale_factor**(-scale_factor), True)
+            if self.width1 > self.canvas_width/4 or self.height1 > self.canvas_height/4:
+                difference = max(self.width1/self.canvas_width*4, self.height1/self.canvas_height*4)
                 scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
-                self.rescale(self.scale_factor**(-scale_factor))
-                print("zoom_out")
-        else:
-            if h*self.scale < self.canvas_height/40:
-                difference = h*self.scale/self.canvas_height*40
+                self.rescale(self.scale_factor**(-scale_factor), True)
+        elif self.active_shape == "rightTriangle":
+            if self.width2 < self.canvas_width/80 or self.height2 < self.canvas_height/60:
+                difference = min(self.width2/self.canvas_width*26, self.height2/self.canvas_height*20)
                 scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
-                self.rescale(self.scale_factor**(-scale_factor))
-                print("zoom_in")
-            if h*self.scale > self.canvas_height/4:
-                difference = h*self.scale/self.canvas_height*4
+                self.rescale(self.scale_factor**(-scale_factor), True)
+            if self.width2 > self.canvas_width/4 or self.height2 > self.canvas_height/4:
+                difference = max(self.width2/self.canvas_width*4, self.height2/self.canvas_height*4)
                 scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
-                self.rescale(self.scale_factor**(-scale_factor))
-                print("zoom_out")
-        
+                self.rescale(self.scale_factor**(-scale_factor), True)
+        elif self.active_shape == "Semicircle":
+            if self.r1 < self.canvas_width/80 or self.r1 < self.canvas_height/60:
+                difference = min(self.r1/self.canvas_width*26, self.r1/self.canvas_height*20)
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                self.rescale(self.scale_factor**(-scale_factor), True)
+            if self.r1 > self.canvas_width/4 or self.r1 > self.canvas_height/4:
+                difference = max(self.r1/self.canvas_width*4, self.r1/self.canvas_height*4)
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                self.rescale(self.scale_factor**(-scale_factor), True)
+        elif self.active_shape == "quarter_circle":
+            if self.r2 < self.canvas_width/80 or self.r2 < self.canvas_height/60:
+                difference = min(self.r2/self.canvas_width*26, self.r2/self.canvas_height*20)
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                self.rescale(self.scale_factor**(-scale_factor), True)
+            if self.r2 > self.canvas_width/4 or self.r2 > self.canvas_height/4:
+                difference = max(self.r2/self.canvas_width*4, self.r2/self.canvas_height*4)
+                scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                self.rescale(self.scale_factor**(-scale_factor), True)
+    def auto_scale_default_shape(self, button = False):
+        if button == False:
+            if self.active_shape == "Rectangle":
+                if self.width1 < self.canvas_width/80 or self.height1 < self.canvas_height/60:
+                    difference = min(self.width1/self.canvas_width*26, self.height1/self.canvas_height*20)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_negyzet.canvas_repr, 30,10,30+self.width1,10+self.height1)
+                if self.width1 > self.canvas_width/4 or self.height1 > self.canvas_height/4:
+                    difference = max(self.width1/self.canvas_width*4, self.height1/self.canvas_height*4)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_negyzet.canvas_repr, 30,10,30+self.width1,10+self.height1)
+            elif self.active_shape == "rightTriangle":
+                if self.width2 < self.canvas_width/80 or self.height2 < self.canvas_height/60:
+                    difference = min(self.width2/self.canvas_width*26, self.height2/self.canvas_height*20)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+                if self.width2 > self.canvas_width/4 or self.height2 > self.canvas_height/4:
+                    difference = max(self.width2/self.canvas_width*4, self.height2/self.canvas_height*4)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+            elif self.active_shape == "Semicircle":
+                if self.r1 < self.canvas_width/80 or self.r1 < self.canvas_height/60:
+                    difference = min(self.r1/self.canvas_width*26, self.r1/self.canvas_height*20)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_semicircle, 40,10,40+self.r1*2,10+self.r1*2)
+                if self.r1 > self.canvas_width/4 or self.r1 > self.canvas_height/4:
+                    difference = max(self.r1/self.canvas_width*4, self.r1/self.canvas_height*4)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_semicircle, 40,10,40+self.r1*2,10+self.r1*2)
+            elif self.active_shape == "quarter_circle":
+                if self.r2 < self.canvas_width/80 or self.r2 < self.canvas_height/60:
+                    difference = min(self.r2/self.canvas_width*26, self.r2/self.canvas_height*20)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_quarter_circle, 40,10,40+self.r2*2,10+self.r2*2)
+                if self.r2 > self.canvas_width/4 or self.r2 > self.canvas_height/4:
+                    difference = max(self.r2/self.canvas_width*4, self.r2/self.canvas_height*4)
+                    scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
+                    self.width1 = self.width1*self.scale_factor**(-scale_factor)
+                    self.height1 = self.height1*self.scale_factor**(-scale_factor)
+                    self.width2 = self.width2*self.scale_factor**(-scale_factor)
+                    self.height2 = self.height2*self.scale_factor**(-scale_factor)
+                    self.r1 = self.r1*self.scale_factor**(-scale_factor)
+                    self.r2 = self.r2*self.scale_factor**(-scale_factor)
+                    self.coords(self.alap_quarter_circle, 40,10,40+self.r2*2,10+self.r2*2)
 
 class sb_side_menu(tk.Frame):
     def __init__(self,root):
