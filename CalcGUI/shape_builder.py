@@ -274,11 +274,13 @@ class shapeBuilder(tk.Canvas):
     def delete_shape(self, e=None):
         print("deleteing rectangle")
         for i in self.selected:
+            if i.negative: self.negatives.remove(i)
             self.delete(i.canvas_repr)
             self.shapes.remove(i)
             self.selected = []
         for k in self.shapes:
             k.is_overlapping()
+        self.check_for_negatives()
         self.move_entry()
     def resize_rectangle(self,e=None): #! Something is wrong...
         for i in self.selected:
@@ -294,6 +296,7 @@ class shapeBuilder(tk.Canvas):
             i = None
         for k in self.rectangles:
             k.is_overlapping()
+        self.check_for_negatives()
     def rectangle_info(self,e=None): #! Formating
         self.clear_results()
         if len(self.selected)>1:
@@ -669,11 +672,13 @@ class shapeBuilder(tk.Canvas):
         self.rectangles = []
         self.arcs = []
         self.rightTriangles = []
+        self.negatives = []
         self.delete("shape") 
         self.delete("principal_axis")
         self.delete("s_axis")
         del self.shapes
         self.shapes = Shapes(self,self.rectangles,self.arcs,self.rightTriangles)
+        self.negativ_in_wrong_position = False
     def plot_principal_axis(self, Ix, Iy, Ixy, Sx, Sy, a_length):
         I1 = (Ix+Iy)/2 + 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
         I2 = (Ix+Iy)/2 - 0.5*sqrt((Ix-Iy)**2 + 4* Ixy**2)
@@ -781,6 +786,7 @@ class shapeBuilder(tk.Canvas):
                 self.shapes.append(place_quarter_circle)
         else:
             None
+        self.check_for_negatives()
         self.move_entry()
     def add_to_clp(self,e=None):
         self.clipboard = self.selected #! deepcopy???
@@ -958,10 +964,11 @@ class shapeBuilder(tk.Canvas):
         self.width_entry.focus_set()
         self.width_entry.select_range(0, 'end')
     def check_for_negatives(self):
+        self.negativ_in_wrong_position = False
         if len(self.negatives)== 0: return 0
         positives = [i for i in self.shapes if i.negative == False]
         geom = []
-        self.negativ_in_wrong_position = False
+        #self.negativ_in_wrong_position = False
         for i in positives:
             if type(i) == Rectangle:
                 geom.append(Polygon(i.get_charachteristic_points()))
