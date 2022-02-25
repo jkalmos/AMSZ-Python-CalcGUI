@@ -868,11 +868,15 @@ class shapeBuilder(tk.Canvas):
         else:
             tmp = []
             for i in self.selected:
-                if i.negative: continue
+                #if i.negative: continue
                 if i.type == "Rectangle":
                     i.width, i.height = i.height, i.width
                     i.refresh(i.x1, i.y1, i.x1 + i.width, i.y1 + i.height)
                     tmp.append(i)
+                    if i.negative:
+                        self.negatives.remove(i)
+                        self.negatives.append(i)
+                        self.check_for_negatives()
                 elif i.type == "Semicircle" or i.type == "quarter_circle":
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
@@ -882,6 +886,10 @@ class shapeBuilder(tk.Canvas):
                     self.itemconfig(rotate_semicircle.canvas_repr,fill="pink")
                     self.shapes.append(rotate_semicircle)
                     tmp.append(rotate_semicircle)
+                    if i.negative:
+                        self.negatives.remove(i)
+                        self.negatives.append(rotate_semicircle)
+                        self.check_for_negatives()
                     #self.selected.append(rotate_semicircle)
                 elif i.type == "rightTriangle":
                     print(len(self.shapes.rightTriangles))
@@ -893,8 +901,12 @@ class shapeBuilder(tk.Canvas):
                     self.itemconfig(rotate_rt.canvas_repr,fill="pink")
                     self.shapes.append(rotate_rt)
                     tmp.append(rotate_rt)
+                    if i.negative:
+                        self.negatives.remove(i)
+                        self.negatives.append(rotate_rt)
+                        self.check_for_negatives()
                     #self.selected.append(rotate_rt)
-                    print(len(self.shapes.rightTriangles))
+                    #print(len(self.shapes.rightTriangles))
                 else:
                     raise TypeError
             self.selected = tmp
