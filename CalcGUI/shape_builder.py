@@ -1,3 +1,4 @@
+from copy import deepcopy
 import tkinter as tk
 from math import cos, radians, sin, sqrt, atan, asin, pi, degrees
 from tkinter.constants import ANCHOR, CENTER, FALSE, NO, TRUE
@@ -865,17 +866,22 @@ class shapeBuilder(tk.Canvas):
                 self.alap_triangle.canvas_repr = self.create_polygon(self.alap_triangle.points[0][0],self.alap_triangle.points[0][1],self.alap_triangle.points[1][0],self.alap_triangle.points[1][1],self.alap_triangle.points[2][0],self.alap_triangle.points[2][1], fill=self.root.colors["sb_draw_2nd"],outline="#000000", tags=("alap_triangle"))
             else: raise TypeError
         else:
+            tmp = []
             for i in self.selected:
+                if i.negative: continue
                 if i.type == "Rectangle":
                     i.width, i.height = i.height, i.width
                     i.refresh(i.x1, i.y1, i.x1 + i.width, i.y1 + i.height)
+                    tmp.append(i)
                 elif i.type == "Semicircle" or i.type == "quarter_circle":
                     self.delete(i.canvas_repr)
                     self.shapes.remove(i)
                     #self.selected.remove(i)
                     i.start = i.start+direction 
                     rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start, Negative=i.negative)
+                    self.itemconfig(rotate_semicircle.canvas_repr,fill="pink")
                     self.shapes.append(rotate_semicircle)
+                    tmp.append(rotate_semicircle)
                     #self.selected.append(rotate_semicircle)
                 elif i.type == "rightTriangle":
                     print(len(self.shapes.rightTriangles))
@@ -884,12 +890,15 @@ class shapeBuilder(tk.Canvas):
                     #self.selected.remove(i)
                     i.orientation = i.orientation-direction#! itt ez a - jel ez nem biztos, de így működik jól...
                     rotate_rt = RightTriangle(self,self.root,i.center[0],i.center[1],i.width,i.height, orientation= i.orientation, Negative=i.negative)
+                    self.itemconfig(rotate_rt.canvas_repr,fill="pink")
                     self.shapes.append(rotate_rt)
+                    tmp.append(rotate_rt)
                     #self.selected.append(rotate_rt)
                     print(len(self.shapes.rightTriangles))
                 else:
                     raise TypeError
-        self.rotation_happend = True
+            self.selected = tmp
+            self.rotation_happend = True
     def move_entry(self):
         if len(self.selected) == 1:
             object = self.selected[0]
