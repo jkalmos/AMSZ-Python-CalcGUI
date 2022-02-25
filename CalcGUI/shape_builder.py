@@ -477,6 +477,7 @@ class shapeBuilder(tk.Canvas):
         Ixy = 0
         A = 0
         out_str = ""
+        self.clear_results()
         if not self.root.calc_for_orig_axis:
             Sx=0
             Sy=0
@@ -556,19 +557,20 @@ class shapeBuilder(tk.Canvas):
             Iy += (1-2* (i.negative)) * (((Ixc+Iyc)/2 + (Ixc-Iyc)/2 * cos(2*radians(i.orientation))-Ixyc*sin(2*radians(i.orientation)) + i.area*(Sx-i.s_center[0])**2))
             Ixy += (1-2* (i.negative)) * ((Ixc-Iyc)/2 * sin(2*radians(i.orientation)) + Ixyc*cos(2*radians(i.orientation)) + i.area*(Sx-i.s_center[0])*(Sy-i.s_center[1]))
             print("Warning: Calculate for riht Triangles is not checked")
-        out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
-        i1, i2, alpha = self.plot_principal_axis(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
-        out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
+        #out_str += f"A: {A/self.scale**2} mm\nIx: {Ix/self.scale**4} mm\nIy: {Iy/self.scale**4} mm\nIxy: {Ixy/self.scale**4}\n"
+        
+        #out_str += f"I_1 = {i1}\nI_2 = {i2}\nalpa = {alpha}"
         self.result4.config(text="Keresztmetszeti jellemzők:")
         self.result5.config(text="A = " + str(round(A/self.scale**2, 4)) + " " + self.root.unit + "²")
         self.result6.config(text="Iₓ = " + str(round(Ix/self.scale**4, 4)) + " " + self.root.unit + "\u2074")
         self.result7.config(text="Iᵧ = " + str(round(Iy/self.scale**4,4)) + " " + self.root.unit + "\u2074")
         self.result8.config(text="Iₓᵧ = " + str(round(Ixy/self.scale**4,4)) + " " + self.root.unit + "\u2074")
-
-        self.result9.config(text="Főmásodrendű nyomatékok:")
-        self.result10.config(text="I₁ = " + str(round(i1,4)) + " " + self.root.unit + "\u2074")
-        self.result11.config(text="I₂ = " + str(round(i2,4)) + " " + self.root.unit + "\u2074")
-        self.result12.config(text="\u03B1 = " + str(round(alpha,4)) + " " + self.root.angle_unit)
+        if not self.root.calc_for_orig_axis:
+            i1, i2, alpha = self.plot_principal_axis(Ix/self.scale**4,Iy/self.scale**4,Ixy/self.scale**4, Sx,Sy,a_length)
+            self.result9.config(text="Főmásodrendű nyomatékok:")
+            self.result10.config(text="I₁ = " + str(round(i1,4)) + " " + self.root.unit + "\u2074")
+            self.result11.config(text="I₂ = " + str(round(i2,4)) + " " + self.root.unit + "\u2074")
+            self.result12.config(text="\u03B1 = " + str(round(alpha,4)) + " " + self.root.angle_unit)
         
     def overwrite(self):
         ok = True
