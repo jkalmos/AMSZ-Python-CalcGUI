@@ -708,6 +708,7 @@ class shapeBuilder(tk.Canvas):
                 if not ok: return -1
                 self.r1 = h
                 self.coords(self.alap_semicircle, 30,10,30+self.r1*2,10+self.r1*2)
+                print(self.r1)
             elif self.active_shape == "quarter_circle":
                 if not ok: return -1
                 self.r2 = h
@@ -742,8 +743,8 @@ class shapeBuilder(tk.Canvas):
     def rescale(self,scale, button = False): #!? Could be better
         self.scale *= scale
         self.alap_negyzet.refresh(30,10,30+self.width1*scale,10+self.height1*scale)
-        self.coords(self.alap_semicircle, 30,10,30+self.r1*scale,10+self.r1*scale)
-        self.coords(self.alap_quarter_circle, 30,10,30+self.r2*scale,10+self.r2*scale) 
+        self.coords(self.alap_semicircle, 30,10,30+2*self.r1*scale,10+2*self.r1*scale)
+        self.coords(self.alap_quarter_circle, 30,10,30+2*self.r2*scale,10+2*self.r2*scale) 
         l,r,t,b = self.alap_triangle.get_bounding_box()
         self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.width2*scale, self.height2*scale)
         l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
@@ -754,6 +755,7 @@ class shapeBuilder(tk.Canvas):
         self.height2 *= scale
         self.r1 *= scale
         self.r2 *= scale
+        print(self.r1)
         for i in self.rectangles: #?Esetleg álltalánosítani bármilyen alakzatra
             i.refresh(self.Xcenter-(self.Xcenter-i.x1)*scale, self.Ycenter-(self.Ycenter-i.y1)*scale, self.Xcenter-(self.Xcenter - i.x2)*scale, self.Ycenter-(self.Ycenter-i.y2)*scale)
         for i in self.arcs:
@@ -869,24 +871,27 @@ class shapeBuilder(tk.Canvas):
             self.itemconfigure("alap_triangle",state="hidden")
 
         elif self.active_shape == "Semicircle":
+            self.itemconfigure("alap_semicircle",state="normal")
             self.itemconfigure("alap_rectangle",state="hidden")
             self.itemconfigure("alap_triangle",state="hidden")
             self.itemconfigure("alap_quarter_circle",state="hidden")
-            self.start = 0
-            self.angle = 180
-            a,b,c,d = self.coords(self.alap_semicircle)
+            # self.start = 0
+            # self.angle = 180
+            # a,b,c,d = self.coords(self.alap_semicircle)
             self.delete(self.alap_semicircle)
-            self.alap_semicircle = self.create_arc(a,b,c,d,extent=180, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_semicircle"))
+            self.alap_semicircle = self.create_arc(30,10,30+2*self.r1,10+2*self.r1,extent=180, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_semicircle"))
+            print(self.r1)
 
         elif self.active_shape == "quarter_circle":
-            self.start = 0
+            # self.start = 0
+            self.itemconfigure("alap_quarter_circle",state="normal")
             self.itemconfigure("alap_rectangle",state="hidden")
             self.itemconfigure("alap_triangle",state="hidden")
             self.itemconfigure("alap_semicircle",state="hidden")
-            self.angle = 90
-            a,b,c,d = self.coords(self.alap_quarter_circle)
+            # self.angle = 90
+            # a,b,c,d = self.coords(self.alap_quarter_circle)
             self.delete(self.alap_quarter_circle)
-            self.alap_quarter_circle = self.create_arc(a,b,c,d,extent=90, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_quarter_circle"))
+            self.alap_quarter_circle = self.create_arc(30,10,30+2*self.r2,10+2*self.r2,extent=90, start = 0, fill=self.root.colors["sb_draw_2nd"], tags=("alap_quarter_circle"))
 
         elif self.active_shape == "rightTriangle":
             self.itemconfigure("alap_rectangle", state="hidden")
