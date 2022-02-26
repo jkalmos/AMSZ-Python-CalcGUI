@@ -511,6 +511,19 @@ class shapeBuilder(tk.Canvas):
             Sx = self.Xcenter
             Sy = self.Ycenter
             a_length = min(min(Sx,Sy),self.canvas_height-Sy,self.canvas_width-Sx)
+            #calc for s_center
+            A_t = 0
+            Sx_t = 0
+            Sy_t = 0
+            for i in self.shapes:
+                A_t += i.area*(1-2* (i.negative))
+                Sx_t += (i.s_center[0]-self.Xcenter)*i.area*(1-2* (i.negative))
+                Sy_t += (self.Ycenter-i.s_center[1])*i.area*(1-2* (i.negative))
+            Sx_t = Sx_t/A_t
+            Sy_t = Sy_t/A_t
+            self.result1.config(text=f"Alakzat súlypontja\n(nem erre számol!):")
+            self.result2.config(text=f"Súlypont x: {Sx_t/self.scale}")
+            self.result3.config(text=f"Súlypont y: {Sy_t/self.scale}")
         A = 0
         for i in self.shapes.rectangles:
             pos = self.coords(i.canvas_repr)
