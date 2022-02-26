@@ -659,12 +659,11 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "Semicircle":
                 if not ok: return -1
                 self.r1 = h
-
-                self.coords(self.alap_semicircle, 40,10,40+self.r1*2,10+self.r1*2)
+                self.coords(self.alap_semicircle, 30,10,30+self.r1*2,10+self.r1*2)
             elif self.active_shape == "quarter_circle":
                 if not ok: return -1
                 self.r2 = h
-                self.coords(self.alap_quarter_circle, 40,10,40+self.r2*2,10+self.r2*2)
+                self.coords(self.alap_quarter_circle, 30,10,30+self.r2*2,10+self.r2*2)
             self.auto_scale_default()
         self.move_entry()
     def clear_all(self): #? Could be better
@@ -860,7 +859,7 @@ class shapeBuilder(tk.Canvas):
                 self.alap_quarter_circle = self.create_arc(30,10,30+2*self.r2,10+2*self.r2,extent=self.angle, start = self.start , fill=self.root.colors["sb_draw_2nd"], tags=("alap_quarter_circle"))
             elif self.active_shape == "rightTriangle":
                 #self.delete(self.alap_triangle.canvas_repr)
-                self.orientation = (self.start+direction)%360
+                self.start = (self.start+direction)%360
                 #self.alap_triangle.canvas_repr = self.create_polygon())
                 self.alap_triangle.rotate(direction)
                 self.delete(self.alap_triangle.canvas_repr)
@@ -880,6 +879,7 @@ class shapeBuilder(tk.Canvas):
                         i.start = 0
                     else:
                         i.start = i.start+direction
+                    print(i.start, i.angle)
                     rotate_semicircle = Arc(self,self.root,i.center[0],i.center[1],i.r,angle=i.angle, start = i.start)
                     self.shapes.append(rotate_semicircle)
                 elif i.type == "rightTriangle":
@@ -905,8 +905,32 @@ class shapeBuilder(tk.Canvas):
             elif object.type == "rightTriangle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.width_entry.place(x = object.center[0] + object.width/2 - 6, y = object.center[1]+4)
-                self.height_entry.place(x = object.center[0] + 6 + object.width , y = object.center[1]-object.height/2-4)
+                if object.orientation <= 0:
+                    if object.orientation%360 == 0:
+                        self.width_entry.place(x = object.center[0] + object.width/2 - 6, y = object.center[1]+4)
+                        self.height_entry.place(x = object.center[0] + 6 + object.width , y = object.center[1]-object.height/2-4)
+                    elif object.orientation%270 == 0:
+                        self.width_entry.place(x = object.center[0] + object.height + 6 , y = object.center[1]+object.width/2-4)
+                        self.height_entry.place(x = object.center[0] + object.height/2 - 6, y = object.center[1]-18)
+                    elif object.orientation%180 == 0:
+                        self.width_entry.place(x = object.center[0] - object.width/2 - 6, y = object.center[1]-18)
+                        self.height_entry.place(x = object.center[0] +6 , y = object.center[1]+object.height/2-4)
+                    elif object.orientation%90 == 0:
+                        self.width_entry.place(x = object.center[0] + 2 , y = object.center[1]-object.width/2-4)
+                        self.height_entry.place(x = object.center[0] - object.height/2 - 6, y = object.center[1]+4)
+                else:
+                    if object.orientation%360 == 0:
+                        self.width_entry.place(x = object.center[0] + object.width/2 - 6, y = object.center[1]+4)
+                        self.height_entry.place(x = object.center[0] + 6 + object.width , y = object.center[1]-object.height/2-4)
+                    elif object.orientation%270 == 0:
+                        self.width_entry.place(x = object.center[0] + 2 , y = object.center[1]-object.width/2-4)
+                        self.height_entry.place(x = object.center[0] - object.height/2 - 6, y = object.center[1]+4)
+                    elif object.orientation%180 == 0:
+                        self.width_entry.place(x = object.center[0] - object.width/2 - 6, y = object.center[1]-18)
+                        self.height_entry.place(x = object.center[0] +6 , y = object.center[1]+object.height/2-4)
+                    elif object.orientation%90 == 0:
+                        self.width_entry.place(x = object.center[0] + object.height + 6 , y = object.center[1]+object.width/2-4)
+                        self.height_entry.place(x = object.center[0] + object.height/2 - 6, y = object.center[1]-18)
                 self.width_entry.delete(0, tk.END)
                 self.height_entry.delete(0, tk.END)
                 self.width_entry.insert(tk.END, str(round(object.width/self.scale,4)))
@@ -914,13 +938,27 @@ class shapeBuilder(tk.Canvas):
             elif object.type == "Semicircle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
+                if object.start == 0:
+                    self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
+                elif object.start == 90:
+                    self.height_entry.place(x = object.center[0] + 2 , y = object.center[1] -12)
+                elif object.start == 180:
+                    self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
+                elif object.start == 270:
+                    self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
                 self.height_entry.delete(0, tk.END)
                 self.height_entry.insert(tk.END, str(round(object.r/self.scale,4)))
             elif object.type == "quarter_circle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
+                if object.start == 0:
+                    self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
+                elif object.start == 90:
+                    self.height_entry.place(x = object.center[0] + 2 , y = object.center[1] -12)
+                elif object.start == 180:
+                    self.height_entry.place(x = object.center[0] + 2 , y = object.center[1] -12)
+                elif object.start == 270:
+                    self.height_entry.place(x = object.center[0] + 2 + object.r , y = object.center[1] -12)
                 self.height_entry.delete(0, tk.END)
                 self.height_entry.insert(tk.END, str(round(object.r/self.scale,4)))
         else:
@@ -937,8 +975,18 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "rightTriangle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.width_entry.place(x = 24 + self.width2/2, y = 12 + self.height2)
-                self.height_entry.place(x = 32 + self.width2, y = 2 + self.height2/2)
+                if self.start == 0:
+                    self.width_entry.place(x = 32 + self.width2/2, y = 12 + self.height2)
+                    self.height_entry.place(x = 42 + self.width2, y = 2 + self.height2/2)
+                elif self.start == 90:
+                    self.width_entry.place(x = 42 + self.height2, y = 2 + self.width2/2)
+                    self.height_entry.place(x = 32 + self.height2/2, y = 12 + self.width2)
+                elif self.start == 180:
+                    self.width_entry.place(x = 32 + self.width2/2, y = 12 + self.height2)
+                    self.height_entry.place(x = 42 + self.width2, y = 2 + self.height2/2)
+                elif self.start == 270:
+                    self.width_entry.place(x = 42 + self.height2, y = 2 + self.width2/2)
+                    self.height_entry.place(x = 32 + self.height2/2, y = 12 + self.width2) 
                 self.width_entry.delete(0, tk.END)
                 self.height_entry.delete(0, tk.END)
                 self.width_entry.insert(tk.END, str(round(self.width2/self.scale,4)))
@@ -946,13 +994,27 @@ class shapeBuilder(tk.Canvas):
             elif self.active_shape == "Semicircle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.height_entry.place(x = 50 + self.r1, y = 2 + self.r1/4)
+                if self.start == 0:
+                    self.height_entry.place(x = 32 + self.r1*2, y = 2 + self.r1)
+                elif self.start == 90:
+                    self.height_entry.place(x = 32 + self.r1, y = 2 + self.r1)
+                elif self.start == 180:
+                    self.height_entry.place(x = 32 + self.r1*2, y = 2 + self.r1)
+                elif self.start == 270:
+                    self.height_entry.place(x = 32 + self.r1*2, y = 2 + self.r1)
                 self.height_entry.delete(0, tk.END)
                 self.height_entry.insert(tk.END, str(round(self.r1/self.scale,4)))
             elif self.active_shape == "quarter_circle":
                 self.width_entry.place_forget()
                 self.height_entry.place_forget()
-                self.height_entry.place(x = 50 + self.r2, y = 2 + self.r2/4)
+                if self.start == 0:
+                    self.height_entry.place(x = 32 + self.r2*2, y = 2 + self.r2)
+                elif self.start == 90:
+                    self.height_entry.place(x = 32 + self.r2, y = 2 + self.r2)
+                elif self.start == 180:
+                    self.height_entry.place(x = 32 + self.r2, y = 2 + self.r2)
+                elif self.start == 270:
+                    self.height_entry.place(x = 32 + self.r2*2, y = 2 + self.r2)
                 self.height_entry.delete(0, tk.END)
                 self.height_entry.insert(tk.END, str(round(self.r2/self.scale,4)))
     def focus_height(self):
@@ -1014,7 +1076,7 @@ class shapeBuilder(tk.Canvas):
         max_width = max(x_coords)
         max_height = max(y_coords)
         if max_width < self.canvas_width/80 or max_height < self.canvas_height/60:
-            difference = max(max_width/self.canvas_width*30, max_height/self.canvas_height*20)
+            difference = max(max_width/self.canvas_width*26, max_height/self.canvas_height*20)
             scale_factor = round(np.log(difference)/np.log(self.scale_factor))-1
             self.rescale(self.scale_factor**(-scale_factor))
             print("zoom_in", scale_factor)
@@ -1094,7 +1156,10 @@ class shapeBuilder(tk.Canvas):
                     self.height2 = self.height2*self.scale_factor**(-scale_factor)
                     self.r1 = self.r1*self.scale_factor**(-scale_factor)
                     self.r2 = self.r2*self.scale_factor**(-scale_factor)
-                    self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+                    l,r,t,b = self.alap_triangle.get_bounding_box()
+                    self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.width2, self.height2)
+                    l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
+                    self.alap_triangle.translate(l-l2,t-t2)
                 if self.width2 > self.canvas_width/4 or self.height2 > self.canvas_height/4:
                     difference = max(self.width2/self.canvas_width*4, self.height2/self.canvas_height*4)
                     scale_factor = round(np.log(difference)/np.log(self.scale_factor))+1
@@ -1104,7 +1169,10 @@ class shapeBuilder(tk.Canvas):
                     self.height2 = self.height2*self.scale_factor**(-scale_factor)
                     self.r1 = self.r1*self.scale_factor**(-scale_factor)
                     self.r2 = self.r2*self.scale_factor**(-scale_factor)
-                    self.coords(self.alap_triangle.canvas_repr, 30,10,30+self.width2,10+self.height2, 30, 10+self.height2)
+                    l,r,t,b = self.alap_triangle.get_bounding_box()
+                    self.alap_triangle.refresh(self.alap_triangle.center[0],self.alap_triangle.center[1], self.width2, self.height2)
+                    l2,r2,t2,b2 = self.alap_triangle.get_bounding_box()
+                    self.alap_triangle.translate(l-l2,t-t2)
             elif self.active_shape == "Semicircle":
                 if self.r1 < self.canvas_width/80 or self.r1 < self.canvas_height/60:
                     difference = min(self.r1/self.canvas_width*26, self.r1/self.canvas_height*20)

@@ -145,7 +145,7 @@ class SideMenu(tk.Frame):
             self.canvas, text = "Falvastagság hozzáadása",
             variable = self.root.thickness_on, onvalue=True, offvalue=False, font=input_font, 
             bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
-            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
+            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors, root.angle_unit),
             entry_enable(self.the1, self.root.thickness_on)])
 
         # Checkbox: transformed coordinate system
@@ -153,7 +153,7 @@ class SideMenu(tk.Frame):
             self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
             bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
-            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
+            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors, root.angle_unit),
             entry_enable(self.te1, self.root.transformed_coordinate_on),
             entry_enable(self.te2, self.root.transformed_coordinate_on),
             entry_enable(self.te3, self.root.transformed_coordinate_on)])

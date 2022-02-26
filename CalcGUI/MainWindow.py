@@ -129,9 +129,9 @@ class main_window(tk.Tk):
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
         # self.sm.pack(side=tk.LEFT, fill=tk.Y)
-        # calculate on pressing enter
+        # angle_unit on pressing enter
         self.bind('<Return>', self.calculate)
-        plot(self, None, False, False, False, False, self.colors)
+        plot(self, None, False, False, False, False, self.colors, self.angle_unit)
         
     ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     
@@ -280,7 +280,7 @@ class main_window(tk.Tk):
             self.plotted = False
             
             self.sm.shape = None
-            plot(self, None, False, False, False, False, self.colors)
+            plot(self, None, False, False, False, False, self.colors, self.angle_unit)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
@@ -316,7 +316,7 @@ class main_window(tk.Tk):
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit)
     
     def get_entry(self, number_of_entries):
         vissza = []
@@ -681,12 +681,22 @@ class main_window(tk.Tk):
                 self.sm.result11.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
             else:
                 print("Hiba, az alakzat nem talalhato")
-            if self.sm.shape == "Circle":
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
-                plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+            if self.transformed_coordinate_on.get() == False:
+                if self.sm.shape == "Circle":
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit)
+                    plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+                else:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit, vissza[0], vissza[1], vissza[0])
+                    plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape, vissza[0], vissza[1], vissza[0])
             else:
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, vissza[0], vissza[1], vissza[0])
-                plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape, vissza[0], vissza[1], vissza[0])
+                u = float(self.sm.te1.get().replace(',','.'))
+                v = float(self.sm.te2.get().replace(',','.'))
+                rot = float(self.sm.te3.get().replace(',','.'))
+                if self.sm.shape == "Circle":
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit, calculated = True, u=u, v=v, rot=rot)
+                else:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit, vissza[0], vissza[1], vissza[0], calculated = True, u=u, v=v, rot=rot)
+
 
     def save_file(self):
         if self.valid_sol.get() == True:

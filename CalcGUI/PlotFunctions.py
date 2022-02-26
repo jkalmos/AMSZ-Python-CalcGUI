@@ -5,7 +5,7 @@ import matplotlib.patches as patches
 import numpy as np
 
 # PLOT SHAPE --------------------------------------------------------------------------------------------------------------------------------------------------------
-def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on, thickness_on, colors, a = 1.6, b = 0.8, d = 0.8):
+def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinate_on, thickness_on, colors, angle_unit, a = 1.6, b = 0.8, d = 0.8, calculated = False, u=0, v=0, rot=0):
     if parent.plotted == True:
         parent.canvas._tkcanvas.destroy()
     circ = False
@@ -119,8 +119,8 @@ def plot(parent, shape, coordinate_on, dimension_lines_on, transformed_coordinat
     if dimension_lines_on == True:
         dimension_lines(x, y, parent.ax, r"$a$", r"$b$", coordinate_displacement, colors, circ, right)
     if transformed_coordinate_on == True:
-        transformed_coordinate_system(x, y, parent.ax, 15, colors)
-        transformation_dimensions(x, y, parent.ax, colors)
+        transformed_coordinate_system(x, y, parent.ax, 15, colors, angle_unit, calculated, u,v,rot)
+        transformation_dimensions(x, y, parent.ax, colors,calculated)
     if shape != None:
         if proportional == False:
             parent.ax.text(-x, -y, "NEM arányos!!!", verticalalignment='center', size='large', color = colors["text_color"])
@@ -291,59 +291,86 @@ def coordinate_system(x, y, ax, e, colors):
         color = color,
         alpha=transparency)
 
-def transformed_coordinate_system(x, y, ax, phi, colors):
+def transformed_coordinate_system(x, y, ax, phi, colors, angle_unit, calculated = False, u=0, v=0, alpha=0):
     color = colors['draw_tertiary']
     hw = 0.015*max(x,y)
     hl = 2*hw
-    phi = phi/180*np.pi
-    ar1_x = (-x*3/4)*np.cos(phi)+x/5
-    ar1_y = -x*3/4*np.sin(phi)+y/5
-    ar1_dx = (x*3/2)*np.cos(phi)
-    ar1_dy = x*3/2*np.sin(phi)
-    ar2_x = y*3/4*np.sin(phi)+x/5
-    ar2_y = -y*3/4*np.cos(phi)+y/5
-    ar2_dx = (-y*3/2)*np.sin(phi)
-    ar2_dy = y*3/2*np.cos(phi)
+    if calculated == False:
+        phi = phi/180*np.pi
+        ar1_x = (-x*3/4)*np.cos(phi)+x/5
+        ar1_y = -x*3/4*np.sin(phi)+y/5
+        ar1_dx = (x*3/2)*np.cos(phi)
+        ar1_dy = x*3/2*np.sin(phi)
+        ar2_x = y*3/4*np.sin(phi)+x/5
+        ar2_y = -y*3/4*np.cos(phi)+y/5
+        ar2_dx = (-y*3/2)*np.sin(phi)
+        ar2_dy = y*3/2*np.cos(phi)
 
-    ax.arrow(ar1_x, ar1_y, ar1_dx, ar1_dy,
-                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
-    ax.arrow(ar2_x, ar2_y, ar2_dx, ar2_dy,
-                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
-    ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$x_1$", horizontalalignment='center', color = color,
-                        verticalalignment='center', size='large')
-    ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$y_1$", horizontalalignment='center', color = color,
-                        verticalalignment='center', size='large')
+        ax.arrow(ar1_x, ar1_y, ar1_dx, ar1_dy,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
+        ax.arrow(ar2_x, ar2_y, ar2_dx, ar2_dy,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
+        ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$x_1$", horizontalalignment='center', color = color,
+                            verticalalignment='center', size='large')
+        ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$y_1$", horizontalalignment='center', color = color,
+                            verticalalignment='center', size='large')
+    else:
+        print(angle_unit)
+        if angle_unit == "°":
+            alpha = alpha/180*np.pi
+            print("deg to rad")
+            print(alpha)
+        ar1_x = (-x*3/4)*np.cos(alpha)+u
+        ar1_y = -x*3/4*np.sin(alpha)+v
+        ar1_dx = (x*3/2)*np.cos(alpha)
+        ar1_dy = x*3/2*np.sin(alpha)
+        ar2_x = y*3/4*np.sin(alpha)+u
+        ar2_y = -y*3/4*np.cos(alpha)+v
+        ar2_dx = (-y*3/2)*np.sin(alpha)
+        ar2_dy = y*3/2*np.cos(alpha)
 
-def transformation_dimensions(x, y, ax, colors):
-    color = colors['draw_tertiary']
-    transparency = 1 #0.7
-    hw = 0.015*max(x,y)
-    hl = 2*hw
-    y_disp_x = [x/5, x]
-    y_disp_y = [y/5, y/5]
-    ax.plot(y_disp_x, y_disp_y, color, lw=1, zorder=5, alpha=transparency)
-    ax.arrow(x/2+x/8, 0, 0, y/5,
-                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
-    ax.arrow(x/2+x/8, y/5, 0, -y/5,
-                         head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
-    ax.text(x/2+x/6, y/8, r"$v$", horizontalalignment='center', color = color,
+        ax.arrow(ar1_x, ar1_y, ar1_dx, ar1_dy,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
+        ax.arrow(ar2_x, ar2_y, ar2_dx, ar2_dy,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, zorder=3)
+        ax.text(ar1_x+ar1_dx+x/20, ar1_y+ar1_dy+y/20,  r"$x_1$", horizontalalignment='center', color = color,
+                            verticalalignment='center', size='large')
+        ax.text(ar2_x+ar2_dx+x/20, ar2_y+ar2_dy+y/20, r"$y_1$", horizontalalignment='center', color = color,
+                            verticalalignment='center', size='large')
+
+def transformation_dimensions(x, y, ax, colors, dimensions = False):
+    if dimensions == False:
+        color = colors['draw_tertiary']
+        transparency = 1 #0.7
+        hw = 0.015*max(x,y)
+        hl = 2*hw
+        y_disp_x = [x/5, x]
+        y_disp_y = [y/5, y/5]
+        ax.plot(y_disp_x, y_disp_y, color, lw=1, zorder=5, alpha=transparency)
+        ax.arrow(x/2+x/8, 0, 0, y/5,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
+        ax.arrow(x/2+x/8, y/5, 0, -y/5,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
+        ax.text(x/2+x/6, y/8, r"$v$", horizontalalignment='center', color = color,
+                            verticalalignment='center', alpha=transparency)
+        x_disp_x = [x/5, x/5]
+        x_disp_y = [y/5, -y/5]
+        ax.plot(x_disp_x, x_disp_y, color, lw=1, zorder=5, alpha=transparency)
+        ax.arrow(0, -y/8, x/5, 0,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
+        ax.arrow(x/5, -y/8, -x/5, 0,
+                            head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
+        ax.text(x/8, -y/12, r"$u$", horizontalalignment='center', color = color,
                         verticalalignment='center', alpha=transparency)
-    x_disp_x = [x/5, x/5]
-    x_disp_y = [y/5, -y/5]
-    ax.plot(x_disp_x, x_disp_y, color, lw=1, zorder=5, alpha=transparency)
-    ax.arrow(0, -y/8, x/5, 0,
-                        head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
-    ax.arrow(x/5, -y/8, -x/5, 0,
-                        head_width=hw, head_length=hl, fc=color, ec=color,length_includes_head = True, alpha=transparency)
-    ax.text(x/8, -y/12, r"$u$", horizontalalignment='center', color = color,
-                    verticalalignment='center', alpha=transparency)
-    style = "Simple, tail_width=0.2, head_width=4, head_length=8"
-    kw = dict(arrowstyle=style, color=color)
-    a3 = patches.FancyArrowPatch((x/2+x/3, y/5), (x/2+x/5+x/20, y/5+x*3/20),
-                            connectionstyle="arc3,rad=.2", **kw, alpha=transparency)
-    ax.add_patch(a3)
-    ax.text(x/2+x/4+x/8, y/4+y/12, r"$\varphi$", horizontalalignment='center', color = color,
-                    verticalalignment='center', alpha=transparency)
+        style = "Simple, tail_width=0.2, head_width=4, head_length=8"
+        kw = dict(arrowstyle=style, color=color)
+        a3 = patches.FancyArrowPatch((x/2+x/3, y/5), (x/2+x/5+x/20, y/5+x*3/20),
+                                connectionstyle="arc3,rad=.2", **kw, alpha=transparency)
+        ax.add_patch(a3)
+        ax.text(x/2+x/4+x/8, y/4+y/12, r"$\varphi$", horizontalalignment='center', color = color,
+                        verticalalignment='center', alpha=transparency)
+    else:
+        None
     
 def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coordinate_on,shape, a = 1.6, b = 0.8, d = 0.8):
     principal_x = True
@@ -360,7 +387,7 @@ def plot_principal_axes(parent, colors, ax, alpha, angle_unit, transformed_coord
     hw = 0.015*max(x,y)
     hl = 2*hw
 
-    if angle_unit == "deg":
+    if angle_unit == '°':
         phi = alpha/180*np.pi
     else:
         phi = alpha
