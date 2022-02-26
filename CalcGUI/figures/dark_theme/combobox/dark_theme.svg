@@ -4,11 +4,12 @@
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    id="svg874"
    version="1.1"
-   viewBox="0 0 15 7.4835482"
-   height="7.4835482mm"
-   width="15mm"
+   viewBox="0 0 84.352486 40.299568"
+   height="40.299568mm"
+   width="84.352486mm"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -77,8 +78,8 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer4"
      inkscape:document-units="mm"
-     inkscape:cy="-42.067156"
-     inkscape:cx="-386.71373"
+     inkscape:cy="13.684496"
+     inkscape:cx="-73.490814"
      inkscape:zoom="0.98651785"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -91,15 +92,15 @@
     <sodipodi:guide
        id="guide2177"
        orientation="0,-1"
-       position="195.40651,207.95197" />
+       position="48.996709,228.25207" />
     <sodipodi:guide
        id="guide2179"
        orientation="0,-1"
-       position="195.13493,228.07557" />
+       position="48.725129,248.37567" />
     <sodipodi:guide
        id="guide2203"
        orientation="0,-1"
-       position="212.93513,233.09645" />
+       position="66.52533,253.39655" />
   </sodipodi:namedview>
   <metadata
      id="metadata871">
@@ -117,7 +118,7 @@
      inkscape:label="DARK"
      id="layer4"
      inkscape:groupmode="layer"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        y="18.498104"
        x="0"
@@ -2122,6 +2123,44 @@
          x="177.83888"
          y="339.25793"
          style="fill:#cccccc;fill-opacity:1;stroke-width:0.264583">Súgó</tspan></text>
+    <g
+       id="g1192">
+      <rect
+         y="321.44357"
+         x="321.60559"
+         height="40.299568"
+         width="84.352486"
+         id="rect1170"
+         style="display:inline;opacity:0.994;fill:#1a1a1a;stroke-width:1.22026;stroke-linecap:round" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;display:inline;fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="345.41354"
+         y="340.29456"
+         id="text1174"
+         inkscape:export-filename="C:\Users\Piri Barnabas\OneDrive - Budapesti Műszaki és Gazdaságtudományi Egyetem\Dokumentumok\BME\AMSZ\Projektek\AMSZ_CalcGUI_piri\CalcGUI\figures\dark_theme\menubar\basic.png"
+         inkscape:export-xdpi="88.246918"
+         inkscape:export-ydpi="88.246918"><tspan
+           sodipodi:role="line"
+           id="tspan1172"
+           x="345.41354"
+           y="340.29456"
+           style="fill:#cccccc;fill-opacity:1;stroke-width:0.264583">Nincs kiszámolt eredmény,</tspan><tspan
+           sodipodi:role="line"
+           x="345.41354"
+           y="346.46817"
+           style="fill:#cccccc;fill-opacity:1;stroke-width:0.264583"
+           id="tspan1318">amelyet menteni lehetne!</tspan></text>
+      <image
+         width="11.98289"
+         height="10.4"
+         preserveAspectRatio="none"
+         xlink:href="data:image/png;base64,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 SUVORK5CYII= "
+         id="image12833"
+         x="327.35394"
+         y="336.40958"
+         style="stroke-width:1.56721" />
+    </g>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -2129,7 +2168,7 @@
      inkscape:label="calculate_button"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        style="display:inline;opacity:0.997;fill:#cf6679;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect928-4-2-4"
@@ -2163,7 +2202,7 @@
      inkscape:label="combo_rectangle"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <path
        id="rect960-6"
        style="display:inline;opacity:0.997;fill:#87cdde;stroke-width:1.22026;stroke-linecap:round"
@@ -2194,7 +2233,7 @@
      inkscape:label="combo_rectangle_hover"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <path
        id="path1405"
        style="display:inline;opacity:0.997;fill:#87a1de;fill-opacity:1;stroke-width:1.22026;stroke-linecap:round"
@@ -2225,7 +2264,7 @@
      inkscape:label="combo_circle"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="35"
        inkscape:export-xdpi="35"
@@ -2258,7 +2297,7 @@
      inkscape:label="combo_circle_hover"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2291,7 +2330,7 @@
      inkscape:label="combo_ellipse"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        ry="0"
        y="63.913177"
@@ -2324,7 +2363,7 @@
      inkscape:label="combo_ellipse_hover"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        ry="0"
        y="63.913177"
@@ -2357,7 +2396,7 @@
      inkscape:label="combo_isosceles"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <path
        sodipodi:nodetypes="cccsscc"
        inkscape:connector-curvature="0"
@@ -2388,7 +2427,7 @@
      inkscape:label="combo_isosceles_hover"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <path
        sodipodi:nodetypes="cccsscc"
        inkscape:connector-curvature="0"
@@ -2419,7 +2458,7 @@
      inkscape:label="combo_default"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="75.208771"
        inkscape:export-xdpi="75.208771"
@@ -2474,7 +2513,7 @@
      inkscape:label="combo_rectangle_closed"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2529,7 +2568,7 @@
      inkscape:label="combo_circle_closed"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2584,7 +2623,7 @@
      inkscape:label="combo_ellipse_closed"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"
@@ -2639,7 +2678,7 @@
      inkscape:label="combo_isosceles_closed"
      style="display:none"
      sodipodi:insensitive="true"
-     transform="translate(-175.19579,-333.9595)">
+     transform="translate(-321.60559,-321.44357)">
     <rect
        inkscape:export-ydpi="75.208755"
        inkscape:export-xdpi="75.208755"

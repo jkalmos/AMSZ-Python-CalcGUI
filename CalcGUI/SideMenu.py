@@ -117,6 +117,7 @@ class SideMenu(tk.Frame):
         self.calc.bind('<Button-1>', func=lambda e: self.root.calculate())
 
         # result labels
+        self.result0 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result1 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result2 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result3 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
@@ -128,24 +129,27 @@ class SideMenu(tk.Frame):
         self.result9 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result10 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
         self.result11 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
-        self.result1.grid(row=12, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result2.grid(row=13, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result3.grid(row=14, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result4.grid(row=15, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result5.grid(row=16, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W) # Ip
-        self.result6.grid(row=17, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
-        self.result7.grid(row=18, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result8.grid(row=19, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result9.grid(row=20, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
-        self.result10.grid(row=21, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
-        self.result11.grid(row=22, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result12 = tk.Label(self.canvas, text="", bg=self["background"], fg=root.colors['text_color'], font=result_font)
+        self.result0.grid(row=12, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
+        self.result1.grid(row=13, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result2.grid(row=14, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result3.grid(row=15, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result4.grid(row=16, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result5.grid(row=17, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W) # Ip
+        self.result6.grid(row=18, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
+        self.result7.grid(row=19, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result8.grid(row=20, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result9.grid(row=21, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result10.grid(row=22, column = 0, columnspan=4, padx=15, pady=2, sticky=tk.W)
+        self.result11.grid(row=23, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
+        self.result12.grid(row=24, column = 0, columnspan=4, padx=30, pady=2, sticky=tk.W)
 
         # Checkbox: set thickness
         self.thickness = tk.Checkbutton(
             self.canvas, text = "Falvastagság hozzáadása",
             variable = self.root.thickness_on, onvalue=True, offvalue=False, font=input_font, 
             bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
-            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
+            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors, root.angle_unit),
             entry_enable(self.the1, self.root.thickness_on)])
 
         # Checkbox: transformed coordinate system
@@ -153,7 +157,7 @@ class SideMenu(tk.Frame):
             self.canvas, text = "Transzformált koordináta rendszer", font=input_font, 
             variable = self.root.transformed_coordinate_on, onvalue=True, offvalue=False,
             bg = self["background"], fg=root.colors['text_color'], selectcolor=self["background"],
-            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors),
+            command = lambda: [plot(root, self.shape, self.root.coordinate_on.get(), self.root.dimension_lines_on.get(), self.root.transformed_coordinate_on.get(), self.root.thickness_on.get(), root.colors, root.angle_unit),
             entry_enable(self.te1, self.root.transformed_coordinate_on),
             entry_enable(self.te2, self.root.transformed_coordinate_on),
             entry_enable(self.te3, self.root.transformed_coordinate_on)])
@@ -169,6 +173,7 @@ class SideMenu(tk.Frame):
 
         # append result label to indicators
         self.indicators = []
+        self.indicators.append(self.result0)
         self.indicators.append(self.result1)
         self.indicators.append(self.result2)
         self.indicators.append(self.result3)
@@ -180,6 +185,7 @@ class SideMenu(tk.Frame):
         self.indicators.append(self.result9)
         self.indicators.append(self.result10)
         self.indicators.append(self.result11)
+        self.indicators.append(self.result12)
         self.indicators.append(self.lbl)
         self.indicators.append(self.lbl2)
         self.indicators.append(self.calc)

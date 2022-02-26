@@ -94,13 +94,13 @@ def settings_window(self):
         
         #sb stuff --------------------------------------
         self.orig_axis_dissapier_check = tk.Checkbutton(
-        self.settings_menu_options, text = "Segéd tengelyek eltüntetése számolásnál",
+        self.settings_menu_options, text = "Segéd tengelyek (szürke) eltüntetése számolásnál",
         variable = self.orig_axis_dissapier_bool, onvalue=True, offvalue=False, 
         bg = self["background"], fg=self.colors['text_color'], selectcolor=self["background"],
         command = lambda :turn_on_fixed_axis_dissapier())
         
         self.show_orig_axis_check = tk.Checkbutton(
-        self.settings_menu_options, text = "Segéd tengelyek megjelenítése",
+        self.settings_menu_options, text = "Segéd tengelyek (szürke) megjelenítése",
         variable = self.show_orig_axis_bool, onvalue=True, offvalue=False, 
         bg = self["background"], fg=self.colors['text_color'], selectcolor=self["background"],
         command = lambda :turn_on_show_fixed_axis())
@@ -112,7 +112,7 @@ def settings_window(self):
         command = lambda :turn_on_sb_ha_vis())
 
         self.calc_for_orig_axis_check = tk.Checkbutton(
-        self.settings_menu_options, text = "Számolás fix tengelyre",
+        self.settings_menu_options, text = "Számolás a segéd koordináta-rendszerre vonatkozva",
         variable = self.calc_for_orig_axis_bool, onvalue=True, offvalue=False, 
         bg = self["background"], fg=self.colors['text_color'], selectcolor=self["background"],
         command = lambda :turn_on_calc_for_orig_axis())

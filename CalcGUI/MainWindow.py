@@ -11,6 +11,7 @@ from tkvideo import tkvideo
 from PlotFunctions import plot, plot_principal_axes
 import shape_builder
 from SettingsWindow import settings_window
+from ErrorWindow import error_window
 from tkinter.filedialog import asksaveasfile
 from tkinter import messagebox
 import datetime as dt
@@ -47,8 +48,8 @@ class main_window(tk.Tk):
         super().__init__()
 
         # main window opening size
-        self.win_width = 1201
-        self.win_height = 650
+        self.win_width = 1301
+        self.win_height = 750
 
         # screen size
         self.screen_width = self.winfo_screenwidth()
@@ -74,7 +75,7 @@ class main_window(tk.Tk):
         self.plotted = tk.BooleanVar(False)
         self.shape_builder_mode = False
         self.window_open = BooleanVar(False)
-        self.valid_sol = BooleanVar(False)
+        #self.valid_sol = BooleanVar(False)
 
         # Default unit, default theme
         self.unit = settings["default_unit"]#"mm"
@@ -129,9 +130,9 @@ class main_window(tk.Tk):
         self.sm = SideMenu(self)
         self.sm.pack(side=tk.LEFT, padx = (20,10), pady = 20, fill=tk.Y)
         # self.sm.pack(side=tk.LEFT, fill=tk.Y)
-        # calculate on pressing enter
+        # angle_unit on pressing enter
         self.bind('<Return>', self.calculate)
-        plot(self, None, False, False, False, False, self.colors)
+        plot(self, None, False, False, False, False, self.colors, self.angle_unit)
         
     ## USEFUL FUNCTIONS ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
     
@@ -280,7 +281,7 @@ class main_window(tk.Tk):
             self.plotted = False
             
             self.sm.shape = None
-            plot(self, None, False, False, False, False, self.colors)
+            plot(self, None, False, False, False, False, self.colors, self.angle_unit)
 
             self.change_button_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change.png")
             self.change_button_hover_img = tk.PhotoImage(file=f"{self.colors['path']}menubar/change_hover.png")
@@ -316,7 +317,7 @@ class main_window(tk.Tk):
         else:
             self.sm.shape = None
             print("Ez az alakzat még nincs definiálva...")
-        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
+        plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit)
     
     def get_entry(self, number_of_entries):
         vissza = []
@@ -326,7 +327,7 @@ class main_window(tk.Tk):
             try:
                 vissza.append(float(self.sm.controls[i]["entry"].get().replace(',','.')))
                 self.sm.controls[i]["entry"].config({"background": self.colors['entry_color']})
-                self.valid_sol.set(True)
+                #self.valid_sol.set(True)
             except:
                 print("Hiba")
                 self.sm.controls[i]["entry"].config({"background": self.colors['error_color']})
@@ -517,6 +518,7 @@ class main_window(tk.Tk):
                     elif t >= a/2 and t >= b/2:
                         self.sm.controls[0]["entry"].config({"background": self.colors['error_color']})
                         self.sm.controls[1]["entry"].config({"background": self.colors['error_color']})
+                        self.sm.controls[-1]["entry"].config({"background": self.colors['error_color']})
                         for i in self.sm.indicators:
                             i.config(text="")
                         self.sm.result1.config(text="Hiba a bemeneti adatokban!")
@@ -537,13 +539,23 @@ class main_window(tk.Tk):
         return vissza,t
 
     def calculate(self, event=None):
+        for i in self.sm.indicators:
+            i.config(text="")
         if not self.shape_builder_mode:
+            self.sm.result0.config(text = "Keresztmetszeti jellemzők:")
             if self.sm.shape == "Rectangle":
                 vissza, t = self.get_entry(2)
                 if None in vissza:
                     return -1
                 self.values = Calc.Rectangle(*vissza[:2], t, *vissza[2:], rad = self.angle_unit == "rad")
                 self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+
+                alpha = self.values["alpha"] # ez radián 
+                if self.angle_unit == '°':
+                    alpha = alpha/np.pi*180
+                else:
+                    alpha = alpha
+
                 if self.transformed_coordinate_on.get() == True:
                     print("transformed")
                     self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
@@ -556,18 +568,19 @@ class main_window(tk.Tk):
                     self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result5.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result6.config(text="Főmásodrendű nyomatékok:")
-                if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                    print("x nagyobb")
-                else:
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                    print("y nagyobb")
-                self.sm.result9.config(text="Keresztmetszeti tényezők:")
-                self.sm.result10.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
-                self.sm.result11.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result6.config(text="Főmásodrendű nyomatékok:")
+                    if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    else:
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(self.values["alpha"], 4)) + " " + self.angle_unit)
+                    self.sm.result10.config(text="Keresztmetszeti tényezők:")
+                    self.sm.result11.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result12.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
+                
 
             elif self.sm.shape == "Circle":
                 vissza, t = self.get_entry(1)
@@ -575,6 +588,13 @@ class main_window(tk.Tk):
                     return -1
                 self.values = Calc.Circle(vissza[0], t, *vissza[1:],rad = self.angle_unit == "rad")
                 self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+
+                alpha = self.values["alpha"]
+                if self.angle_unit == '°':
+                    alpha = alpha/np.pi*180
+                else:
+                    alpha = alpha
+
                 if self.transformed_coordinate_on.get() == True:
                     print("transformed")
                     self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
@@ -587,12 +607,14 @@ class main_window(tk.Tk):
                     self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result5.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result6.config(text="Főmásodrendű nyomatékok:")
-                self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result9.config(text="Keresztmetszeti tényezők:")
-                self.sm.result10.config(text="Kₓ = Kᵧ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
-                self.sm.result11.config(text="Kₚ = " + str(round(self.values["Kp"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result6.config(text="Főmásodrendű nyomatékok:")
+                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                    self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    self.sm.result10.config(text="Keresztmetszeti tényezők:")
+                    self.sm.result11.config(text="Kₓ = Kᵧ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result12.config(text="Kₚ = " + str(round(self.values["Kp"], 4)) + " " + self.unit + "\u00B3")
+                
 
             elif self.sm.shape == "Ellipse":
                 vissza, t = self.get_entry(2)
@@ -600,6 +622,13 @@ class main_window(tk.Tk):
                     return -1
                 self.values = Calc.Ellipse(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
                 self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+
+                alpha = self.values["alpha"]
+                if self.angle_unit == '°':
+                    alpha = alpha/np.pi*180
+                else:
+                    alpha = alpha
+
                 if self.transformed_coordinate_on.get() == True:
                     print("transcoord")
                     self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
@@ -612,16 +641,18 @@ class main_window(tk.Tk):
                     self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result5.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result6.config(text="Főmásodrendű nyomatékok:")
-                if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                else:
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result9.config(text="Keresztmetszeti tényezők:")
-                self.sm.result10.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
-                self.sm.result11.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result6.config(text="Főmásodrendű nyomatékok:")
+                    if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    else:
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    self.sm.result10.config(text="Keresztmetszeti tényezők:")
+                    self.sm.result11.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result12.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
 
             elif self.sm.shape == "Isosceles_triangle":
                 vissza, t = self.get_entry(2)
@@ -629,6 +660,13 @@ class main_window(tk.Tk):
                     return -1
                 self.values = Calc.IsoscelesTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
                 self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+
+                alpha = self.values["alpha"]
+                if self.angle_unit == '°':
+                    alpha = alpha/np.pi*180
+                else:
+                    alpha = alpha
+
                 if self.transformed_coordinate_on.get() == True:
                     print("transcoord")
                     self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
@@ -641,22 +679,32 @@ class main_window(tk.Tk):
                     self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result5.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result6.config(text="Főmásodrendű nyomatékok:")
-                if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                else:
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result9.config(text="Keresztmetszeti tényezők:")
-                self.sm.result10.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
-                self.sm.result11.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result6.config(text="Főmásodrendű nyomatékok:")
+                    if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    else:
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    self.sm.result10.config(text="Keresztmetszeti tényezők:")
+                    self.sm.result11.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result12.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
+
             elif self.sm.shape == "Right_triangle":
                 vissza, t = self.get_entry(2)
                 if None in vissza:
                     return -1
                 self.values = Calc.RightTriangle(*vissza[:2], t, *vissza[2:],rad = self.angle_unit == "rad")
                 self.sm.result1.config(text="A = " + str(round(self.values["A"], 4)) + " " + self.unit + "²")
+
+                alpha = self.values["alpha"]
+                if self.angle_unit == '°':
+                    alpha = alpha/np.pi*180
+                else:
+                    alpha = alpha
+
                 if self.transformed_coordinate_on.get() == True:
                     print("transcoord")
                     self.sm.result2.config(text="Iₓ₁ = " + str(round(self.values["Ixi"], 4)) + " " + self.unit + "\u2074")
@@ -669,28 +717,39 @@ class main_window(tk.Tk):
                     self.sm.result3.config(text="Iᵧ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result4.config(text="Iₓᵧ = " + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074")
                     self.sm.result5.config(text="Iₚ = " + str(round(self.values["Ip"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result6.config(text="Főmásodrendű nyomatékok:")
-                if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                else:
-                    self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
-                    self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
-                self.sm.result9.config(text="Keresztmetszeti tényezők:")
-                self.sm.result10.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
-                self.sm.result11.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result6.config(text="Főmásodrendű nyomatékok:")
+                    if round(self.values["Ix"], 4) >= round(self.values["Iy"], 4):
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    else:
+                        self.sm.result7.config(text="I₁ = " + str(round(self.values["Iy"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result8.config(text="I₂ = " + str(round(self.values["Ix"], 4)) + " " + self.unit + "\u2074")
+                        self.sm.result9.config(text="\u03B1 = " + str(round(alpha, 4)) + " " + self.angle_unit)
+                    self.sm.result10.config(text="Keresztmetszeti tényezők:")
+                    self.sm.result11.config(text="Kₓ = " + str(round(self.values["Kx"], 4)) + " " + self.unit + "\u00B3")
+                    self.sm.result12.config(text="Kᵧ = " + str(round(self.values["Ky"], 4)) + " " + self.unit + "\u00B3")
             else:
                 print("Hiba, az alakzat nem talalhato")
-            if self.sm.shape == "Circle":
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors)
-                plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+            if self.transformed_coordinate_on.get() == False:
+                if self.sm.shape == "Circle":
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit)
+                    plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape)
+                else:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit, vissza[0], vissza[1], vissza[0])
+                    plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape, vissza[0], vissza[1], vissza[0])
             else:
-                plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, vissza[0], vissza[1], vissza[0])
-                plot_principal_axes(self, self.colors,  self.ax, self.values["alpha"],self.angle_unit, self.transformed_coordinate_on.get(), self.sm.shape, vissza[0], vissza[1], vissza[0])
+                u = float(self.sm.te1.get().replace(',','.'))
+                v = float(self.sm.te2.get().replace(',','.'))
+                rot = float(self.sm.te3.get().replace(',','.'))
+                if self.sm.shape == "Circle":
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit, calculated = True, u=u, v=v, rot=rot)
+                else:
+                    plot(self, self.sm.shape, self.coordinate_on.get(), self.dimension_lines_on.get(), self.transformed_coordinate_on.get(), self.thickness_on.get(), self.colors, self.angle_unit, vissza[0], vissza[1], vissza[0], calculated = True, u=u, v=v, rot=rot)
 
     def save_file(self):
-        if self.valid_sol.get() == True:
-            if self.shape_builder_mode == False:
+        if self.shape_builder_mode == False:
+            if self.sm.result4.cget("text") != "":
                 print('Alap mod mentes')
                 date=dt.datetime.now()
                 filename = "eredmenyek_" + f"{date:%y_%m_%d_%H_%M}"
@@ -702,10 +761,26 @@ class main_window(tk.Tk):
 
                 if self.sm.shape == "Circle":
                     d = float(self.sm.controls[0]["entry"].get().replace(',','.'))
-                    
+                    if self.transformed_coordinate_on.get() == True:
+                        u = float(self.sm.te1.get().replace(',','.'))
+                        v = float(self.sm.te2.get().replace(',','.'))
+                        phi = float(self.sm.te3.get().replace(',','.'))
+                    else:
+                        u = 0
+                        v = 0
+                        phi = 0
+
                 else:
                     a = float(self.sm.controls[0]["entry"].get().replace(',','.'))
                     b = float(self.sm.controls[1]["entry"].get().replace(',','.'))
+                    if self.transformed_coordinate_on.get() == True:
+                        u = float(self.sm.te1.get().replace(',','.'))
+                        v = float(self.sm.te2.get().replace(',','.'))
+                        phi = float(self.sm.te3.get().replace(',','.'))
+                    else:
+                        u = 0
+                        v = 0
+                        phi = 0
                 
                 if self.thickness_on.get() == True:
                     t = float(self.sm.controls[-1]["entry"].get().replace(',','.'))
@@ -717,12 +792,12 @@ class main_window(tk.Tk):
                 pdf = FPDF()
                 pdf.add_page()
                 pdf.add_font('DejaVu', '', 'DejaVuSansCondensed.ttf', uni=True)
-                pdf.set_font('DejaVu', '', 14)
+                pdf.set_font('DejaVu', '', 12)
 
                 self.fig.patch.set_facecolor("#FFFFFF")
                 self.canvas.draw()
 
-                self.canvas.print_figure('tempfig.png', 200)
+                self.canvas.print_figure('tempfig.png', 250)
                 self.fig.patch.set_facecolor(self.colors["secondary_color"])
                 self.canvas.draw()
       
@@ -730,66 +805,136 @@ class main_window(tk.Tk):
                 pdf.set_text_color(0,0,0) 
             
 
-                background_img.save('background_img.png')
-                pdf.image('background_img.png', x = 0, y = 0, w = 210, h = 297, type = 'PNG')
-                pdf.image('tempfig.png', x = 65, y = 15, w = 140, h = 0, type = 'PNG')
-                
+                if self.thickness_on.get() == True:
+                    print('belep az agba')
 
-                if self.sm.shape == "Circle": 
-                    pdf.cell(200, 10, txt = 'Az alakzat: ' + self.sm.shape +  ' (d = ' + str(round(d, 4)) + " " + self.unit + ', t = ' + str(round(t, 4)) + " " + self.unit + ')' , ln = 1, align = 'L')
-                    pdf.cell(200, 10, txt = 'A = '    + str(round(self.values["A"], 4))   + " " + self.unit + "²" , ln = 2, align = 'L')
-                    pdf.cell(200, 10, txt = 'Iₓ = '   + str(round(self.values["Ix"], 4))  + " " + self.unit + "\u2074", ln = 3, align = 'L')
-                    pdf.cell(200, 10, txt = 'Iᵧ = '   + str(round(self.values["Iy"], 4))  + " " + self.unit + "\u2074", ln = 4, align = 'L')
-                    pdf.cell(200, 10, txt = 'Iₚ = '   + str(round(self.values["Ip"], 4))  + " " + self.unit + "\u2074", ln = 5, align = 'L')
-                    pdf.cell(200, 10, txt = 'Iₓᵧ = '  + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074", ln = 6, align = 'L')
-                    pdf.cell(200, 10, txt = 'I₁ = '   + str(round(self.values["I1"], 4))  + " " + self.unit + "\u2074", ln = 7, align = 'L')
-                    pdf.cell(200, 10, txt = 'I₂ = '   + str(round(self.values["I2"], 4))  + " " + self.unit + "\u2074", ln = 8, align = 'L')
-                    pdf.cell(200, 10, txt = 'Kₓ = Kᵧ = '   + str(round(self.values["Kx"], 4))  + " " + self.unit + "\u00B3", ln = 9, align = 'L')
-                    pdf.cell(200, 10, txt = 'Kₚ = '   + str(round(self.values["Kp"], 4))  + " " + self.unit + "\u00B3", ln = 10, align = 'L')
-                else:
-
-                    if round(self.values["I1"], 4) >= round(self.values["I2"], 4):
-                        pdf.cell(200, 10, txt = 'Az alakzat: ' + self.sm.shape +  ' (a = ' + str(round(a, 4)) + " "  + self.unit + ', b = ' + str(round(b, 4)) + " "  + self.unit + ', t = ' + str(round(t, 4)) + " "  + self.unit + ')', ln = 1, align = 'L')
-                        pdf.cell(200, 10, txt = 'A = '    + str(round(self.values["A"], 4))   + " " + self.unit + "²" , ln = 2, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iₓ = '   + str(round(self.values["Ix"], 4))  + " " + self.unit + "\u2074", ln = 3, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iᵧ = '   + str(round(self.values["Iy"], 4))  + " " + self.unit + "\u2074", ln = 4, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iₚ = '   + str(round(self.values["Ip"], 4))  + " " + self.unit + "\u2074", ln = 5, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iₓᵧ = '  + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074", ln = 6, align = 'L')
-                        pdf.cell(200, 10, txt = 'I₁ = '   + str(round(self.values["I1"], 4))  + " " + self.unit + "\u2074", ln = 7, align = 'L')
-                        pdf.cell(200, 10, txt = 'I₂ = '   + str(round(self.values["I2"], 4))  + " " + self.unit + "\u2074", ln = 8, align = 'L')
-                        pdf.cell(200, 10, txt = 'Kₓ = '   + str(round(self.values["Kx"], 4))  + " " + self.unit + "\u00B3", ln = 9, align = 'L')
-                        pdf.cell(200, 10, txt = 'Kᵧ = '   + str(round(self.values["Ky"], 4))  + " " + self.unit + "\u00B3", ln = 10, align = 'L')
+                    im = Image.open('tempfig.png')
+                    data = np.array(im)
+                    if self.theme == "Dark":
+                        r1, g1, b1 = 51, 51, 51 # Original value
                     else:
-                        pdf.cell(200, 10, txt = 'Az alakzat: ' + self.sm.shape +  ' (a = ' + str(round(a, 4)) + " "  + self.unit + ', b = ' + str(round(b, 4)) + " "  + self.unit + ', t = ' + str(round(t, 4)) + " "  + self.unit + ')', ln = 1, align = 'L')
-                        pdf.cell(200, 10, txt = 'A = '    + str(round(self.values["A"], 4))   + " " + self.unit + "²" , ln = 2, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iₓ = '   + str(round(self.values["Ix"], 4))  + " " + self.unit + "\u2074", ln = 3, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iᵧ = '   + str(round(self.values["Iy"], 4))  + " " + self.unit + "\u2074", ln = 4, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iₚ = '   + str(round(self.values["Ip"], 4))  + " " + self.unit + "\u2074", ln = 5, align = 'L')
-                        pdf.cell(200, 10, txt = 'Iₓᵧ = '  + str(round(self.values["Ixy"], 4)) + " " + self.unit + "\u2074", ln = 6, align = 'L')
-                        pdf.cell(200, 10, txt = 'I₁ = '   + str(round(self.values["I2"], 4))  + " " + self.unit + "\u2074", ln = 7, align = 'L')
-                        pdf.cell(200, 10, txt = 'I₂ = '   + str(round(self.values["I1"], 4))  + " " + self.unit + "\u2074", ln = 8, align = 'L')
-                        pdf.cell(200, 10, txt = 'Kₓ = '   + str(round(self.values["Kx"], 4))  + " " + self.unit + "\u00B3", ln = 9, align = 'L')
-                        pdf.cell(200, 10, txt = 'Kᵧ = '   + str(round(self.values["Ky"], 4))  + " " + self.unit + "\u00B3", ln = 10, align = 'L')
+                        r1, g1, b1 = 244, 242, 244 # Original value
 
+                    r2, g2, b2 = 255, 255, 255 # Value that we want to replace it with
+
+                    red, green, blue = data[:,:,0], data[:,:,1], data[:,:,2]
+                    mask = (red == r1) & (green == g1) & (blue == b1)
+                    data[:,:,:3][mask] = [r2, g2, b2]
+
+                    im = Image.fromarray(data)
+                    im.save('tempfig.png')
+                else:
+                    print('nem lep be')
+                    None
+
+                self.canvas.draw()
+    
+                pdf.image('tempfig.png', x = 55, y = 15, w = 170, h = 0, type = 'PNG')
+                
+                if self.sm.shape == "Circle":
+                    pdf.cell(200, 10, txt = 'Az alakzat: ' + self.sm.shape +  ' (d = ' + str(round(d, 4)) + " " + self.unit + ', t = ' + 
+                                            str(round(t, 4)) + " " + self.unit + ', u = ' + str(round(u, 4)) + " " + self.unit +
+                                             ', v = ' + str(round(v, 4)) + " " + self.unit + ', \u03c6 = ' + str(round(phi, 4)) + " " + self.angle_unit +')' , ln = 1, align = 'L')
+                else:
+                    pdf.cell(200, 10, txt = 'Az alakzat: ' + self.sm.shape +  ' (a = ' + str(round(a, 4)) + " " + self.unit + ', b = ' + str(round(b, 4)) + " " + self.unit + ', t = ' + 
+                                            str(round(t, 4)) + " " + self.unit + ', u = ' + str(round(u, 4)) + " " + self.unit +
+                                             ', v = ' + str(round(v, 4)) + " " + self.unit + ', \u03c6 = ' + str(round(phi, 4)) + " " + self.angle_unit +')' , ln = 1, align = 'L')
+
+                pdf.set_x(10)
+                pdf.cell(200, 10, txt = "Keresztmetszeti jellemzők:" , ln = 2, align = 'L')
+                pdf.set_x(20)
+                pdf.cell(200, 10, txt = self.sm.result1.cget("text") , ln = 3, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result2.cget("text"), ln = 3, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result3.cget("text"), ln = 4, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result4.cget("text"), ln = 5, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result5.cget("text"), ln = 6, align = 'L')
+                pdf.set_x(10)
+                pdf.cell(200, 10, txt = self.sm.result6.cget("text"), ln = 7, align = 'L')
+                pdf.set_x(20)   
+                pdf.cell(200, 10, txt = self.sm.result7.cget("text"), ln = 8, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result8.cget("text"), ln = 9, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result9.cget("text"), ln = 10, align = 'L')
+                pdf.set_x(10)
+                pdf.cell(200, 10, txt = self.sm.result10.cget("text"), ln = 11, align = 'L')
+                pdf.set_x(20)
+                pdf.cell(200, 10, txt = self.sm.result11.cget("text"), ln = 12, align = 'L')
+                pdf.cell(200, 10, txt = self.sm.result12.cget("text"), ln = 12, align = 'L')
                 
                 pdf.output(f.name, 'F') 
                 pdf.close()
 
             else:
-                print('Mentes shapebuilder')
-                self.getter(self.sb)
-
-
+                error_window(self)
+        
         else:
-            messagebox.showerror("Hiba a mentés közben", "Nincs kiszámolt adat, amit menteni lehetne!")
+            if self.sb.result4.cget("text") != "":
+                
+                print('Mentes shapebuilder')
 
-    def getter(self, widget):
-        print("inside getter")
-        x=root.winfo_rootx()+widget.winfo_x()
-        y=root.winfo_rooty()+widget.winfo_y()
-        x1=x+widget.winfo_width()
-        y1=y+widget.winfo_height()
-        ImageGrab.grab().crop((x,y,x1,y1)).save("teszt.png")
+                date=dt.datetime.now()
+                filename = "eredmenyek_" + f"{date:%y_%m_%d_%H_%M}"
+
+                self.sb.configure(bg='#FFFFFF')
+                
+                self.sb.visual_grid.delete_grid()
+
+                self.sb.update_idletasks()
+
+                x=root.winfo_rootx()+self.sb.winfo_x()
+                y=root.winfo_rooty()+self.sb.winfo_y()
+                x1=x+self.sb.winfo_width()
+                y1=y+self.sb.winfo_height()
+                ImageGrab.grab().crop((x,y,x1,y1)).save("tempfig.png")
+                
+                self.sb.configure(bg=self.colors["secondary_color"])
+                self.sb.visual_grid.create_grid(self.sb.scale, self.sb.Xcenter, self.sb.Ycenter, self.sb.scale_factor)
+                self.sb.update_idletasks()
+
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.add_font('DejaVu', '', 'DejaVuSansCondensed.ttf', uni=True)
+                pdf.set_font('DejaVu', '', 12)
+
+
+                f = asksaveasfile(initialfile = filename,
+                defaultextension=".pdf",filetypes=[("All Files","*.*"),("PDF files","*.pdf")])
+                if f is None:
+                    return
+
+                pdf.image('tempfig.png', x = 15, y = 5, w = 180, h = 0, type = 'PNG')
+
+                pdf.image('cover.png', x = 0, y = 0, w = 35, h = 60, type = 'PNG') # top-left
+                pdf.image('cover.png', x = 180, y = 0, w = 50, h = 0, type = 'PNG') # top-right
+                pdf.image('cover.png', x = 0, y = 80, w = 25, h = 60, type = 'PNG') # bottom-left
+                pdf.image('cover.png', x = 175, y = 80, w = 50, h = 0, type = 'PNG') # bottom-right
+
+                pdf.set_y(120)
+                
+                pdf.cell(200, 10, txt = 'Saját alakzat:', ln = 20, align = 'L')
+                pdf.set_x(10)
+                pdf.cell(200, 10, txt = self.sb.result1.cget("text") , ln = 2, align = 'L')
+                pdf.set_x(20)
+                pdf.cell(200, 10, txt = self.sb.result2.cget("text"), ln = 3, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result3.cget("text"), ln = 4, align = 'L')
+                pdf.set_x(10)
+                pdf.cell(200, 10, txt = self.sb.result4.cget("text"), ln = 5, align = 'L')
+                pdf.set_x(20)
+                pdf.cell(200, 10, txt = self.sb.result5.cget("text"), ln = 6, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result6.cget("text"), ln = 7, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result7.cget("text"), ln = 8, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result8.cget("text"), ln = 9, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result9.cget("text"), ln = 10, align = 'L')
+                pdf.set_x(10)
+                pdf.cell(200, 10, txt = self.sb.result10.cget("text"), ln = 11, align = 'L')
+                pdf.set_x(20)
+                pdf.cell(200, 10, txt = self.sb.result11.cget("text"), ln = 12, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result12.cget("text"), ln = 13, align = 'L')
+                pdf.cell(200, 10, txt = self.sb.result13.cget("text"), ln = 14, align = 'L')
+
+                pdf.output(f.name, 'F') 
+                pdf.close()
+            else:
+                error_window(self)
 
     def doNothing(self):
         print("Ez a funkció jelenleg nem elérhető...")
@@ -830,7 +975,7 @@ LIGHT_THEME = {
         'sb_selected':'',
         'sb_error':'',
         'sb_negative':'',
-        'sb_grid':'#3f3f3f',
+        'sb_grid':'#c4c4c4',
         'path': 'figures/light_theme/'
         }
 
