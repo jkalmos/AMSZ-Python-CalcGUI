@@ -972,6 +972,7 @@ class shapeBuilder(tk.Canvas):
                     raise TypeError
             self.selected = tmp
             self.rotation_happend = True
+            self.move_entry()
     def move_entry(self):
         if len(self.selected) == 1:
             object = self.selected[0]
